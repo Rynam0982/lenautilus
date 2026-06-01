@@ -1,0 +1,319 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  ARTIST
+  CLIENT
+}
+
+enum ReservationStatus {
+  PENDING
+  APPROVED
+  REFUSED
+  CANCELLED
+}
+
+enum EventStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  PUBLISHED
+  CANCELLED
+  PAST
+}
+
+enum TicketStatus {
+  VALID
+  USED
+  CANCELLED
+  REFUNDED
+}
+
+enum AuditAction {
+  EVENT_CREATED
+  EVENT_UPDATED
+  EVENT_APPROVED
+  EVENT_REFUSED
+  EVENT_PUBLISHED
+  EVENT_CANCELLED
+  RESERVATION_CREATED
+  RESERVATION_APPROVED
+  RESERVATION_REFUSED
+  TICKET_PURCHASED
+  TICKET_REFUNDED
+  USER_ROLE_CHANGED
+  OPENAGENDA_SYNCED
+  OPENAGENDA_SYNC_FAILED
+}
+
+// ─── User & Auth ──────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  password      String?
+  role          Role      @default(CLIENT)
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  tickets       Ticket[]
+  artistProfile ArtistProfile?
+  auditLogs     AuditLog[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Artist ───────────────────────────────────────────────────────────────────
+
+model ArtistProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  stageName   String
+  bio         String?  @db.Text
+  genre       String?
+  website     String?
+  socialLinks Json?
+  image       String?
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reservations VenueReservation[]
+
+  @@index([userId])
+}
+
+// ─── Venue ────────────────────────────────────────────────────────────────────
+
+model Venue {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String   @db.Text
+  capacity    Int
+  specs       Json?
+  amenities   String[]
+  coverImage  String?
+  gallery     String[]
+  pricing     Json?
+  address     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reservations VenueReservation[]
+  events       Event[]
+
+  @@index([slug])
+}
+
+// ─── Venue Reservation ────────────────────────────────────────────────────────
+
+model VenueReservation {
+  id         String            @id @default(cuid())
+  venueId    String
+  artistId   String
+  startDate  DateTime
+  endDate    DateTime
+  status     ReservationStatus @default(PENDING)
+  notes      String?           @db.Text
+  adminNotes String?           @db.Text
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  venue  Venue         @relation(fields: [venueId], references: [id])
+  artist ArtistProfile @relation(fields: [artistId], references: [id])
+  event  Event?
+
+  @@index([venueId])
+  @@index([artistId])
+  @@index([status])
+  @@index([startDate, endDate])
+}
+
+// ─── Event ────────────────────────────────────────────────────────────────────
+
+model Event {
+  id              String      @id @default(cuid())
+  slug            String      @unique
+  title           String
+  description     String      @db.Text
+  longDescription String?     @db.Text
+  coverImage      String?
+  gallery         String[]
+  startDate       DateTime
+  endDate         DateTime
+  timezone        String      @default("Europe/Paris")
+  venueId         String
+  reservationId   String?     @unique
+  isPublic        Boolean     @default(false)
+  status          EventStatus @default(DRAFT)
+  categories      String[]
+  keywords        String[]
+  conditions      String?
+  ageMin          Int?
+  ageMax          Int?
+
+  openAgendaUid      Int?
+  openAgendaSynced   Boolean   @default(false)
+  openAgendaSyncedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  venue       Venue             @relation(fields: [venueId], references: [id])
+  reservation VenueReservation? @relation(fields: [reservationId], references: [id])
+  ticketTypes TicketType[]
+  tickets     Ticket[]
+  auditLogs   AuditLog[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([isPublic])
+  @@index([startDate])
+  @@index([venueId])
+}
+
+// ─── Ticket Type ──────────────────────────────────────────────────────────────
+
+model TicketType {
+  id          String    @id @default(cuid())
+  eventId     String
+  name        String
+  description String?
+  price       Int
+  currency    String    @default("EUR")
+  quantity    Int
+  sold        Int       @default(0)
+  saleStartAt DateTime?
+  saleEndAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  event   Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tickets Ticket[]
+
+  @@index([eventId])
+}
+
+// ─── Ticket ───────────────────────────────────────────────────────────────────
+
+model Ticket {
+  id           String       @id @default(cuid())
+  code         String       @unique @default(cuid())
+  ticketTypeId String
+  eventId      String
+  userId       String
+  status       TicketStatus @default(VALID)
+
+  stripePaymentIntentId String?
+  stripeChargeId        String?
+  amountPaid            Int
+
+  refundedAt     DateTime?
+  refundAmount   Int?
+  stripeRefundId String?
+
+  purchasedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ticketType TicketType @relation(fields: [ticketTypeId], references: [id])
+  event      Event      @relation(fields: [eventId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([eventId])
+  @@index([code])
+  @@index([stripePaymentIntentId])
+  @@index([status])
+}
+
+// ─── Audit Log ────────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id        String      @id @default(cuid())
+  userId    String
+  action    AuditAction
+  eventId   String?
+  metadata  Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime    @default(now())
+
+  user  User   @relation(fields: [userId], references: [id])
+  event Event? @relation(fields: [eventId], references: [id])
+
+  @@index([userId])
+  @@index([eventId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// ─── OpenAgenda Sync Log ──────────────────────────────────────────────────────
+
+model OpenAgendaSyncLog {
+  id        String   @id @default(cuid())
+  eventId   String?
+  action    String
+  success   Boolean
+  error     String?  @db.Text
+  payload   Json?
+  createdAt DateTime @default(now())
+
+  @@index([eventId])
+  @@index([createdAt])
+}
