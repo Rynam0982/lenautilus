@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireArtist } from "@/lib/auth/guards";
 import { createReservation, getArtistReservations } from "@/services/reservations.service";
 import { reservationSchema } from "@/lib/validators/event";
+import { prisma } from "@/lib/db/client";
+import { sendReservationSubmittedToAdmin } from "@/lib/email";
 
 export async function GET() {
   const session = await requireArtist();
@@ -29,6 +31,33 @@ export async function POST(req: NextRequest) {
     }
 
     const reservation = await createReservation(parsed.data, session.user.id);
+
+    // Notify all admins by email
+    const admins = await prisma.user.findMany({
+      where: { role: "ADMIN" },
+      select: { email: true },
+    });
+
+    const artist = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { name: true, email: true },
+    });
+
+    for (const admin of admins) {
+      if (admin.email) {
+        sendReservationSubmittedToAdmin({
+          adminEmail: admin.email,
+          artistName: artist?.name ?? "Artiste",
+          artistEmail: artist?.email ?? "",
+          eventTitle: reservation.event?.title ?? parsed.data.eventDetails.title,
+          venueName: reservation.venue.name,
+          startDate: reservation.startDate,
+          endDate: reservation.endDate,
+          reservationId: reservation.id,
+        }).catch(console.error);
+      }
+    }
+
     return NextResponse.json({ success: true, data: reservation }, { status: 201 });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";

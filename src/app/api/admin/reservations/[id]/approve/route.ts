@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/guards";
 import { approveReservation } from "@/services/reservations.service";
 import { publishEventToOpenAgenda } from "@/services/openagenda.service";
+import { prisma } from "@/lib/db/client";
+import {
+  sendReservationApprovedToArtist,
+  sendReservationSubmittedToAdmin,
+} from "@/lib/email";
 import { z } from "zod";
 
 const schema = z.object({
@@ -23,24 +28,39 @@ export async function POST(
       return NextResponse.json({ success: false, error: "Invalid input" }, { status: 400 });
     }
 
-    const results = await approveReservation(id, session.user.id, parsed.data);
+    await approveReservation(id, session.user.id, parsed.data);
 
-    // If public, sync to OpenAgenda
-    if (parsed.data.isPublic) {
-      const reservation = results[0] as { id: string };
-      const event = await import("@/lib/db/client").then(m =>
-        m.prisma.venueReservation.findUnique({
-          where: { id },
-          include: { event: true },
-        })
-      );
-      if (event?.event?.id) {
-        try {
-          await publishEventToOpenAgenda(event.event.id);
-        } catch (e) {
-          console.error("[OPENAGENDA SYNC]", e);
-        }
+    // Load full reservation for email
+    const reservation = await prisma.venueReservation.findUnique({
+      where: { id },
+      include: {
+        venue: true,
+        artist: { include: { user: { select: { name: true, email: true } } } },
+        event: true,
+      },
+    });
+
+    // Sync to OpenAgenda if public
+    if (parsed.data.isPublic && reservation?.event) {
+      try {
+        await publishEventToOpenAgenda(reservation.event.id);
+      } catch (e) {
+        console.error("[OA SYNC]", e);
       }
+    }
+
+    // Send approval email to artist
+    if (reservation?.artist.user.email) {
+      sendReservationApprovedToArtist({
+        artistEmail: reservation.artist.user.email,
+        artistName: reservation.artist.user.name ?? reservation.artist.stageName,
+        eventTitle: reservation.event?.title ?? "Votre événement",
+        venueName: reservation.venue.name,
+        startDate: reservation.startDate,
+        endDate: reservation.endDate,
+        isPublic: parsed.data.isPublic,
+        adminNotes: parsed.data.adminNotes,
+      }).catch(console.error);
     }
 
     return NextResponse.json({ success: true });
