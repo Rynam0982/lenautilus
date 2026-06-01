@@ -1,4 +1,5 @@
-import { auth } from "@/lib/auth";
+import NextAuth from "next-auth";
+import { authConfig } from "@/auth.config";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getDashboardRoute } from "@/lib/auth/route";
@@ -8,11 +9,10 @@ const ARTIST_ROUTES = /^\/artist(\/.*)?$/;
 const CLIENT_ROUTES = /^\/dashboard(\/.*)?$/;
 const AUTH_ROUTES = /^\/auth\/(login|register)$/;
 
-type AuthRequest = NextRequest & {
-  auth: { user?: { role?: string } } | null;
-};
+// Edge-safe auth — only JWT verification, no Prisma, no Node.js adapter
+const { auth } = NextAuth(authConfig);
 
-export function proxy(req: AuthRequest) {
+export default auth((req) => {
   const { nextUrl } = req;
   const session = req.auth;
   const pathname = nextUrl.pathname;
@@ -59,9 +59,7 @@ export function proxy(req: AuthRequest) {
   }
 
   return NextResponse.next();
-}
-
-export default auth(proxy as Parameters<typeof auth>[0]);
+});
 
 export const config = {
   matcher: [

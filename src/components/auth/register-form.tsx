@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn, getSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { getDashboardRoute } from "@/lib/auth/route";
+import { signIn } from "next-auth/react";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +16,6 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ defaultRole = "CLIENT" }: RegisterFormProps) {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -60,9 +57,8 @@ export function RegisterForm({ defaultRole = "CLIENT" }: RegisterFormProps) {
         redirect: false,
       });
 
-      const session = await getSession();
       toast.success("Compte créé avec succès !");
-      router.push(getDashboardRoute(session?.user?.role ?? data.role));
+      window.location.href = "/auth/redirect";
     } catch {
       toast.error("Une erreur est survenue");
     } finally {

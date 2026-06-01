@@ -3,14 +3,12 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn, getSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginSchema, type LoginInput } from "@/lib/validators/auth";
-import { getDashboardRoute } from "@/lib/auth/route";
 import { toast } from "sonner";
 
 interface LoginFormProps {
@@ -19,7 +17,6 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ callbackUrl, error }: LoginFormProps) {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -42,17 +39,20 @@ export function LoginForm({ callbackUrl, error }: LoginFormProps) {
 
       if (result?.error) {
         toast.error("Email ou mot de passe incorrect");
+        setIsLoading(false);
         return;
       }
 
-      // Read the updated session to get the role, then route to the right dashboard.
-      // getSession() fetches /api/auth/session which has the fresh JWT.
-      const session = await getSession();
-      const destination = callbackUrl ?? getDashboardRoute(session?.user?.role);
-      router.push(destination);
+      // Hard navigation to /auth/redirect — the server reads the fresh session
+      // and routes to the correct dashboard. This guarantees the JWT cookie
+      // is included in the request before any auth check runs.
+      const redirectTarget = callbackUrl
+        ? `/auth/redirect?to=${encodeURIComponent(callbackUrl)}`
+        : "/auth/redirect";
+
+      window.location.href = redirectTarget;
     } catch {
       toast.error("Une erreur est survenue");
-    } finally {
       setIsLoading(false);
     }
   };
