@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "cdn.openagenda.com" },
+      { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "**.uploadthing.com" },
       { protocol: "https", hostname: "utfs.io" },
       { protocol: "https", hostname: "**.ufs.sh" },
