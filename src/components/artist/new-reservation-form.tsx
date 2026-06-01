@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -28,6 +28,12 @@ export function NewReservationForm({ venues }: NewReservationFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedVenueId, setSelectedVenueId] = useState("");
+  const [minDate, setMinDate] = useState("");
+
+  useEffect(() => {
+    // Format for datetime-local min attribute: "YYYY-MM-DDTHH:mm"
+    setMinDate(new Date().toISOString().slice(0, 16));
+  }, []);
 
   const {
     register,
@@ -54,10 +60,17 @@ export function NewReservationForm({ venues }: NewReservationFormProps) {
   const onSubmit = async (data: ReservationInput) => {
     setIsLoading(true);
     try {
+      // Convert datetime-local format to full UTC ISO before sending to API
+      const payload = {
+        ...data,
+        startDate: new Date(data.startDate).toISOString(),
+        endDate: new Date(data.endDate).toISOString(),
+      };
+
       const res = await fetch("/api/artist/reservations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       const body = (await res.json()) as { success: boolean; error?: string };
@@ -65,10 +78,13 @@ export function NewReservationForm({ venues }: NewReservationFormProps) {
       if (!res.ok) {
         if (res.status === 409) {
           toast.error("Créneau indisponible", {
-            description: "La salle est déjà réservée sur ce créneau. Choisissez une autre date.",
+            description:
+              "La salle est déjà réservée pour ce créneau (réservation en attente ou approuvée). Veuillez choisir une autre date.",
           });
+        } else if (body.error) {
+          toast.error("Demande refusée", { description: body.error });
         } else {
-          toast.error(body.error ?? "Erreur lors de la demande");
+          toast.error("Une erreur est survenue lors de l'envoi de la demande");
         }
         return;
       }
@@ -78,7 +94,9 @@ export function NewReservationForm({ venues }: NewReservationFormProps) {
       });
       router.push("/artist/dashboard");
     } catch {
-      toast.error("Une erreur est survenue");
+      toast.error("Une erreur est survenue", {
+        description: "Vérifiez votre connexion et réessayez.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -122,6 +140,7 @@ export function NewReservationForm({ venues }: NewReservationFormProps) {
             <Input
               id="startDate"
               type="datetime-local"
+              min={minDate}
               error={errors.startDate?.message}
               {...register("startDate")}
             />
@@ -131,6 +150,7 @@ export function NewReservationForm({ venues }: NewReservationFormProps) {
             <Input
               id="endDate"
               type="datetime-local"
+              min={minDate}
               error={errors.endDate?.message}
               {...register("endDate")}
             />

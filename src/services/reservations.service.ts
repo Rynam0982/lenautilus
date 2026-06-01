@@ -11,15 +11,23 @@ export async function createReservation(
   const artistProfile = await prisma.artistProfile.findUnique({
     where: { userId: artistUserId },
   });
-  if (!artistProfile) throw new Error("Artist profile not found");
+  if (!artistProfile) throw new Error("Profil artiste introuvable");
 
   const start = new Date(input.startDate);
   const end = new Date(input.endDate);
 
-  if (end <= start) throw new Error("End must be after start");
+  if (isNaN(start.getTime()) || isNaN(end.getTime()))
+    throw new Error("Les dates fournies sont invalides");
+
+  if (start <= new Date())
+    throw new Error("La date de début doit être dans le futur");
+
+  if (end <= start)
+    throw new Error("La date de fin doit être après la date de début");
 
   const available = await checkVenueAvailability(input.venueId, start, end);
-  if (!available) throw new Error("CONFLICT: The salle is already booked");
+  if (!available)
+    throw new Error("CONFLICT: La salle est déjà réservée pour ce créneau (réservation en attente ou approuvée)");
 
   const slug = await generateUniqueSlug(input.eventDetails.title);
 
