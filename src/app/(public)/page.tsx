@@ -64,7 +64,7 @@ function CTASection() {
           Réservez notre scène
         </h2>
         <p className="text-nautilus-gray text-lg mb-10 max-w-xl mx-auto">
-          Trois salles à votre disposition. Une équipe dédiée. Des conditions
+          Deux salles à votre disposition. Une équipe dédiée. Des conditions
           professionnelles pour vos événements.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

@@ -5,7 +5,7 @@ import { VenueCard } from "@/components/public/venue-card";
 
 export const metadata: Metadata = {
   title: "Nos salles",
-  description: "Découvrez les trois salles du Nautilus — leurs capacités, équipements et disponibilités.",
+  description: "Découvrez les deux salles du Nautilus — leurs capacités, équipements et disponibilités.",
 };
 
 export default async function VenuesPage() {

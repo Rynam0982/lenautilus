@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,6 @@ interface NewReservationFormProps {
 export function NewReservationForm({ venues }: NewReservationFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedVenueId, setSelectedVenueId] = useState("");
   const [minDate, setMinDate] = useState("");
 
   useEffect(() => {
@@ -38,7 +37,7 @@ export function NewReservationForm({ venues }: NewReservationFormProps) {
   const {
     register,
     handleSubmit,
-    setValue,
+    control,
     formState: { errors },
   } = useForm<ReservationInput>({
     resolver: zodResolver(reservationSchema),
@@ -51,7 +50,7 @@ export function NewReservationForm({ venues }: NewReservationFormProps) {
         title: "",
         description: "",
         longDescription: "",
-        coverImage: "",
+        coverImage: undefined, // "" fails z.string().url() even on optional fields
         categories: [],
       },
     },
@@ -112,23 +111,24 @@ export function NewReservationForm({ venues }: NewReservationFormProps) {
 
         <div className="space-y-2">
           <Label>Salle</Label>
-          <Select
-            onValueChange={(v) => {
-              setSelectedVenueId(v);
-              setValue("venueId", v);
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Choisir une salle" />
-            </SelectTrigger>
-            <SelectContent>
-              {venues.map((v) => (
-                <SelectItem key={v.id} value={v.id}>
-                  {v.name} — {v.capacity.toLocaleString("fr-FR")} pers.
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Controller
+            name="venueId"
+            control={control}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choisir une salle" />
+                </SelectTrigger>
+                <SelectContent>
+                  {venues.map((v) => (
+                    <SelectItem key={v.id} value={v.id}>
+                      {v.name} — {v.capacity.toLocaleString("fr-FR")} pers.
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
           {errors.venueId && (
             <p className="text-xs text-red-400">{errors.venueId.message}</p>
           )}
