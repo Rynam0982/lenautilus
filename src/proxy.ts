@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getDashboardRoute } from "@/lib/auth/route";
 
 const ADMIN_ROUTES = /^\/admin(\/.*)?$/;
 const ARTIST_ROUTES = /^\/artist(\/.*)?$/;
@@ -18,25 +19,48 @@ export function proxy(req: AuthRequest) {
   const user = session?.user;
   const role = user?.role;
 
+  // Authenticated user hitting auth pages → send to their dashboard
   if (AUTH_ROUTES.test(pathname) && user) {
-    return NextResponse.redirect(new URL("/", nextUrl));
+    const destination = getDashboardRoute(role);
+    return NextResponse.redirect(new URL(destination, nextUrl));
   }
+
+  // Admin routes: ADMIN only
   if (ADMIN_ROUTES.test(pathname)) {
-    if (!user) return NextResponse.redirect(new URL("/auth/login", nextUrl));
-    if (role !== "ADMIN") return NextResponse.redirect(new URL("/", nextUrl));
+    if (!user) {
+      const url = new URL("/auth/login", nextUrl);
+      url.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(url);
+    }
+    if (role !== "ADMIN") {
+      return NextResponse.redirect(new URL(getDashboardRoute(role), nextUrl));
+    }
   }
+
+  // Artist routes: ARTIST or ADMIN
   if (ARTIST_ROUTES.test(pathname)) {
-    if (!user) return NextResponse.redirect(new URL("/auth/login", nextUrl));
-    if (role !== "ARTIST" && role !== "ADMIN")
-      return NextResponse.redirect(new URL("/", nextUrl));
+    if (!user) {
+      const url = new URL("/auth/login", nextUrl);
+      url.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(url);
+    }
+    if (role !== "ARTIST" && role !== "ADMIN") {
+      return NextResponse.redirect(new URL(getDashboardRoute(role), nextUrl));
+    }
   }
+
+  // Client routes: any authenticated user
   if (CLIENT_ROUTES.test(pathname)) {
-    if (!user) return NextResponse.redirect(new URL("/auth/login", nextUrl));
+    if (!user) {
+      const url = new URL("/auth/login", nextUrl);
+      url.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(url);
+    }
   }
+
   return NextResponse.next();
 }
 
-// Auth.js wraps the proxy with session injection
 export default auth(proxy as Parameters<typeof auth>[0]);
 
 export const config = {

@@ -16,24 +16,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
+      // Only populate on initial sign-in. The role is signed into the JWT
+      // and trusted on subsequent requests — no DB call needed here.
+      // (DB calls in this callback run inside the Edge proxy and will fail
+      // silently with Prisma's Node.js driver.)
       if (user) {
         token.role = (user as { role?: Role }).role ?? "CLIENT";
         token.id = user.id;
-      }
-      // Refresh role from DB on each token refresh
-      if (token.id && !user) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { role: true },
-        });
-        if (dbUser) token.role = dbUser.role;
       }
       return token;
     },
     async session({ session, token }) {
       if (token.sub) {
         session.user.id = token.sub;
-        session.user.role = token.role as Role;
+        session.user.role = (token.role as Role) ?? "CLIENT";
       }
       return session;
     },

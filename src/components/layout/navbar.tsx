@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { cn } from "@/lib/utils";
+import { getDashboardRoute } from "@/lib/auth/route";
 
 const navLinks = [
   { href: "/events", label: "Événements" },
@@ -35,8 +36,7 @@ export function Navbar() {
   const user = session?.user;
   const role = user?.role;
 
-  const dashboardHref =
-    role === "ADMIN" ? "/admin" : role === "ARTIST" ? "/artist" : "/dashboard";
+  const dashboardHref = getDashboardRoute(role);
 
   return (
     <header

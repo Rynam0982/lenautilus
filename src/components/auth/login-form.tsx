@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginSchema, type LoginInput } from "@/lib/validators/auth";
+import { getDashboardRoute } from "@/lib/auth/route";
 import { toast } from "sonner";
 
 interface LoginFormProps {
@@ -44,8 +45,11 @@ export function LoginForm({ callbackUrl, error }: LoginFormProps) {
         return;
       }
 
-      router.push(callbackUrl ?? "/");
-      router.refresh();
+      // Read the updated session to get the role, then route to the right dashboard.
+      // getSession() fetches /api/auth/session which has the fresh JWT.
+      const session = await getSession();
+      const destination = callbackUrl ?? getDashboardRoute(session?.user?.role);
+      router.push(destination);
     } catch {
       toast.error("Une erreur est survenue");
     } finally {
