@@ -5,7 +5,7 @@ import { getAllEventsAdmin } from "@/services/events.service";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDate, formatPrice } from "@/lib/utils";
-import { Plus, Globe, Lock, Pencil, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Globe, Lock, Pencil, Search, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { EventPublishButton } from "@/components/admin/event-publish-button";
 import { EventDeleteButton } from "@/components/admin/event-delete-button";
 import type { EventStatus } from "@prisma/client";
@@ -30,8 +30,17 @@ const statusOptions = [
   { value: "CANCELLED", label: "Annulés" },
 ];
 
+type SortOption = "date_asc" | "date_desc" | "created_desc";
+type PeriodOption = "upcoming" | "past" | "";
+
+const periodOptions: { value: PeriodOption; label: string }[] = [
+  { value: "", label: "Toutes périodes" },
+  { value: "upcoming", label: "À venir" },
+  { value: "past", label: "Passés" },
+];
+
 interface PageProps {
-  searchParams: Promise<{ page?: string; search?: string; status?: string }>;
+  searchParams: Promise<{ page?: string; search?: string; status?: string; sort?: string; period?: string }>;
 }
 
 export default async function AdminEventsPage({ searchParams }: PageProps) {
@@ -39,16 +48,20 @@ export default async function AdminEventsPage({ searchParams }: PageProps) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10));
   const search = params.search;
   const status = params.status as EventStatus | undefined;
+  const sort = (params.sort ?? "date_asc") as SortOption;
+  const period = (params.period ?? "") as PeriodOption;
 
   const { data: events, total, totalPages } = await getAllEventsAdmin({
     page,
     perPage: 20,
     search,
     status: status || undefined,
+    orderBy: sort,
+    period: period || undefined,
   });
 
   const buildHref = (overrides: Record<string, string | undefined>) => {
-    const p = { page: String(page), search, status, ...overrides };
+    const p = { page: String(page), search, status, sort, period: period || undefined, ...overrides };
     const qs = Object.entries(p)
       .filter(([, v]) => v)
       .map(([k, v]) => `${k}=${encodeURIComponent(v!)}`)
@@ -74,8 +87,10 @@ export default async function AdminEventsPage({ searchParams }: PageProps) {
       {/* Filter bar */}
       <div className="flex flex-wrap items-center gap-3 mb-6 p-4 rounded-xl border border-nautilus-border bg-nautilus-card">
         {/* Search */}
-        <form method="GET" action="/admin/events" className="relative flex-1 min-w-[220px] max-w-xs">
+        <form method="GET" action="/admin/events" className="relative flex-1 min-w-[200px] max-w-xs">
           {status && <input type="hidden" name="status" value={status} />}
+          {sort !== "date_asc" && <input type="hidden" name="sort" value={sort} />}
+          {period && <input type="hidden" name="period" value={period} />}
           <input type="hidden" name="page" value="1" />
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-nautilus-gray pointer-events-none" />
           <input
@@ -85,6 +100,26 @@ export default async function AdminEventsPage({ searchParams }: PageProps) {
             className="w-full h-9 pl-8 pr-3 rounded-lg border border-nautilus-border bg-nautilus-dark text-sm text-nautilus-white placeholder:text-nautilus-gray/50 focus:border-nautilus-gold/60 focus:outline-none transition-colors"
           />
         </form>
+
+        {/* Period filter */}
+        <div className="flex items-center gap-1.5">
+          {periodOptions.map((opt) => (
+            <Link
+              key={opt.value}
+              href={buildHref({ period: opt.value || undefined, page: "1" })}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                period === opt.value
+                  ? "bg-nautilus-gold text-nautilus-black"
+                  : "border border-nautilus-border text-nautilus-gray hover:border-nautilus-gold/50 hover:text-nautilus-white"
+              }`}
+            >
+              {opt.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Divider */}
+        <div className="h-5 w-px bg-nautilus-border hidden sm:block" />
 
         {/* Status filter */}
         <div className="flex items-center gap-1.5 flex-wrap">
@@ -109,7 +144,29 @@ export default async function AdminEventsPage({ searchParams }: PageProps) {
         <table className="w-full">
           <thead>
             <tr className="border-b border-nautilus-border bg-nautilus-dark">
-              {["Événement", "Date", "Salle", "Prix", "Statut", "Visibilité", "Actions"].map((h) => (
+              <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-nautilus-gray font-medium">
+                Événement
+              </th>
+              {/* Clickable Date header — toggles asc/desc */}
+              <th className="px-4 py-3">
+                <Link
+                  href={buildHref({
+                    sort: sort === "date_asc" ? "date_desc" : "date_asc",
+                    page: "1",
+                  })}
+                  className="flex items-center gap-1 text-xs uppercase tracking-wider text-nautilus-gray font-medium hover:text-nautilus-gold transition-colors group"
+                >
+                  Date
+                  {sort === "date_asc" ? (
+                    <ArrowUp className="h-3.5 w-3.5 text-nautilus-gold" />
+                  ) : sort === "date_desc" ? (
+                    <ArrowDown className="h-3.5 w-3.5 text-nautilus-gold" />
+                  ) : (
+                    <ArrowUpDown className="h-3.5 w-3.5 opacity-40 group-hover:opacity-80" />
+                  )}
+                </Link>
+              </th>
+              {["Salle", "Prix", "Statut", "Visibilité", "Actions"].map((h) => (
                 <th key={h} className="text-left px-4 py-3 text-xs uppercase tracking-wider text-nautilus-gray font-medium">
                   {h}
                 </th>

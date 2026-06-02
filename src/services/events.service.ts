@@ -16,6 +16,8 @@ type EventFilters = {
   upcoming?: boolean;
   status?: EventStatus;
   isPublic?: boolean;
+  orderBy?: "date_asc" | "date_desc" | "created_desc";
+  period?: "upcoming" | "past";
 };
 
 export async function getPublicEvents(
@@ -92,8 +94,9 @@ export async function getPublicEventBySlug(
 export async function getAllEventsAdmin(
   filters: EventFilters = {}
 ): Promise<PaginatedResponse<EventWithDetails>> {
-  const { page = 1, perPage = 20, search, status } = filters;
+  const { page = 1, perPage = 20, search, status, orderBy = "date_asc", period } = filters;
   const skip = (page - 1) * perPage;
+  const now = new Date();
 
   const where = {
     ...(search && {
@@ -103,14 +106,23 @@ export async function getAllEventsAdmin(
       ],
     }),
     ...(status && { status }),
+    ...(period === "upcoming" && { startDate: { gte: now } }),
+    ...(period === "past" && { startDate: { lt: now } }),
   };
+
+  const prismaOrderBy =
+    orderBy === "date_asc"
+      ? { startDate: "asc" as const }
+      : orderBy === "date_desc"
+      ? { startDate: "desc" as const }
+      : { createdAt: "desc" as const };
 
   const [events, total] = await Promise.all([
     prisma.event.findMany({
       where,
       skip,
       take: perPage,
-      orderBy: { createdAt: "desc" },
+      orderBy: prismaOrderBy,
       include: {
         venue: true,
         ticketTypes: true,
