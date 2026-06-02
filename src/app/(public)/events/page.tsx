@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  searchParams: Promise<{ page?: string; search?: string; category?: string }>;
+  searchParams: Promise<{ page?: string; search?: string; category?: string; upcoming?: string }>;
 }
 
 export default async function EventsPage({ searchParams }: PageProps) {
@@ -18,13 +18,14 @@ export default async function EventsPage({ searchParams }: PageProps) {
   const page = parseInt(params.page ?? "1", 10);
   const search = params.search;
   const category = params.category;
+  const upcoming = params.upcoming === "true";
 
   const { data: events, total, totalPages } = await getPublicEvents({
     page,
     perPage: 12,
     search,
     categories: category ? [category] : undefined,
-    upcoming: false,
+    upcoming,
   });
 
   return (
@@ -36,10 +37,10 @@ export default async function EventsPage({ searchParams }: PageProps) {
             Programmation
           </p>
           <h1 className="font-display text-5xl md:text-6xl font-bold text-nautilus-white mb-4">
-            Événements
+            {upcoming ? "Événements à venir" : "Événements"}
           </h1>
           <p className="text-nautilus-gray text-lg max-w-xl">
-            {total} événement{total !== 1 ? "s" : ""} à découvrir
+            {total} événement{total !== 1 ? "s" : ""} {upcoming ? "à venir" : "à découvrir"}
           </p>
         </div>
 
@@ -62,7 +63,7 @@ export default async function EventsPage({ searchParams }: PageProps) {
           <div className="flex justify-center gap-3 mt-16">
             {Array.from({ length: totalPages }).map((_, i) => {
               const p = i + 1;
-              const href = `?page=${p}${search ? `&search=${search}` : ""}${category ? `&category=${category}` : ""}`;
+              const href = `?page=${p}${upcoming ? "&upcoming=true" : ""}${search ? `&search=${search}` : ""}${category ? `&category=${category}` : ""}`;
               return (
                 <a
                   key={p}

@@ -37,7 +37,7 @@ export function FeaturedEvents({ events }: FeaturedEventsProps) {
             </h2>
           </div>
           <Link
-            href="/events"
+            href="/events?upcoming=true"
             className="hidden md:flex items-center gap-2 text-sm text-nautilus-gray hover:text-nautilus-gold transition-colors"
           >
             Tout voir
@@ -63,10 +63,10 @@ export function FeaturedEvents({ events }: FeaturedEventsProps) {
         {/* Mobile CTA */}
         <div className="md:hidden mt-8 text-center">
           <Link
-            href="/events"
+            href="/events?upcoming=true"
             className="inline-flex items-center gap-2 text-sm text-nautilus-gold"
           >
-            Voir tous les événements
+            Voir tous les événements à venir
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

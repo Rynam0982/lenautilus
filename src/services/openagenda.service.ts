@@ -42,10 +42,8 @@ export async function importAllFromOpenAgenda(): Promise<{
           longDescription:
             oaEvent.longDescription?.fr ?? oaEvent.longDescription?.en ?? null,
           coverImage: oaEvent.image?.full ?? null,
-          startDate: new Date(oaEvent.timings[0]?.begin ?? new Date()),
-          endDate: new Date(
-            oaEvent.timings[oaEvent.timings.length - 1]?.end ?? new Date()
-          ),
+          startDate: new Date(oaEvent.timings?.[0]?.begin ?? new Date()),
+          endDate: new Date(oaEvent.timings?.at(-1)?.end ?? new Date()),
           venueId: defaultVenue.id,
           isPublic: oaEvent.state === 2,
           status: oaEvent.state === 2 ? "PUBLISHED" : "APPROVED",
