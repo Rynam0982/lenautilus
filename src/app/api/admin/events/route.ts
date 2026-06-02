@@ -4,13 +4,18 @@ import { prisma } from "@/lib/db/client";
 import { createEventSchema } from "@/lib/validators/event";
 import { slugify } from "@/lib/utils";
 import { publishEventToOpenAgenda } from "@/services/openagenda.service";
+import { z } from "zod";
+
+const adminCreateSchema = createEventSchema.extend({
+  isPublic: z.boolean().optional().default(false),
+});
 
 export async function POST(req: NextRequest) {
   const session = await requireAdmin();
 
   try {
     const body = await req.json() as unknown;
-    const parsed = createEventSchema.safeParse(body);
+    const parsed = adminCreateSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
         { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input" },
@@ -25,6 +30,8 @@ export async function POST(req: NextRequest) {
     while (await prisma.event.findUnique({ where: { slug } })) {
       slug = `${base}-${counter++}`;
     }
+
+    const status = data.isPublic ? "PUBLISHED" : "DRAFT";
 
     const event = await prisma.event.create({
       data: {
@@ -42,8 +49,8 @@ export async function POST(req: NextRequest) {
         conditions: data.conditions,
         ageMin: data.ageMin,
         ageMax: data.ageMax,
-        status: "DRAFT",
-        isPublic: false,
+        status,
+        isPublic: data.isPublic,
         ticketTypes: {
           create: (data.ticketTypes ?? []).map((tt) => ({
             name: tt.name,
@@ -64,9 +71,18 @@ export async function POST(req: NextRequest) {
         userId: session.user.id,
         action: "EVENT_CREATED",
         eventId: event.id,
-        metadata: { title: event.title },
+        metadata: { title: event.title, isPublic: data.isPublic },
       },
     });
+
+    // Sync to OpenAgenda if public
+    if (data.isPublic) {
+      try {
+        await publishEventToOpenAgenda(event.id);
+      } catch (e) {
+        console.error("[OA SYNC on create]", e);
+      }
+    }
 
     return NextResponse.json({ success: true, data: event }, { status: 201 });
   } catch (err) {

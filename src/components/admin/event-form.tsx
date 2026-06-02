@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Plus, Trash2, Globe, Lock } from "lucide-react";
 import type { Venue, Event, TicketType } from "@prisma/client";
+import { ImageUploadField } from "@/components/admin/image-upload-field";
 
 const ticketSchema = z.object({
   name: z.string().min(1),
@@ -143,8 +144,11 @@ export function EventForm({ venues, event }: EventFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label>Image de couverture (URL)</Label>
-          <Input type="url" placeholder="https://..." {...register("coverImage")} />
+          <ImageUploadField
+            label="Image de couverture"
+            value={watch("coverImage") ?? ""}
+            onChange={(url) => setValue("coverImage", url)}
+          />
         </div>
 
         <div className="space-y-2">

@@ -19,6 +19,7 @@ import { reservationSchema, type ReservationInput } from "@/lib/validators/event
 import { toast } from "sonner";
 import type { Venue } from "@prisma/client";
 import { AlertCircle } from "lucide-react";
+import { ImageUploadField } from "@/components/admin/image-upload-field";
 
 interface NewReservationFormProps {
   venues: Venue[];
@@ -38,6 +39,8 @@ export function NewReservationForm({ venues }: NewReservationFormProps) {
     register,
     handleSubmit,
     control,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<ReservationInput>({
     resolver: zodResolver(reservationSchema),
@@ -204,6 +207,17 @@ export function NewReservationForm({ venues }: NewReservationFormProps) {
             rows={5}
             {...register("eventDetails.longDescription")}
           />
+        </div>
+
+        <div className="space-y-2">
+          <ImageUploadField
+            label="Affiche / image de couverture (optionnel)"
+            value={watch("eventDetails.coverImage") ?? ""}
+            onChange={(url) => setValue("eventDetails.coverImage", url || undefined)}
+          />
+          {errors.eventDetails?.coverImage && (
+            <p className="text-xs text-red-400">{errors.eventDetails.coverImage.message}</p>
+          )}
         </div>
       </div>
 
