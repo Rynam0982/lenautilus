@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Ticket, User, LogOut, Settings, LayoutDashboard } from "lucide-react";
+import { Menu, X, Ticket, User, LogOut, Settings, LayoutDashboard, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/ui/avatar";
 import {
@@ -16,6 +16,7 @@ import {
 } from "@radix-ui/react-dropdown-menu";
 import { cn } from "@/lib/utils";
 import { getDashboardRoute } from "@/lib/auth/route";
+import { NavSearch } from "@/components/layout/nav-search";
 
 const navLinks = [
   { href: "/events", label: "Événements" },
@@ -71,7 +72,8 @@ export function Navbar() {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2">
+            <NavSearch />
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -157,6 +159,21 @@ export function Navbar() {
             className="md:hidden border-t border-nautilus-border bg-nautilus-black/98 backdrop-blur-md"
           >
             <div className="px-4 py-6 flex flex-col gap-4">
+              {/* Mobile search */}
+              <form
+                method="GET"
+                action="/events"
+                className="relative"
+                onSubmit={(e) => { e.preventDefault(); setOpen(false); const q = (e.currentTarget.querySelector("input[name=search]") as HTMLInputElement)?.value; if (q) window.location.href = `/events?search=${encodeURIComponent(q)}`; }}
+              >
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-nautilus-gray pointer-events-none" />
+                <input
+                  name="search"
+                  placeholder="Rechercher un événement…"
+                  className="w-full h-10 pl-9 pr-4 rounded-xl border border-nautilus-border bg-nautilus-dark/60 text-sm text-nautilus-white placeholder:text-nautilus-gray/50 focus:border-nautilus-gold/60 focus:outline-none transition-colors"
+                />
+              </form>
+
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
