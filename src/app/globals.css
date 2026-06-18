@@ -67,6 +67,12 @@
   --nautilus-gray: #8a8a8a;
   --nautilus-gray-light: #b5b5b5;
 
+  /* Brand ribbon colors (logo purple + green + logo yellow) */
+  --band-1: #a855f7;
+  --band-2: #34d27a;
+  --band-3: #eab308;
+  --band-opacity: 0.5;
+
   color-scheme: dark;
 }
 
@@ -88,6 +94,12 @@
   --nautilus-white: #1c1a16; /* primary text */
   --nautilus-gray: #6a6359; /* secondary text (AA on cream) */
   --nautilus-gray-light: #322e27; /* strong text */
+
+  /* Brand ribbon colors — deeper, professional tones on cream */
+  --band-1: #7c3aed;
+  --band-2: #15803d;
+  --band-3: #c08a1e;
+  --band-opacity: 0.4;
 
   color-scheme: light;
 }
@@ -196,6 +208,11 @@ h1, h2, h3, h4, h5, h6 {
 .mask-fade-bottom {
   mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+}
+
+.mask-fade-y {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
 }
 
 .line-clamp-2 {
