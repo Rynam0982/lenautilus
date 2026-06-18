@@ -71,7 +71,7 @@
   --band-1: #a855f7;
   --band-2: #34d27a;
   --band-3: #eab308;
-  --band-opacity: 0.5;
+  --band-opacity: 0.16;
 
   color-scheme: dark;
 }
@@ -99,7 +99,7 @@
   --band-1: #7c3aed;
   --band-2: #15803d;
   --band-3: #c08a1e;
-  --band-opacity: 0.4;
+  --band-opacity: 0.13;
 
   color-scheme: light;
 }

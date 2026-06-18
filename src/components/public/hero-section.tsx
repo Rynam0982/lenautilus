@@ -7,8 +7,9 @@ import { ChevronDown } from "lucide-react";
 export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-nautilus-black">
+      {/* Background gradient — transparent so the page backdrop/ribbons flow
+          through the hero and into the next section without a hard edge */}
+      <div className="absolute inset-0 pointer-events-none">
         <div
           className="absolute inset-0 opacity-20"
           style={{

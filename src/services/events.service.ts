@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db/client";
+import { prisma, safeQuery } from "@/lib/db/client";
 import { slugify } from "@/lib/utils";
 import type {
   CreateEventInput,
@@ -21,6 +21,22 @@ type EventFilters = {
 };
 
 export async function getPublicEvents(
+  filters: EventFilters = {}
+): Promise<PaginatedResponse<EventCardData>> {
+  return safeQuery(
+    () => getPublicEventsRaw(filters),
+    {
+      data: [],
+      total: 0,
+      page: filters.page ?? 1,
+      perPage: filters.perPage ?? 12,
+      totalPages: 0,
+    },
+    "getPublicEvents"
+  );
+}
+
+async function getPublicEventsRaw(
   filters: EventFilters = {}
 ): Promise<PaginatedResponse<EventCardData>> {
   const { page = 1, perPage = 12, search, categories, venueId, upcoming } =
@@ -83,18 +99,23 @@ export async function getPublicEvents(
 export async function getPublicEventBySlug(
   slug: string
 ): Promise<EventWithDetails | null> {
-  return prisma.event.findFirst({
-    where: {
-      slug,
-      isPublic: true,
-      status: { in: ["PUBLISHED", "CANCELLED"] },
-    },
-    include: {
-      venue: true,
-      ticketTypes: true,
-      _count: { select: { tickets: true } },
-    },
-  }) as Promise<EventWithDetails | null>;
+  return safeQuery(
+    () =>
+      prisma.event.findFirst({
+        where: {
+          slug,
+          isPublic: true,
+          status: { in: ["PUBLISHED", "CANCELLED"] },
+        },
+        include: {
+          venue: true,
+          ticketTypes: true,
+          _count: { select: { tickets: true } },
+        },
+      }) as Promise<EventWithDetails | null>,
+    null,
+    "getPublicEventBySlug"
+  );
 }
 
 export async function getAllEventsAdmin(
@@ -211,6 +232,10 @@ export async function updateEventAdmin(data: AdminUpdateEventInput) {
 }
 
 export async function getFeaturedEvents(limit = 6): Promise<EventCardData[]> {
+  return safeQuery(() => getFeaturedEventsRaw(limit), [], "getFeaturedEvents");
+}
+
+async function getFeaturedEventsRaw(limit = 6): Promise<EventCardData[]> {
   const events = await prisma.event.findMany({
     where: { isPublic: true, status: "PUBLISHED", startDate: { gte: new Date() } },
     take: limit,

@@ -14,7 +14,7 @@ export function VenuesShowcase({ venues }: VenuesShowcaseProps) {
   if (venues.length === 0) return null;
 
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8 bg-nautilus-dark/50 border-y border-nautilus-border">
+    <section className="py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-end justify-between mb-12">
           <div>

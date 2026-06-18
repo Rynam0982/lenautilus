@@ -78,7 +78,7 @@ export default function RootLayout({
       className={`${manrope.variable} ${bricolage.variable} h-full`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-nautilus-black text-nautilus-white antialiased">
+      <body className="relative min-h-full flex flex-col bg-nautilus-black text-nautilus-white antialiased">
         <Providers>
           {children}
           <Toaster

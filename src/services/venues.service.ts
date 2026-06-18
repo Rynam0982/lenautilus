@@ -1,16 +1,27 @@
-import { prisma } from "@/lib/db/client";
+import { prisma, safeQuery } from "@/lib/db/client";
 import type { VenueWithEvents } from "@/types";
 
 export async function getAllVenues() {
-  return prisma.venue.findMany({
-    orderBy: { name: "asc" },
-    include: {
-      _count: { select: { events: true, reservations: true } },
-    },
-  });
+  return safeQuery(
+    () =>
+      prisma.venue.findMany({
+        orderBy: { name: "asc" },
+        include: {
+          _count: { select: { events: true, reservations: true } },
+        },
+      }),
+    [],
+    "getAllVenues"
+  );
 }
 
 export async function getVenueBySlug(
+  slug: string
+): Promise<VenueWithEvents | null> {
+  return safeQuery(() => getVenueBySlugRaw(slug), null, "getVenueBySlug");
+}
+
+async function getVenueBySlugRaw(
   slug: string
 ): Promise<VenueWithEvents | null> {
   const venue = await prisma.venue.findUnique({

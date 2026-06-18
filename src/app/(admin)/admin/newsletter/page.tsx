@@ -1,13 +1,25 @@
 import { Mail, Users } from "lucide-react";
 import { requireAdmin } from "@/lib/auth/guards";
 import { getAudienceStats } from "@/lib/mailchimp";
+import { getPublicEvents } from "@/services/events.service";
 import { NewsletterForm } from "@/components/admin/newsletter-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminNewsletterPage() {
   await requireAdmin();
-  const stats = await getAudienceStats();
+  const [stats, eventsRes] = await Promise.all([
+    getAudienceStats(),
+    getPublicEvents({ upcoming: true, perPage: 12 }),
+  ]);
+
+  const eventOptions = eventsRes.data.map((e) => ({
+    id: e.id,
+    title: e.title,
+    date: new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" }).format(
+      new Date(e.startDate)
+    ),
+  }));
 
   return (
     <div className="space-y-8">
@@ -48,7 +60,7 @@ export default async function AdminNewsletterPage() {
       </div>
 
       <div className="rounded-xl border border-nautilus-border bg-nautilus-card p-6">
-        <NewsletterForm configured={stats.configured} />
+        <NewsletterForm configured={stats.configured} events={eventOptions} />
       </div>
     </div>
   );

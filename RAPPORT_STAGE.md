@@ -658,6 +658,51 @@ Suppression de fichiers de config inutiles pour garder un dépôt propre.
 
 ---
 
+### Tâche 42 — Bandes de couleurs en arrière-plan + fluidité des sections
+**Amélioration visuelle.**
+
+- Les rubans de marque sont désormais un **fond de page** (derrière tout le contenu),
+  parcourant toute la longueur de la page, en opacité réduite (filigrane discret).
+- **Transition hero corrigée** : le hero avait un fond noir opaque qui créait une
+  coupure nette ; il est rendu transparent pour que le fond commun (et les rubans)
+  s'enchaîne sans rupture. Suppression des bordures/bandes dures entre sections.
+
+---
+
+### Tâche 43 — Robustesse base de données (dégradation gracieuse)
+**Bug corrigé.**
+
+- **Symptôme :** les pages `/salles` et `/événements` renvoyaient une erreur 500
+  lorsque la base (Neon serverless) était suspendue/injoignable.
+- **Solution :** ajout d'un helper `safeQuery` ; les lectures publiques renvoient un
+  **état vide** au lieu de planter → le site reste affichable même si la base dort.
+
+---
+
+### Tâche 44 — Refonte de la newsletter (qualité marketing)
+**Amélioration.**
+
+- **Template e-mail responsive** (mobile-first) : logo, titre, message, **événements
+  mis en avant** (image, date, lieu, prix) avec un **bouton « Réserver » par
+  événement**, pied de page conforme (réseaux, adresse, désinscription).
+- Page Admin → Newsletter enrichie : **objet**, **texte d'aperçu (preheader)**,
+  **message d'intro**, **sélection des événements** à présenter, **aperçu** avant
+  envoi, puis envoi de la campagne Mailchimp.
+- Application des **bonnes pratiques** issues d'un audit (objet + preheader,
+  un CTA fort par bloc, contenu court/mobile, désinscription).
+
+---
+
+### Tâche 45 — Guide pas-à-pas
+**Documentation.**
+
+- Création de `STEP_BY_STEP.md` expliquant (sans code) : l'affichage des données
+  **OpenAgenda**, la mise en route de **Stripe** (étapes + webhook + passage en live)
+  et de **Mailchimp** (configuration, fonctionnement sur le site, bonnes pratiques et
+  architecture marketing pour gagner en visibilité).
+
+---
+
 ## 4. Récapitulatif des bugs corrigés
 
 | # | Bug | Cause | Solution |

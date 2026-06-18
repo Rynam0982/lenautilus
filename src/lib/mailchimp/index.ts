@@ -105,6 +105,7 @@ export async function getAudienceStats(): Promise<{
 export async function sendNewsletterCampaign(input: {
   subject: string;
   title?: string;
+  preheader?: string;
   html: string;
   fromName?: string;
   replyTo?: string;
@@ -118,9 +119,11 @@ export async function sendNewsletterCampaign(input: {
       recipients: { list_id: AUDIENCE_ID },
       settings: {
         subject_line: input.subject,
+        preview_text: input.preheader ?? "",
         title: input.title ?? input.subject,
         from_name: input.fromName ?? "Le Nautilus",
         reply_to: input.replyTo ?? "bonjour@le-nautilus.org",
+        auto_footer: false,
       },
     });
     await mc("PUT", `/campaigns/${campaign.id}/content`, { html: input.html });
