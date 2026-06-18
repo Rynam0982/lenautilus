@@ -647,6 +647,17 @@ Suppression de fichiers de config inutiles pour garder un dépôt propre.
 
 ---
 
+### Tâche 41 — Bandes de couleurs de marque
+**Amélioration visuelle.**
+
+- Ajout d'un motif décoratif `ColorBands` : trois rubans verticaux (violet, vert,
+  jaune — les couleurs de l'entreprise) qui **s'entrelacent puis se séparent**, sur
+  toute la hauteur des pages, fixés aux bords gauche et droite.
+- Couleurs et opacité **adaptées au thème** (teintes vives en sombre, plus profondes
+  en clair), fondu progressif en haut et en bas, placé derrière le contenu.
+
+---
+
 ## 4. Récapitulatif des bugs corrigés
 
 | # | Bug | Cause | Solution |
