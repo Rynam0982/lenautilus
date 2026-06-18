@@ -3,26 +3,28 @@
 /* ─── Design Tokens ─────────────────────────────────────────────────────────── */
 
 @theme inline {
-  /* Colors */
+  /* Colors — reference runtime vars so they flip with the light/dark theme */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  --color-nautilus-black: #080808;
-  --color-nautilus-dark: #0d0d0d;
-  --color-nautilus-card: #111111;
-  --color-nautilus-border: #1e1e1e;
-  --color-nautilus-muted: #2a2a2a;
-  --color-nautilus-gold: #c9a84c;
-  --color-nautilus-gold-light: #e8c97a;
-  --color-nautilus-gold-dim: #8a6b2a;
-  --color-nautilus-white: #f5f5f0;
-  --color-nautilus-gray: #8a8a8a;
-  --color-nautilus-gray-light: #b5b5b5;
+  --color-nautilus-black: var(--nautilus-black);
+  --color-nautilus-dark: var(--nautilus-dark);
+  --color-nautilus-card: var(--nautilus-card);
+  --color-nautilus-border: var(--nautilus-border);
+  --color-nautilus-muted: var(--nautilus-muted);
+  --color-nautilus-gold: var(--nautilus-gold);
+  --color-nautilus-gold-light: var(--nautilus-gold-light);
+  --color-nautilus-gold-dim: var(--nautilus-gold-dim);
+  --color-nautilus-white: var(--nautilus-white);
+  --color-nautilus-gray: var(--nautilus-gray);
+  --color-nautilus-gray-light: var(--nautilus-gray-light);
 
   /* Fonts */
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-playfair);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+
+  /* Secondary accent (company green) */
+  --color-nautilus-green: var(--nautilus-green);
 
   /* Spacing scale extension */
   --spacing-18: 4.5rem;
@@ -48,8 +50,46 @@
 /* ─── CSS Variables ─────────────────────────────────────────────────────────── */
 
 :root {
+  /* Dark theme (default) */
   --background: #080808;
   --foreground: #f5f5f0;
+
+  --nautilus-black: #080808;
+  --nautilus-dark: #0d0d0d;
+  --nautilus-card: #111111;
+  --nautilus-border: #1e1e1e;
+  --nautilus-muted: #2a2a2a;
+  --nautilus-gold: #c9a84c;
+  --nautilus-gold-light: #e8c97a;
+  --nautilus-gold-dim: #8a6b2a;
+  --nautilus-green: #34d27a;
+  --nautilus-white: #f5f5f0;
+  --nautilus-gray: #8a8a8a;
+  --nautilus-gray-light: #b5b5b5;
+
+  color-scheme: dark;
+}
+
+/* Light theme — semantic tokens flip (black = surface, white = text).
+   Accent shifts from gold (dark) to the company green to match le-nautilus.org. */
+.light {
+  --background: #f6f1e7;
+  --foreground: #1b1b1b;
+
+  --nautilus-black: #f4efe4; /* page background (warm cream) */
+  --nautilus-dark: #ebe2d0; /* footer / sidebar surface */
+  --nautilus-card: #fffdf9; /* cards (warm white) */
+  --nautilus-border: #ddd0b6; /* clearly visible on cream */
+  --nautilus-muted: #e7dcc6; /* hover surfaces */
+  --nautilus-gold: #8a6d18; /* primary accent — deep antique gold (readable) */
+  --nautilus-gold-light: #a9842e;
+  --nautilus-gold-dim: #e2d3a8;
+  --nautilus-green: #15803d; /* secondary accent — company green */
+  --nautilus-white: #1c1a16; /* primary text */
+  --nautilus-gray: #6a6359; /* secondary text (AA on cream) */
+  --nautilus-gray-light: #322e27; /* strong text */
+
+  color-scheme: light;
 }
 
 /* ─── Base Styles ────────────────────────────────────────────────────────────── */
@@ -70,7 +110,7 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter, system-ui, sans-serif);
+  font-family: var(--font-body, system-ui, sans-serif);
   line-height: 1.6;
   overflow-x: hidden;
 }
@@ -78,9 +118,9 @@ body {
 /* ─── Typography ─────────────────────────────────────────────────────────────── */
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-playfair, Georgia, serif);
+  font-family: var(--font-display, system-ui, sans-serif);
   letter-spacing: -0.02em;
-  line-height: 1.15;
+  line-height: 1.1;
 }
 
 /* ─── Scrollbar ──────────────────────────────────────────────────────────────── */
@@ -91,36 +131,59 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0d0d0d;
+  background: var(--nautilus-dark);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
+  background: var(--nautilus-muted);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #c9a84c;
+  background: var(--nautilus-gold);
 }
 
 /* ─── Selection ──────────────────────────────────────────────────────────────── */
 
 ::selection {
-  background: rgba(201, 168, 76, 0.3);
-  color: #f5f5f0;
+  background: color-mix(in srgb, var(--nautilus-gold) 30%, transparent);
+  color: var(--nautilus-white);
 }
 
 /* ─── Focus Ring ─────────────────────────────────────────────────────────────── */
 
 :focus-visible {
-  outline: 2px solid #c9a84c;
+  outline: 2px solid var(--nautilus-gold);
   outline-offset: 2px;
 }
 
 /* ─── Utilities ──────────────────────────────────────────────────────────────── */
 
+/* Theme-aware logo: purple sticker (dark) ↔ yellow logo (light) */
+.logo-light {
+  display: none;
+}
+.light .logo-light {
+  display: block;
+}
+.light .logo-dark {
+  display: none;
+}
+
 .text-gradient-gold {
   background: linear-gradient(135deg, #c9a84c 0%, #e8c97a 50%, #c9a84c 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Brand gradient (gold → company green), adapts to the active theme */
+.text-gradient-brand {
+  background: linear-gradient(
+    120deg,
+    var(--nautilus-gold) 0%,
+    var(--nautilus-green) 100%
+  );
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

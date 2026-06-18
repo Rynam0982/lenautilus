@@ -17,10 +17,13 @@ import {
 import { cn } from "@/lib/utils";
 import { getDashboardRoute } from "@/lib/auth/route";
 import { NavSearch } from "@/components/layout/nav-search";
+import { Logo } from "@/components/layout/logo";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 const navLinks = [
   { href: "/events", label: "Événements" },
   { href: "/venues", label: "Salles" },
+  { href: "/projet", label: "Le projet" },
 ];
 
 export function Navbar() {
@@ -51,12 +54,7 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link
-            href="/"
-            className="font-display text-xl font-bold tracking-wider text-nautilus-white hover:text-nautilus-gold transition-colors"
-          >
-            LE NAUTILUS
-          </Link>
+          <Logo size="sm" />
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
@@ -74,6 +72,7 @@ export function Navbar() {
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-2">
             <NavSearch />
+            <ThemeToggle />
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -184,6 +183,10 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
+              <div className="flex items-center justify-between py-2">
+                <span className="text-base text-nautilus-gray">Thème</span>
+                <ThemeToggle />
+              </div>
               <div className="h-px bg-nautilus-border" />
               {user ? (
                 <>

@@ -29,7 +29,9 @@ export async function getPublicEvents(
 
   const where = {
     isPublic: true,
-    status: "PUBLISHED" as EventStatus,
+    // Cancelled events stay visible (shown with an "Annulé" badge) — only
+    // drafts / pending events are hidden from the public site.
+    status: { in: ["PUBLISHED", "CANCELLED"] as EventStatus[] },
     ...(search && {
       OR: [
         { title: { contains: search, mode: "insensitive" as const } },
@@ -82,7 +84,11 @@ export async function getPublicEventBySlug(
   slug: string
 ): Promise<EventWithDetails | null> {
   return prisma.event.findFirst({
-    where: { slug, isPublic: true, status: "PUBLISHED" },
+    where: {
+      slug,
+      isPublic: true,
+      status: { in: ["PUBLISHED", "CANCELLED"] },
+    },
     include: {
       venue: true,
       ticketTypes: true,

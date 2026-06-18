@@ -13,8 +13,11 @@ import {
   RefreshCw,
   LogOut,
   Settings,
+  Mail,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/layout/logo";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Tableau de bord" },
@@ -22,6 +25,7 @@ const navItems = [
   { href: "/admin/events", icon: CalendarDays, label: "Événements" },
   { href: "/admin/venues", icon: Building2, label: "Salles" },
   { href: "/admin/users", icon: Users, label: "Utilisateurs" },
+  { href: "/admin/newsletter", icon: Mail, label: "Newsletter" },
   { href: "/admin/analytics", icon: BarChart3, label: "Analytiques" },
   { href: "/admin/openagenda", icon: RefreshCw, label: "OpenAgenda" },
 ];
@@ -33,12 +37,7 @@ export function AdminSidebar() {
     <aside className="fixed left-0 top-0 bottom-0 w-64 border-r border-nautilus-border bg-nautilus-dark flex flex-col z-40">
       {/* Logo */}
       <div className="px-6 py-5 border-b border-nautilus-border">
-        <Link href="/" className="font-display text-lg font-bold text-nautilus-white hover:text-nautilus-gold transition-colors">
-          LE NAUTILUS
-        </Link>
-        <p className="text-xs text-nautilus-gold mt-0.5 uppercase tracking-widest">
-          Administration
-        </p>
+        <Logo size="sm" subtitle="Administration" />
       </div>
 
       {/* Navigation */}
@@ -68,6 +67,10 @@ export function AdminSidebar() {
 
       {/* Footer */}
       <div className="px-3 py-4 border-t border-nautilus-border space-y-1">
+        <div className="flex items-center justify-between px-3 py-1.5">
+          <span className="text-sm text-nautilus-gray">Thème</span>
+          <ThemeToggle />
+        </div>
         <Link
           href="/"
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-nautilus-gray hover:text-nautilus-white hover:bg-nautilus-muted transition-all"

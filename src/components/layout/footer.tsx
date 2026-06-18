@@ -1,20 +1,21 @@
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
+import { Logo } from "@/components/layout/logo";
+import { NewsletterSignup } from "@/components/public/newsletter-signup";
 
 const footerLinks = {
   "Découvrir": [
     { href: "/events", label: "Événements" },
     { href: "/venues", label: "Nos salles" },
+    { href: "/projet", label: "Le projet" },
   ],
   "Espace": [
     { href: "/auth/login", label: "Connexion" },
     { href: "/auth/register", label: "S'inscrire" },
-    { href: "/artist", label: "Espace artiste" },
+    { href: "/artist/dashboard", label: "Espace artiste" },
   ],
   "Légal": [
     { href: "/mentions-legales", label: "Mentions légales" },
-    { href: "/confidentialite", label: "Confidentialité" },
-    { href: "/cgv", label: "CGV" },
   ],
 };
 
@@ -25,15 +26,15 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="font-display text-xl font-bold tracking-wider text-nautilus-white">
-              LE NAUTILUS
-            </Link>
-            <p className="mt-3 text-sm text-nautilus-gray leading-relaxed max-w-xs">
+            <Logo />
+            <p className="mt-4 text-sm text-nautilus-gray leading-relaxed max-w-xs">
               Scène musicale et espace événementiel. Vivez des expériences inoubliables.
             </p>
             <div className="flex gap-4 mt-6">
               <a
-                href="#"
+                href="https://www.instagram.com/lenautilusperpignan/?hl=fr"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Instagram"
                 className="text-nautilus-gray hover:text-nautilus-gold transition-colors"
               >
@@ -42,7 +43,9 @@ export function Footer() {
                 </svg>
               </a>
               <a
-                href="#"
+                href="https://www.facebook.com/people/Le-Nautilus/61559046365589/"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Facebook"
                 className="text-nautilus-gray hover:text-nautilus-gold transition-colors"
               >
@@ -73,6 +76,19 @@ export function Footer() {
               </ul>
             </div>
           ))}
+        </div>
+
+        {/* Newsletter */}
+        <div className="mt-14 rounded-2xl border border-nautilus-border bg-nautilus-card/60 p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <p className="font-display text-lg font-semibold text-nautilus-white">
+              Restez informé de la programmation
+            </p>
+            <p className="text-sm text-nautilus-gray mt-1">
+              Recevez nos événements et soirées directement dans votre boîte mail.
+            </p>
+          </div>
+          <NewsletterSignup />
         </div>
 
         <Separator className="my-10 bg-nautilus-border/50" />

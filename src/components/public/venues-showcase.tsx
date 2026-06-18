@@ -34,7 +34,7 @@ export function VenuesShowcase({ venues }: VenuesShowcaseProps) {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-wrap justify-center gap-8">
           {venues.map((venue, i) => (
             <motion.div
               key={venue.id}
@@ -42,6 +42,7 @@ export function VenuesShowcase({ venues }: VenuesShowcaseProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full sm:w-[420px]"
             >
               <VenueCard venue={venue} />
             </motion.div>

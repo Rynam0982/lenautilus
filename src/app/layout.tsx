@@ -1,18 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Manrope, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/shared/providers";
 import { Toaster } from "sonner";
 
-const inter = Inter({
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-body",
   display: "swap",
 });
 
-const playfair = Playfair_Display({
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  variable: "--font-display",
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -36,6 +37,11 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Le Nautilus" }],
   creator: "Le Nautilus",
+  icons: {
+    icon: "/images/logo-nautilus.jpg",
+    shortcut: "/images/logo-nautilus.jpg",
+    apple: "/images/logo-nautilus.jpg",
+  },
   openGraph: {
     type: "website",
     locale: "fr_FR",
@@ -69,7 +75,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${inter.variable} ${playfair.variable} h-full`}
+      className={`${manrope.variable} ${bricolage.variable} h-full`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-nautilus-black text-nautilus-white antialiased">

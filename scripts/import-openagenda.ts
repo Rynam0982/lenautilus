@@ -1,5 +1,5 @@
 import { config } from "dotenv";
-config({ path: ".env.local" });
+config({ path: ".env.local", override: true });
 
 import { PrismaClient } from "@prisma/client";
 
@@ -55,10 +55,27 @@ function getText(field: any): string {
 }
 
 async function fetchPage(from: number, size: number) {
-  const params = new URLSearchParams({ key: PUBLIC_KEY, size: String(size), from: String(from) });
+  // detailed=1 + large longDescription size → full body text (not truncated),
+  // and the `status` field needed to detect cancelled events.
+  const params = new URLSearchParams({
+    key: PUBLIC_KEY,
+    size: String(size),
+    from: String(from),
+    detailed: "1",
+    "longDescription[size]": "20000",
+  });
   const res = await fetch(`${BASE_URL}/agendas/${AGENDA_UID}/events?${params}`);
   if (!res.ok) throw new Error(`OpenAgenda HTTP ${res.status}`);
   return res.json() as Promise<{ events: any[]; total: number }>;
+}
+
+// Cancellation is flagged in the title ("[ANNULÉ]") / body ("ANNULATION…"),
+// not reliably via the numeric `status` field — detect all three.
+function mapStatus(oa: any, title: string, longDesc: string): "PUBLISHED" | "CANCELLED" {
+  if (oa.status === 6) return "CANCELLED";
+  if (/annul/i.test(title)) return "CANCELLED";
+  if (/^\s*annulation\b/i.test(longDesc)) return "CANCELLED";
+  return "PUBLISHED";
 }
 
 async function main() {
@@ -91,9 +108,10 @@ async function main() {
       const exists = await prisma.event.findFirst({ where: { openAgendaUid: oa.uid } });
       if (exists) { skipped++; continue; }
 
-      // Extract dates from firstTiming / lastTiming
-      const ft = oa.firstTiming || oa.nextTiming;
-      const lt = oa.lastTiming || oa.nextTiming;
+      // Prefer the next upcoming occurrence (recurring events) so they list as
+      // "À venir"; fall back to first/last timing otherwise.
+      const ft = oa.nextTiming || oa.firstTiming;
+      const lt = oa.nextTiming || oa.lastTiming;
       if (!ft?.begin || !lt?.end) { skipped++; continue; }
 
       const startDate = new Date(ft.begin);
@@ -134,7 +152,7 @@ async function main() {
           endDate,
           venueId: defaultVenue.id,
           isPublic,
-          status: "PUBLISHED",
+          status: mapStatus(oa, title, longDescription ?? ""),
           categories,
           keywords: [],
           conditions: getText(oa.conditions) || null,

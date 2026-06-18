@@ -22,7 +22,7 @@ export default async function VenuesPage() {
             Nos salles
           </h1>
           <p className="text-nautilus-gray text-lg max-w-xl">
-            Trois espaces uniques pour accueillir vos événements et concerts.
+            Des espaces uniques pour accueillir vos événements et concerts.
           </p>
         </div>
 
@@ -31,9 +31,11 @@ export default async function VenuesPage() {
             Aucune salle disponible pour le moment.
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="flex flex-wrap justify-center gap-8">
             {venues.map((venue) => (
-              <VenueCard key={venue.id} venue={venue} />
+              <div key={venue.id} className="w-full sm:w-[420px]">
+                <VenueCard venue={venue} />
+              </div>
             ))}
           </div>
         )}
