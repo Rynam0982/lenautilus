@@ -39,7 +39,7 @@ export function EventCard({ event }: EventCardProps) {
     <Link
       href={`/events/${event.slug}`}
       data-hov
-      className="group relative flex flex-col overflow-hidden rounded-[14px] border border-nautilus-border bg-nautilus-card transition-[border-color,transform] duration-300 hover:border-nautilus-gold"
+      className="group relative flex h-full flex-col overflow-hidden rounded-[14px] border border-nautilus-border bg-nautilus-card transition-[border-color,transform] duration-300 hover:border-nautilus-gold"
     >
       <div className="relative aspect-[4/5] overflow-hidden">
         {event.coverImage ? (
@@ -74,7 +74,7 @@ export function EventCard({ event }: EventCardProps) {
       </div>
 
       <div className="flex flex-1 flex-col gap-[6px] p-4 pb-[18px]">
-        <h3 className="font-display text-[clamp(22px,2vw,30px)] uppercase leading-[0.95] text-nautilus-white">
+        <h3 className="line-clamp-2 min-h-[1.9em] font-display text-[clamp(22px,2vw,30px)] uppercase leading-[0.95] text-nautilus-white">
           {event.title}
         </h3>
         <p className="font-mono text-[11.5px] tracking-[0.04em] text-nautilus-gray line-clamp-1">

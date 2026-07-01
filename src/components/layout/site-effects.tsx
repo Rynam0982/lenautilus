@@ -14,12 +14,13 @@ export function SiteEffects() {
     const root = document.documentElement;
     root.classList.add("reveal-on");
 
-    const els = Array.from(
-      document.querySelectorAll<HTMLElement>("[data-reveal]")
-    );
+    const revealAll = () =>
+      document
+        .querySelectorAll<HTMLElement>("[data-reveal]:not(.is-visible)")
+        .forEach((el) => el.classList.add("is-visible"));
 
     if (!("IntersectionObserver" in window)) {
-      els.forEach((el) => el.classList.add("is-visible"));
+      revealAll();
       return;
     }
 
@@ -37,8 +38,42 @@ export function SiteEffects() {
       { threshold: 0.1, rootMargin: "0px 0px -6% 0px" }
     );
 
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    // Observe everything currently present…
+    const scan = () =>
+      document
+        .querySelectorAll<HTMLElement>("[data-reveal]:not(.is-visible)")
+        .forEach((el) => io.observe(el));
+    scan();
+
+    // …and anything React streams in later (Suspense boundaries, client
+    // navigations). Without this, late content stays stuck at opacity:0.
+    let raf = 0;
+    const mo = new MutationObserver(() => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(scan);
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    // Streaming/hydration is done quickly — stop watching to avoid overhead.
+    const stopMo = window.setTimeout(() => mo.disconnect(), 8000);
+
+    // Absolute safety net: never leave in-view content invisible.
+    const safety = window.setTimeout(() => {
+      document
+        .querySelectorAll<HTMLElement>("[data-reveal]:not(.is-visible)")
+        .forEach((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.top < window.innerHeight * 1.15) el.classList.add("is-visible");
+        });
+    }, 1400);
+
+    return () => {
+      io.disconnect();
+      mo.disconnect();
+      cancelAnimationFrame(raf);
+      clearTimeout(stopMo);
+      clearTimeout(safety);
+    };
   }, []);
 
   // ── Custom cursor ────────────────────────────────────────────────────────────

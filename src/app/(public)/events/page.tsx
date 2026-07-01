@@ -132,7 +132,7 @@ export default async function EventsPage({ searchParams }: PageProps) {
           ) : (
             <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[18px]">
               {events.map((event) => (
-                <div data-reveal key={event.id}>
+                <div data-reveal key={event.id} className="h-full">
                   <EventCard event={event} />
                 </div>
               ))}

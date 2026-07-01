@@ -796,6 +796,33 @@ OK — `/`, `/events`, `/venues`, `/projet`, `/devenir-artiste`, `/auth/login`,
 bien l'enregistrement. *À tester avec des clés réelles : l'envoi des e-mails
 (Resend) et le paiement/billet de bout en bout (Stripe + webhook).*
 
+### Tâche 48 — Corrections d'affichage (reveal, contraste, cartes uniformes)
+**Corrections de bugs.**
+
+- **Symptôme :** sur l'accueil, la moitié basse de la page restait vide (sections
+  Salles / Projet / CTA invisibles).
+  **Cause :** ces sections sont rendues dans un `Suspense` (streaming). L'observateur
+  de l'animation d'apparition (`data-reveal`) ne surveillait que les éléments
+  présents au montage ; le contenu streamé ensuite n'était jamais observé et restait
+  bloqué à `opacity:0`.
+  **Solution :** l'observateur ré-scanne désormais le DOM via un `MutationObserver`
+  (contenu streamé + navigations client) et un filet de sécurité révèle tout élément
+  déjà visible après 1,4 s. Le contenu ne peut plus rester invisible.
+
+- **Symptôme :** dans l'agenda, les cartes d'événement avaient des hauteurs
+  différentes selon la longueur du titre.
+  **Cause :** titre non tronqué → hauteur de carte variable.
+  **Solution :** titre limité à 2 lignes (hauteur fixe) + cartes en pleine hauteur de
+  cellule (`h-full`) : toutes les box ont désormais la même taille.
+
+- **Contraste (suite de l'audit) :** correction du dégradé de la page salle
+  (`/venues/[slug]`) qui basculait en beige en thème clair, et titre repositionné
+  sous l'image. Vérification qu'aucun voile posé sur une photo n'utilise plus de
+  couleur dépendante du thème.
+
+Vérification : `npm run build` OK, dev local OK (routes en 200), sections de
+l'accueil présentes et révélées.
+
 ---
 
 ## 4. Récapitulatif des bugs corrigés

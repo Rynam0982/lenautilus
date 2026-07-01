@@ -49,10 +49,10 @@ export default async function VenueDetailPage({ params }: PageProps) {
         ) : (
           <div className="h-full bg-gradient-to-br from-nautilus-muted to-nautilus-dark" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-nautilus-black via-nautilus-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-10 pb-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 relative z-10 pb-24">
         <Link
           href="/venues"
           className="inline-flex items-center gap-2 text-sm text-nautilus-gray hover:text-nautilus-white transition-colors mb-8"
