@@ -23,10 +23,8 @@ export async function POST(req: NextRequest) {
     switch (event.type) {
       case "payment_intent.succeeded": {
         const intent = event.data.object;
-        const userId = intent.metadata["userId"];
-        if (userId) {
-          await confirmTicketPurchase(intent.id, userId);
-        }
+        // Guest checkout: tickets are tied to the buyer's email, not a user.
+        await confirmTicketPurchase(intent.id);
         break;
       }
 

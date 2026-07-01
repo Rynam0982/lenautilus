@@ -7,7 +7,7 @@ import { getDashboardRoute } from "@/lib/auth/route";
 const ADMIN_ROUTES = /^\/admin(\/.*)?$/;
 const ARTIST_ROUTES = /^\/artist(\/.*)?$/;
 const CLIENT_ROUTES = /^\/dashboard(\/.*)?$/;
-const AUTH_ROUTES = /^\/auth\/(login|register)$/;
+const AUTH_ROUTES = /^\/auth\/login$/;
 
 // Edge-safe auth — only JWT verification, no Prisma, no Node.js adapter
 const { auth } = NextAuth(authConfig);

@@ -14,6 +14,7 @@ import {
   LogOut,
   Settings,
   Mail,
+  UserPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/layout/logo";
@@ -22,6 +23,7 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Tableau de bord" },
   { href: "/admin/reservations", icon: BookOpen, label: "Réservations" },
+  { href: "/admin/artists", icon: UserPlus, label: "Demandes artistes" },
   { href: "/admin/events", icon: CalendarDays, label: "Événements" },
   { href: "/admin/venues", icon: Building2, label: "Salles" },
   { href: "/admin/users", icon: Users, label: "Utilisateurs" },

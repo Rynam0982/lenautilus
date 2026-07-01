@@ -1,117 +1,98 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, MapPin, Music2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { formatShortDate, formatPrice } from "@/lib/utils";
+import { Music2 } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
 import type { EventCardData } from "@/types";
 
 interface EventCardProps {
   event: EventCardData;
-  featured?: boolean;
 }
 
+const DAY = new Intl.DateTimeFormat("fr-FR", { day: "2-digit" });
+const DOW = new Intl.DateTimeFormat("fr-FR", { weekday: "short" });
+const MON = new Intl.DateTimeFormat("fr-FR", { month: "short" });
+
 export function EventCard({ event }: EventCardProps) {
-  const minPrice = event.ticketTypes.reduce(
-    (min, tt) => (tt.price < min ? tt.price : min),
-    Infinity
-  );
+  const date = new Date(event.startDate);
+  const day = DAY.format(date);
+  const dow = DOW.format(date).replace(".", "").toUpperCase();
+  const mon = MON.format(date).replace(".", "").toUpperCase();
+
+  const prices = event.ticketTypes.map((t) => t.price);
+  const minPrice = prices.length ? Math.min(...prices) : 0;
   const isFree = minPrice === 0;
-  const isSoldOut = event.ticketTypes.every((tt) => tt.sold >= tt.quantity);
+  const isSoldOut =
+    event.ticketTypes.length > 0 &&
+    event.ticketTypes.every((tt) => tt.sold >= tt.quantity);
   const isCancelled = event.status === "CANCELLED";
+  const category = event.categories[0] ?? "Concert";
+
+  const priceLabel = isCancelled
+    ? "Annulé"
+    : isSoldOut
+      ? "Complet"
+      : isFree
+        ? "Gratuit"
+        : `dès ${formatPrice(minPrice)}`;
 
   return (
-    <Link href={`/events/${event.slug}`} className="group block h-full">
-      <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-nautilus-border bg-nautilus-card transition-all duration-300 hover:-translate-y-1 hover:border-nautilus-gold/50 hover:shadow-xl hover:shadow-black/20">
-        {/* Poster — shown in full (contain) over a blurred backdrop, never cropped */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-nautilus-dark">
-          {event.coverImage ? (
-            <>
-              <Image
-                src={event.coverImage}
-                alt=""
-                aria-hidden
-                fill
-                className="object-cover blur-2xl scale-110 opacity-40"
-                sizes="(max-width: 768px) 100vw, 33vw"
-              />
-              <Image
-                src={event.coverImage}
-                alt={event.title}
-                fill
-                className={`object-contain transition-transform duration-500 group-hover:scale-[1.03] ${
-                  isCancelled ? "grayscale-[35%]" : ""
-                }`}
-                sizes="(max-width: 768px) 100vw, 33vw"
-              />
-            </>
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-nautilus-muted to-nautilus-dark">
-              <Music2 className="h-10 w-10 text-nautilus-gold/40" />
-            </div>
-          )}
-
-          {/* Status / price badge */}
-          <div className="absolute top-3 right-3">
-            {isCancelled ? (
-              <span className="rounded-full bg-red-600 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white shadow-lg">
-                Annulé
-              </span>
-            ) : isSoldOut ? (
-              <span className="rounded-full bg-nautilus-black/85 px-3 py-1 text-xs font-medium text-red-300 shadow-lg">
-                Complet
-              </span>
-            ) : isFree ? (
-              <span className="rounded-full bg-nautilus-green px-3 py-1 text-xs font-semibold text-white shadow-lg">
-                Gratuit
-              </span>
-            ) : (
-              <span className="rounded-full bg-nautilus-black/85 px-3 py-1 text-xs font-semibold text-nautilus-gold shadow-lg">
-                dès {formatPrice(minPrice)}
-              </span>
-            )}
+    <Link
+      href={`/events/${event.slug}`}
+      data-hov
+      className="group relative flex flex-col overflow-hidden rounded-[14px] border border-nautilus-border bg-nautilus-card transition-[border-color,transform] duration-300 hover:border-nautilus-gold"
+    >
+      <div className="relative aspect-[4/5] overflow-hidden">
+        {event.coverImage ? (
+          <Image
+            src={event.coverImage}
+            alt={event.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 320px"
+            className="duo object-cover group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-nautilus-muted to-nautilus-dark">
+            <Music2 className="h-10 w-10 text-nautilus-gold/40" />
           </div>
+        )}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 to-transparent to-55%" />
 
-          {isCancelled && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="-rotate-6 bg-red-600 px-5 py-1 font-display text-xl font-bold uppercase tracking-widest text-white shadow-2xl">
-                Annulé
-              </span>
-            </div>
-          )}
+        {/* Date chip */}
+        <div className="media-chip absolute left-[13px] top-[13px] rounded-[10px] px-[11px] py-2 text-center leading-none">
+          <span className="block font-display text-[26px] text-nautilus-gold">
+            {day}
+          </span>
+          <span className="mt-[3px] block font-mono text-[10px] uppercase tracking-[0.1em]">
+            {dow} {mon}
+          </span>
         </div>
 
-        {/* Content on the solid card surface */}
-        <div className="flex flex-1 flex-col p-4">
-          {event.categories.length > 0 && (
-            <div className="mb-2 flex flex-wrap gap-1.5">
-              {event.categories.slice(0, 2).map((cat) => (
-                <Badge key={cat} variant="secondary" className="text-[11px]">
-                  {cat}
-                </Badge>
-              ))}
-            </div>
-          )}
+        {/* Category pill */}
+        <span className="media-chip absolute right-[13px] top-[13px] rounded-full px-[10px] py-[6px] font-mono text-[10px] uppercase tracking-[0.08em]">
+          {isCancelled ? "Annulé" : category}
+        </span>
+      </div>
 
-          <h3 className="font-display text-base font-semibold leading-snug text-nautilus-white transition-colors line-clamp-2 group-hover:text-nautilus-gold">
-            {event.title}
-          </h3>
-
-          <div className="mt-auto flex items-center gap-4 pt-3 text-xs text-nautilus-gray">
-            <span className="flex items-center gap-1.5">
-              <Calendar className="h-3.5 w-3.5 text-nautilus-gold" />
-              {formatShortDate(event.startDate)}
-            </span>
-            <span className="flex items-center gap-1.5 truncate">
-              <MapPin className="h-3.5 w-3.5 text-nautilus-gold" />
-              <span className="truncate">{event.venue.name}</span>
-            </span>
-          </div>
+      <div className="flex flex-1 flex-col gap-[6px] p-4 pb-[18px]">
+        <h3 className="font-display text-[clamp(22px,2vw,30px)] uppercase leading-[0.95] text-nautilus-white">
+          {event.title}
+        </h3>
+        <p className="font-mono text-[11.5px] tracking-[0.04em] text-nautilus-gray line-clamp-1">
+          {category} · {event.venue.name}
+        </p>
+        <div className="mt-auto flex items-center justify-between pt-[14px]">
+          <span className="font-mono text-[13px] text-nautilus-gold-light">
+            {priceLabel}
+          </span>
+          <span className="inline-flex items-center gap-[7px] font-mono text-[11px] uppercase tracking-[0.08em] text-nautilus-gold">
+            Réserver ↗
+          </span>
         </div>
-      </article>
+      </div>
     </Link>
   );
 }
 
 export function EventCardSkeleton() {
-  return <div className="aspect-[4/3] rounded-2xl skeleton" />;
+  return <div className="aspect-[4/5] rounded-[14px] skeleton" />;
 }

@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db/client";
 import { CheckoutClient } from "@/components/public/checkout-client";
 
 export const metadata: Metadata = {
-  title: "Paiement",
-  description: "Finalisez votre achat de billets.",
+  title: "Réservation",
+  description: "Finalisez votre réservation de billets.",
 };
 
 interface PageProps {
@@ -14,7 +13,6 @@ interface PageProps {
 }
 
 export default async function CheckoutPage({ searchParams }: PageProps) {
-  const session = await requireAuth();
   const { eventId, ticketTypeId, quantity } = await searchParams;
 
   if (!eventId || !ticketTypeId || !quantity) redirect("/events");
@@ -38,20 +36,21 @@ export default async function CheckoutPage({ searchParams }: PageProps) {
   if (available < qty) redirect(`/events/${event.slug}`);
 
   return (
-    <div className="min-h-screen pt-24 pb-24 px-4 sm:px-6 lg:px-8 bg-nautilus-black">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="font-display text-3xl font-bold text-nautilus-white mb-2">
-          Finaliser la commande
+    <div className="min-h-screen bg-nautilus-black px-4 pb-24 pt-28 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-2xl">
+        <p className="kicker m-0 mb-3">Billetterie</p>
+        <h1 className="font-display text-4xl uppercase text-nautilus-white">
+          Finaliser
         </h1>
-        <p className="text-nautilus-gray mb-10">
-          Vérifiez les détails avant de payer.
+        <p className="mb-10 mt-2 font-mono text-[13px] text-nautilus-gray">
+          {ticketType.price > 0
+            ? "Vérifiez les détails avant de payer."
+            : "Indiquez votre e-mail pour recevoir vos billets."}
         </p>
         <CheckoutClient
-          event={event as typeof event & { venue: { name: string } }}
+          event={event}
           ticketType={ticketType}
           quantity={qty}
-          userId={session.user.id}
-          userEmail={session.user.email ?? ""}
         />
       </div>
     </div>

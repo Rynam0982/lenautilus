@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createPaymentIntent } from "@/services/tickets.service";
+import { createFreeTickets } from "@/services/tickets.service";
 import { z } from "zod";
 
 const schema = z.object({
@@ -20,13 +20,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = await createPaymentIntent(
+    const tickets = await createFreeTickets(
       parsed.data.ticketTypeId,
       parsed.data.quantity,
       { email: parsed.data.email, name: parsed.data.name }
     );
 
-    return NextResponse.json({ success: true, ...result });
+    return NextResponse.json({ success: true, count: tickets.length });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";
     return NextResponse.json({ success: false, error: message }, { status: 400 });

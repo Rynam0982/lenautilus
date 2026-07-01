@@ -119,3 +119,89 @@ export async function sendReservationRefusedToArtist(data: {
     `,
   });
 }
+
+// ─── E-tickets (guest checkout) ──────────────────────────────────────────────
+
+export async function sendTicketEmail(data: {
+  to: string;
+  name?: string | null;
+  eventTitle: string;
+  venueName: string;
+  startDate: Date;
+  quantity: number;
+  codes: string[];
+}) {
+  const start = data.startDate.toLocaleString("fr-FR", {
+    dateStyle: "full",
+    timeStyle: "short",
+  });
+  const codesHtml = data.codes
+    .map(
+      (c) =>
+        `<tr><td style="padding:10px 14px;border:1px solid #eee;font-family:monospace;letter-spacing:1px">${c}</td></tr>`
+    )
+    .join("");
+
+  await send({
+    to: data.to,
+    subject: `🎟️ Vos billets — ${data.eventTitle}`,
+    html: `
+      <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+        <h2 style="color:#a855f7">Vos billets pour ${data.eventTitle}</h2>
+        <p>Bonjour${data.name ? " " + data.name : ""},</p>
+        <p>Merci ! Voici ${data.quantity} billet(s) pour <strong>${data.eventTitle}</strong>, le ${start} à ${data.venueName}.</p>
+        <p style="color:#666">Présentez ce(s) code(s) à l'entrée :</p>
+        <table style="border-collapse:collapse;margin:16px 0">${codesHtml}</table>
+        <p style="color:#666;font-size:13px">À bientôt au Nautilus.</p>
+      </div>
+    `,
+  });
+}
+
+// ─── Artist account requests & activation ────────────────────────────────────
+
+export async function sendArtistRequestToAdmin(data: {
+  adminEmail: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  description: string;
+}) {
+  await send({
+    to: data.adminEmail,
+    subject: `[Le Nautilus] Demande de compte artiste — ${data.firstName} ${data.lastName}`,
+    html: `
+      <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+        <h2 style="color:#a855f7">Nouvelle demande de compte artiste</h2>
+        <p><strong>${data.firstName} ${data.lastName}</strong> — ${data.email}</p>
+        <div style="background:#faf5ff;border-left:4px solid #a855f7;padding:12px;margin:16px 0">
+          <p style="margin:0;white-space:pre-wrap">${data.description}</p>
+        </div>
+        <a href="${APP_URL}/admin/artists" style="display:inline-block;background:#a855f7;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;margin-top:8px">
+          Traiter la demande →
+        </a>
+      </div>
+    `,
+  });
+}
+
+export async function sendArtistActivation(data: {
+  to: string;
+  name: string;
+  activationUrl: string;
+}) {
+  await send({
+    to: data.to,
+    subject: "Activez votre compte artiste — Le Nautilus",
+    html: `
+      <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+        <h2 style="color:#a855f7">Bienvenue au Nautilus, ${data.name}</h2>
+        <p>Votre compte artiste a été créé. Définissez votre mot de passe pour l'activer :</p>
+        <a href="${data.activationUrl}" style="display:inline-block;background:#a855f7;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;margin:16px 0">
+          Définir mon mot de passe →
+        </a>
+        <p style="color:#666;font-size:13px">Ce lien expire dans 7 jours. Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.</p>
+      </div>
+    `,
+  });
+}

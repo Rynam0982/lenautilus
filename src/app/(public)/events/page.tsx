@@ -45,131 +45,144 @@ export default async function EventsPage({ searchParams }: PageProps) {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-24 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-10 pt-8">
-          <p className="text-xs uppercase tracking-[0.3em] text-nautilus-gold mb-4">
-            Programmation
-          </p>
-          <h1 className="font-display text-5xl md:text-6xl font-bold text-nautilus-white mb-4">
-            {upcoming ? "Événements à venir" : "Événements"}
-          </h1>
-          <p className="text-nautilus-gray text-lg max-w-xl">
-            {total} événement{total !== 1 ? "s" : ""} {upcoming ? "à venir" : "à découvrir"}
-          </p>
+    <div className="min-h-screen">
+      {/* Header */}
+      <section className="px-7 pb-[30px] pt-[150px]">
+        <div className="mx-auto max-w-[1320px]">
+          <p className="kicker m-0 mb-[14px]">Saison 2025 — 26 · La programmation</p>
+          <h1 className="display m-0 text-[clamp(70px,17vw,260px)]">Agenda</h1>
+          <div className="mt-5 flex flex-wrap items-end justify-between gap-5">
+            <p className="m-0 max-w-[48ch] text-[clamp(16px,1.4vw,19px)] leading-[1.55] text-nautilus-cream">
+              Toute la saison en un coup d&apos;œil. Cherchez votre artiste,
+              choisissez votre soir, réservez en deux clics.
+            </p>
+            <p className="m-0 flex items-center gap-[9px] font-mono text-[12px] text-nautilus-gray">
+              <span className="inline-block h-[7px] w-[7px] animate-blink rounded-full bg-nautilus-green" />
+              {total} date{total !== 1 ? "s" : ""} {upcoming ? "à venir" : "affichée" + (total !== 1 ? "s" : "")}
+            </p>
+          </div>
         </div>
+      </section>
 
-        {/* Filter bar */}
-        <div className="flex flex-wrap items-center gap-3 mb-10 p-4 rounded-2xl border border-nautilus-border bg-nautilus-card/50 backdrop-blur-sm">
-          {/* Search */}
-          <form method="GET" action="/events" className="relative flex-1 min-w-[200px] max-w-sm">
-            {upcoming && <input type="hidden" name="upcoming" value="true" />}
-            {category && <input type="hidden" name="category" value={category} />}
-            <input type="hidden" name="page" value="1" />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-nautilus-gray pointer-events-none" />
-            <input
-              name="search"
-              defaultValue={search}
-              placeholder="Rechercher un événement…"
-              className="w-full h-10 pl-10 pr-4 rounded-xl border border-nautilus-border bg-transparent text-sm text-nautilus-white placeholder:text-nautilus-gray/50 focus:border-nautilus-gold/60 focus:outline-none transition-colors"
-            />
-          </form>
+      {/* Filters */}
+      <section className="sticky top-[92px] z-40 px-7">
+        <div className="mx-auto max-w-[1320px]">
+          <div className="flex flex-wrap items-center gap-[10px] border-y border-nautilus-border bg-nautilus-black/85 py-[14px] backdrop-blur-md">
+            <form
+              method="GET"
+              action="/events"
+              className="relative min-w-[200px] flex-1 max-w-sm"
+            >
+              {upcoming && <input type="hidden" name="upcoming" value="true" />}
+              {category && <input type="hidden" name="category" value={category} />}
+              <input type="hidden" name="page" value="1" />
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-nautilus-gray" />
+              <input
+                name="search"
+                defaultValue={search}
+                placeholder="Rechercher un artiste…"
+                className="h-10 w-full rounded-full border border-nautilus-border-strong bg-transparent pl-11 pr-4 font-mono text-[12px] uppercase tracking-[0.06em] text-nautilus-white placeholder:text-nautilus-gray/60 focus:border-nautilus-gold/70 focus:outline-none"
+              />
+            </form>
 
-          {/* Upcoming / All toggle */}
-          <div className="flex items-center gap-1.5">
             <a
               href={buildHref({ upcoming: undefined, page: "1" })}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+              data-hov
+              className={`rounded-full px-4 py-[9px] font-mono text-[12px] uppercase tracking-[0.1em] transition ${
                 !upcoming
-                  ? "bg-nautilus-gold text-nautilus-black"
-                  : "border border-nautilus-border text-nautilus-gray hover:border-nautilus-gold/50 hover:text-nautilus-white"
+                  ? "border border-nautilus-gold bg-nautilus-gold text-nautilus-black"
+                  : "border border-nautilus-border-strong text-nautilus-cream hover:border-nautilus-gold"
               }`}
             >
-              Tous
+              Tout
             </a>
             <a
               href={buildHref({ upcoming: "true", page: "1" })}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+              data-hov
+              className={`rounded-full px-4 py-[9px] font-mono text-[12px] uppercase tracking-[0.1em] transition ${
                 upcoming
-                  ? "bg-nautilus-gold text-nautilus-black"
-                  : "border border-nautilus-border text-nautilus-gray hover:border-nautilus-gold/50 hover:text-nautilus-white"
+                  ? "border border-nautilus-gold bg-nautilus-gold text-nautilus-black"
+                  : "border border-nautilus-border-strong text-nautilus-cream hover:border-nautilus-gold"
               }`}
             >
               À venir
             </a>
-          </div>
 
-          {/* Clear search */}
-          {(search || category) && (
-            <a
-              href={buildHref({ search: undefined, category: undefined, page: "1" })}
-              className="text-xs text-nautilus-gray hover:text-nautilus-gold transition-colors"
-            >
-              Effacer les filtres
-            </a>
+            {(search || category) && (
+              <a
+                href={buildHref({ search: undefined, category: undefined, page: "1" })}
+                className="font-mono text-[11px] uppercase tracking-[0.08em] text-nautilus-gray transition-colors hover:text-nautilus-gold"
+              >
+                Effacer ✕
+              </a>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Grid */}
+      <section className="px-7 pb-[70px] pt-[30px]">
+        <div className="mx-auto max-w-[1320px]">
+          {events.length === 0 ? (
+            <p className="py-[60px] text-center font-mono text-sm text-nautilus-gray">
+              {search
+                ? `Aucun résultat pour « ${search} ».`
+                : "Aucune date pour le moment — revenez très vite."}
+            </p>
+          ) : (
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[18px]">
+              {events.map((event) => (
+                <div data-reveal key={event.id}>
+                  <EventCard event={event} />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-16 flex items-center justify-center gap-2 font-mono text-[13px]">
+              {page > 1 && (
+                <a
+                  href={buildHref({ page: String(page - 1) })}
+                  data-hov
+                  className="flex h-10 items-center gap-1.5 rounded-full border border-nautilus-border-strong px-4 text-nautilus-cream transition-colors hover:border-nautilus-gold hover:text-nautilus-gold"
+                >
+                  ← Précédent
+                </a>
+              )}
+              {Array.from({ length: totalPages }).map((_, i) => {
+                const p = i + 1;
+                if (totalPages > 7 && Math.abs(p - page) > 2 && p !== 1 && p !== totalPages)
+                  return null;
+                return (
+                  <a
+                    key={p}
+                    href={buildHref({ page: String(p) })}
+                    data-hov
+                    className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+                      p === page
+                        ? "bg-nautilus-gold text-nautilus-black"
+                        : "border border-nautilus-border-strong text-nautilus-cream hover:border-nautilus-gold hover:text-nautilus-gold"
+                    }`}
+                  >
+                    {p}
+                  </a>
+                );
+              })}
+              {page < totalPages && (
+                <a
+                  href={buildHref({ page: String(page + 1) })}
+                  data-hov
+                  className="flex h-10 items-center gap-1.5 rounded-full border border-nautilus-border-strong px-4 text-nautilus-cream transition-colors hover:border-nautilus-gold hover:text-nautilus-gold"
+                >
+                  Suivant →
+                </a>
+              )}
+            </div>
           )}
         </div>
-
-        {/* Events Grid */}
-        {events.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-32 text-center">
-            <p className="text-nautilus-gray text-lg mb-2">Aucun événement disponible</p>
-            <p className="text-nautilus-gray/60 text-sm">
-              {search
-                ? `Aucun résultat pour « ${search} »`
-                : upcoming
-                ? "Aucun événement à venir pour le moment."
-                : "Revenez bientôt pour découvrir notre prochaine programmation."}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 mt-16">
-            {page > 1 && (
-              <a
-                href={buildHref({ page: String(page - 1) })}
-                className="flex h-10 px-4 items-center gap-1.5 rounded-full text-sm text-nautilus-gray border border-nautilus-border hover:border-nautilus-gold hover:text-nautilus-white transition-colors"
-              >
-                ← Précédent
-              </a>
-            )}
-            {Array.from({ length: totalPages }).map((_, i) => {
-              const p = i + 1;
-              if (totalPages > 7 && Math.abs(p - page) > 2 && p !== 1 && p !== totalPages) return null;
-              return (
-                <a
-                  key={p}
-                  href={buildHref({ page: String(p) })}
-                  className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium transition-colors ${
-                    p === page
-                      ? "bg-nautilus-gold text-nautilus-black"
-                      : "border border-nautilus-border text-nautilus-gray hover:border-nautilus-gold hover:text-nautilus-white"
-                  }`}
-                >
-                  {p}
-                </a>
-              );
-            })}
-            {page < totalPages && (
-              <a
-                href={buildHref({ page: String(page + 1) })}
-                className="flex h-10 px-4 items-center gap-1.5 rounded-full text-sm text-nautilus-gray border border-nautilus-border hover:border-nautilus-gold hover:text-nautilus-white transition-colors"
-              >
-                Suivant →
-              </a>
-            )}
-          </div>
-        )}
-      </div>
+      </section>
     </div>
   );
 }

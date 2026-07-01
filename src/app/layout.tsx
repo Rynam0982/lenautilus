@@ -1,19 +1,30 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope, Bricolage_Grotesque } from "next/font/google";
+import { Anton, Space_Grotesk, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/shared/providers";
 import { Toaster } from "sonner";
 
-const manrope = Manrope({
+// Body — Space Grotesk
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-body",
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-const bricolage = Bricolage_Grotesque({
+// Display — Anton (massive uppercase headlines)
+const anton = Anton({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400"],
+  display: "swap",
+});
+
+// Mono — Space Mono (labels, kickers, metadata)
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -64,7 +75,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#080808",
+  themeColor: "#0b0a09",
   width: "device-width",
   initialScale: 1,
 };
@@ -75,7 +86,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${manrope.variable} ${bricolage.variable} h-full`}
+      className={`${spaceGrotesk.variable} ${anton.variable} ${spaceMono.variable} h-full`}
       suppressHydrationWarning
     >
       <body className="relative min-h-full flex flex-col bg-nautilus-black text-nautilus-white antialiased">
@@ -85,9 +96,10 @@ export default function RootLayout({
             position="bottom-right"
             toastOptions={{
               style: {
-                background: "#111111",
-                border: "1px solid #1e1e1e",
-                color: "#f5f5f0",
+                background: "#131110",
+                border: "1px solid #221f1b",
+                color: "#f4efe2",
+                fontFamily: "var(--font-body)",
               },
             }}
           />

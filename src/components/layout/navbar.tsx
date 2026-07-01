@@ -1,30 +1,69 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Ticket, User, LogOut, Settings, LayoutDashboard, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { UserAvatar } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
+import { AnimatePresence, motion } from "framer-motion";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getDashboardRoute } from "@/lib/auth/route";
-import { NavSearch } from "@/components/layout/nav-search";
-import { Logo } from "@/components/layout/logo";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 
+function Brand() {
+  return (
+    <Link href="/" className="flex items-center gap-[11px]" data-hov>
+      <span className="relative block h-[34px] w-[34px] shrink-0">
+        <Image
+          src="/images/logo-nautilus.jpg"
+          alt="Le Nautilus"
+          fill
+          priority
+          className="logo-dark rounded-full object-cover ring-1 ring-nautilus-border"
+        />
+        <Image
+          src="/images/logo-nautilus-light.png"
+          alt="Le Nautilus"
+          fill
+          priority
+          className="logo-light rounded-full object-cover"
+        />
+      </span>
+      <span className="font-display text-[21px] leading-none tracking-[0.04em]">
+        LE&nbsp;NAUTILUS
+      </span>
+    </Link>
+  );
+}
+
 const navLinks = [
-  { href: "/events", label: "Événements" },
+  { href: "/events", label: "Agenda" },
   { href: "/venues", label: "Salles" },
   { href: "/projet", label: "Le projet" },
 ];
+
+const marqueeItems = [
+  "Saison 2025 — 26",
+  "Musiques actuelles",
+  "Concerts · Résidences · Ateliers",
+  "Billetterie ouverte",
+];
+
+function MarqueeRow() {
+  const run = [...marqueeItems, ...marqueeItems];
+  return (
+    <div className="overflow-hidden border-y border-nautilus-border bg-nautilus-black/60">
+      <div className="animate-marquee font-mono text-[12px] uppercase tracking-[0.18em] text-nautilus-gray py-2">
+        {run.map((item, i) => (
+          <span key={i} className="inline-flex items-center">
+            <span className="px-[22px]">{item}</span>
+            <span className="px-[22px] text-nautilus-gold">✦</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function Navbar() {
   const { data: session } = useSession();
@@ -32,195 +71,150 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 20);
+    const handler = () => setScrolled(window.scrollY > 40);
+    handler();
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
   const user = session?.user;
-  const role = user?.role;
-
-  const dashboardHref = getDashboardRoute(role);
+  const dashboardHref = getDashboardRoute(user?.role);
 
   return (
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         scrolled
-          ? "bg-nautilus-black/95 backdrop-blur-md border-b border-nautilus-border"
-          : "bg-transparent"
+          ? "bg-nautilus-black/85 backdrop-blur-md border-b border-nautilus-border"
+          : "bg-transparent border-b border-transparent"
       )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Logo size="sm" />
+      <div className="flex items-center justify-between gap-6 px-5 sm:px-7 py-4">
+        {/* Logo */}
+        <Brand />
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center gap-[30px] font-mono text-[12px] uppercase tracking-[0.12em]">
+          <ThemeToggle />
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              data-hov
+              className="opacity-80 hover:opacity-100 hover:text-nautilus-gold transition"
+            >
+              {link.label}
+            </Link>
+          ))}
+
+          {user ? (
+            <div className="flex items-center gap-[22px]">
               <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm text-nautilus-gray hover:text-nautilus-white transition-colors tracking-wide"
+                href={dashboardHref}
+                data-hov
+                className="opacity-80 hover:opacity-100 hover:text-nautilus-gold transition"
               >
-                {link.label}
+                Espace
               </Link>
-            ))}
-          </nav>
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                data-hov
+                className="opacity-60 hover:opacity-100 hover:text-nautilus-gold transition uppercase"
+              >
+                Quitter
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/auth/login"
+              data-hov
+              className="opacity-80 hover:opacity-100 hover:text-nautilus-gold transition"
+            >
+              Connexion
+            </Link>
+          )}
 
-          {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-2">
-            <NavSearch />
-            <ThemeToggle />
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 rounded-full p-0.5 hover:ring-2 hover:ring-nautilus-gold/50 transition-all">
-                    <UserAvatar
-                      name={user.name}
-                      image={user.image}
-                      className="h-8 w-8"
-                    />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="mt-2 w-52 rounded-xl border border-nautilus-border bg-nautilus-card p-1 shadow-xl z-50"
-                >
-                  <div className="px-3 py-2 mb-1">
-                    <p className="text-sm font-medium text-nautilus-white truncate">
-                      {user.name}
-                    </p>
-                    <p className="text-xs text-nautilus-gray truncate">{user.email}</p>
-                  </div>
-                  <DropdownMenuSeparator className="h-px bg-nautilus-border my-1" />
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href={dashboardHref}
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-nautilus-gray-light hover:text-nautilus-white hover:bg-nautilus-muted rounded-lg cursor-pointer transition-colors"
-                    >
-                      <LayoutDashboard className="h-4 w-4" />
-                      Dashboard
-                    </Link>
-                  </DropdownMenuItem>
-                  {role !== "ADMIN" && (
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href="/dashboard/tickets"
-                        className="flex items-center gap-2 px-3 py-2 text-sm text-nautilus-gray-light hover:text-nautilus-white hover:bg-nautilus-muted rounded-lg cursor-pointer transition-colors"
-                      >
-                        <Ticket className="h-4 w-4" />
-                        Mes billets
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuSeparator className="h-px bg-nautilus-border my-1" />
-                  <DropdownMenuItem
-                    onClick={() => signOut({ callbackUrl: "/" })}
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-lg cursor-pointer transition-colors"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Se déconnecter
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href="/auth/login">Connexion</Link>
-                </Button>
-                <Button size="sm" asChild>
-                  <Link href="/auth/register">S'inscrire</Link>
-                </Button>
-              </>
-            )}
-          </div>
-
-          {/* Mobile hamburger */}
-          <button
-            className="md:hidden text-nautilus-gray hover:text-nautilus-white transition-colors"
-            onClick={() => setOpen(!open)}
-            aria-label="Menu"
+          <Link
+            href="/events"
+            data-hov
+            className="inline-flex items-center gap-2 rounded-full bg-nautilus-gold px-[18px] py-[9px] font-bold text-nautilus-black hover:bg-nautilus-gold-light transition-colors"
           >
-            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
+            Billetterie ↗
+          </Link>
+        </nav>
+
+        {/* Mobile hamburger */}
+        <button
+          className="md:hidden text-nautilus-cream hover:text-nautilus-gold transition-colors"
+          onClick={() => setOpen(!open)}
+          aria-label="Menu"
+        >
+          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
       </div>
 
-      {/* Mobile Menu */}
+      <MarqueeRow />
+
+      {/* Mobile menu */}
       <AnimatePresence>
         {open && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-nautilus-border bg-nautilus-black/98 backdrop-blur-md"
+            className="md:hidden overflow-hidden border-b border-nautilus-border bg-nautilus-black/98 backdrop-blur-md"
           >
-            <div className="px-4 py-6 flex flex-col gap-4">
-              {/* Mobile search */}
-              <form
-                method="GET"
-                action="/events"
-                className="relative"
-                onSubmit={(e) => { e.preventDefault(); setOpen(false); const q = (e.currentTarget.querySelector("input[name=search]") as HTMLInputElement)?.value; if (q) window.location.href = `/events?search=${encodeURIComponent(q)}`; }}
-              >
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-nautilus-gray pointer-events-none" />
-                <input
-                  name="search"
-                  placeholder="Rechercher un événement…"
-                  className="w-full h-10 pl-9 pr-4 rounded-xl border border-nautilus-border bg-nautilus-dark/60 text-sm text-nautilus-white placeholder:text-nautilus-gray/50 focus:border-nautilus-gold/60 focus:outline-none transition-colors"
-                />
-              </form>
-
+            <div className="flex flex-col gap-1 px-6 py-6 font-mono text-sm uppercase tracking-[0.12em]">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="text-base text-nautilus-gray hover:text-nautilus-white transition-colors py-2"
+                  className="py-3 text-nautilus-cream hover:text-nautilus-gold transition-colors"
                 >
                   {link.label}
                 </Link>
               ))}
-              <div className="flex items-center justify-between py-2">
-                <span className="text-base text-nautilus-gray">Thème</span>
+              <div className="flex items-center justify-between py-3">
+                <span className="text-nautilus-cream">Thème</span>
                 <ThemeToggle />
               </div>
-              <div className="h-px bg-nautilus-border" />
+              <div className="my-2 h-px bg-nautilus-border" />
               {user ? (
                 <>
-                  <div className="flex items-center gap-3 py-2">
-                    <UserAvatar name={user.name} image={user.image} className="h-9 w-9" />
-                    <div>
-                      <p className="text-sm font-medium text-nautilus-white">{user.name}</p>
-                      <p className="text-xs text-nautilus-gray">{user.email}</p>
-                    </div>
-                  </div>
                   <Link
                     href={dashboardHref}
                     onClick={() => setOpen(false)}
-                    className="text-sm text-nautilus-gray-light py-2"
+                    className="py-3 text-nautilus-cream hover:text-nautilus-gold transition-colors"
                   >
-                    Dashboard
+                    Mon espace
                   </Link>
                   <button
-                    onClick={() => { setOpen(false); signOut({ callbackUrl: "/" }); }}
-                    className="text-sm text-red-400 text-left py-2"
+                    onClick={() => {
+                      setOpen(false);
+                      signOut({ callbackUrl: "/" });
+                    }}
+                    className="py-3 text-left text-nautilus-gray hover:text-nautilus-gold transition-colors uppercase"
                   >
                     Se déconnecter
                   </button>
                 </>
               ) : (
-                <div className="flex flex-col gap-3 pt-2">
-                  <Button variant="outline" asChild className="w-full">
-                    <Link href="/auth/login" onClick={() => setOpen(false)}>Connexion</Link>
-                  </Button>
-                  <Button asChild className="w-full">
-                    <Link href="/auth/register" onClick={() => setOpen(false)}>S'inscrire</Link>
-                  </Button>
-                </div>
+                <Link
+                  href="/auth/login"
+                  onClick={() => setOpen(false)}
+                  className="py-3 text-nautilus-cream hover:text-nautilus-gold transition-colors"
+                >
+                  Connexion
+                </Link>
               )}
+              <Link
+                href="/events"
+                onClick={() => setOpen(false)}
+                className="mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-nautilus-gold px-5 py-3 font-bold text-nautilus-black"
+              >
+                Billetterie ↗
+              </Link>
             </div>
           </motion.div>
         )}

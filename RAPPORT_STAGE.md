@@ -701,6 +701,101 @@ Suppression de fichiers de config inutiles pour garder un dépôt propre.
   et de **Mailchimp** (configuration, fonctionnement sur le site, bonnes pratiques et
   architecture marketing pour gagner en visibilité).
 
+### Tâche 46 — Refonte graphique complète (identité « scène de musiques actuelles »)
+**Fonctionnalité / direction artistique.**
+
+J'ai repris les maquettes HTML fournies dans le dossier `designcl/` (Accueil,
+Agenda, Événement, Salles, Projet) comme point de départ pour donner au site une
+identité unique, dans l'esprit des sites de salles de concert (letempsmachine.com,
+lemetronum.fr) : typographie éditoriale massive, fond chaud quasi-noir, accent or,
+et micro-interactions soignées. L'objectif était d'éliminer tout ce qui faisait
+« template générique ».
+
+Ce qui a été développé :
+
+- **Système de design (socle qui se propage à tout le site)** :
+  - Nouvelles polices via `next/font` : **Anton** (titres en capitales),
+    **Space Grotesk** (texte courant), **Space Mono** (intitulés / métadonnées).
+  - Palette chaude et cinématographique dans `globals.css` (fond `#0b0a09`,
+    texte `#f4efe2`, or `#c9a84c`, crème, bordures fines) et nouveaux jetons
+    Tailwind (`nautilus-cream`, `nautilus-border-strong`, `nautilus-gray-dim`).
+  - Utilitaires éditoriaux : `.kicker`, `.display`, traitement photo `.duo`
+    (virage sépia/or qui s'éclaircit au survol), grain de film en surimpression,
+    marquees, clignotement « live », apparition au défilement.
+- **Interactions signature** (`SiteEffects`) : curseur personnalisé (point + anneau
+  magnétique) et révélation au scroll des éléments `[data-reveal]`, avec repli
+  propre (sans JS, tactile, `prefers-reduced-motion`).
+- **Navigation & pied de page** refaits : barre fixe translucide, liens en mono
+  capitales, bouton « Billetterie ↗», bandeau marquee défilant ; pied de page en
+  quatre colonnes avec newsletter en pilule.
+- **Pages publiques refondues, branchées sur les vraies données** :
+  - **Accueil** : hero « Ce qui vous attend ce soir », liste agenda avec vignette
+    qui suit le curseur, grille des salles, teaser projet, bandeau artiste.
+  - **Agenda** (`/events`) : titre géant, filtres collants en pilules mono,
+    grille de cartes (badge date, pastille catégorie) ; recherche/pagination
+    conservées.
+  - **Événement** (`/events/[slug]`) : hero plein cadre assombri, bandeau méta
+    4 colonnes, billetterie collante restylée, section « À voir aussi ».
+  - **Salles** (`/venues`) : lignes alternées image/contenu exploitant
+    `specs` / `amenities` / `pricing` de la base, filigrane d'index, CTA devis.
+  - **Le projet** (`/projet`) : grand chiffre animé (compteur), grilles de
+    statistiques animées, cartes « missions », galerie en double marquee.
+- **Pages d'authentification** harmonisées (marque à pastille or, titres Anton).
+- Suppression des composants devenus inutiles (`hero-section`, `featured-events`,
+  `venues-showcase`) et nouveaux composants (`site-effects`, `home-hero`,
+  `agenda-list`, `count-up`).
+
+Vérification : `npm run build` compile sans erreur ni avertissement ; le site
+tourne en local (`npm run dev`, http://localhost:3000) et les routes `/`, `/events`,
+`/venues`, `/projet`, `/auth/login` répondent en 200 avec le nouveau rendu.
+
+### Tâche 47 — Thèmes, lisibilité, performances et refonte de l'authentification
+**Fonctionnalité + corrections (suite des retours).**
+
+Logo & thèmes :
+- Réintégration du **vrai logo** du Nautilus dans la navbar et le pied de page
+  (variantes sombre/clair).
+- Deux thèmes au choix avec bascule restaurée : **sombre = noir + violet**,
+  **clair = beige + vert**. L'accent est piloté par un jeton unique, donc tout le
+  site adopte la couleur automatiquement.
+
+Performances :
+- **Cause principale de latence corrigée** : le grain de film en `mix-blend-mode`
+  plein écran forçait un repaint à chaque scroll. Remplacé par une texture légère
+  isolée sur sa propre couche GPU (`translateZ`, `contain`). Suppression d'un appel
+  `auth()` superflu sur la page événement.
+
+Lisibilité (audit de toutes les pages) :
+- Correction des textes posés sur les photos qui devenaient **noir sur fond noir**
+  en thème clair (ex. titre de la page événement). Ajout d'utilitaires `media-title`
+  / `media-text` / `media-chip` qui restent clairs sur les visuels dans les deux
+  thèmes, + ombres de texte sur les héros.
+
+Refonte de l'authentification / billetterie :
+- **Suppression de l'inscription publique** (page `/auth/register`, formulaire et
+  API supprimés).
+- **Billetterie en accès libre (invité)** : plus de compte client. L'acheteur
+  saisit son e-mail au paiement (Stripe `receipt_email`) et reçoit ses billets par
+  e-mail. Les **places gratuites** sont réservées sans compte, avec une **limite
+  par adresse e-mail et par événement** (anti-abus). Webhook et page de succès
+  adaptés.
+- **Comptes artistes créés par l'admin** : page publique `/devenir-artiste`
+  (formulaire nom/prénom/e-mail/description) → enregistrement d'une demande +
+  notification e-mail à l'admin. L'admin traite les demandes dans
+  `/admin/artists` (« Créer le compte » / « Refuser »). La création génère un
+  **lien d'activation envoyé par e-mail** ; l'artiste définit son mot de passe via
+  `/auth/activate` (jetons à usage unique, expiration 7 jours).
+- **Connexion** propre, réservée aux pros (admin/artistes).
+- Schéma Prisma mis à jour (`Ticket` invité : `userId` optionnel + `buyerEmail`/
+  `buyerName` ; modèles `ArtistRequest` et `PasswordToken`) et synchronisé
+  (`prisma db push`).
+
+Vérification : `prisma db push` OK, `npm run build` compile sans erreur, dev local
+OK — `/`, `/events`, `/venues`, `/projet`, `/devenir-artiste`, `/auth/login`,
+`/auth/activate` en 200, `/auth/register` en 404, et l'API de demande artiste crée
+bien l'enregistrement. *À tester avec des clés réelles : l'envoi des e-mails
+(Resend) et le paiement/billet de bout en bout (Stripe + webhook).*
+
 ---
 
 ## 4. Récapitulatif des bugs corrigés

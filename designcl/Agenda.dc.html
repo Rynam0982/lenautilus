@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+  body{ margin:0; background:#0b0a09; color:#f4efe2; font-family:'Space Grotesk',system-ui,sans-serif; overflow-x:hidden; }
+  ::selection{ background:#c9a84c; color:#0b0a09; }
+  a{ color:inherit; text-decoration:none; }
+  @keyframes naut-marquee{ from{ transform:translateX(0) } to{ transform:translateX(-50%) } }
+  @keyframes naut-blink{ 0%,100%{ opacity:1 } 50%{ opacity:.2 } }
+  body.naut-cursor, body.naut-cursor a, body.naut-cursor button{ cursor:none; }
+  ::-webkit-scrollbar{ width:9px; height:9px } ::-webkit-scrollbar-track{ background:#0b0a09 } ::-webkit-scrollbar-thumb{ background:#2a2722; border-radius:6px } ::-webkit-scrollbar-thumb:hover{ background:#c9a84c }
+</style>
+</helmet>
+<div data-naut-root style="position:relative; min-height:100vh; background:#0b0a09; color:#f4efe2; font-family:'Space Grotesk',system-ui,sans-serif;">
+
+  <div data-grain style="pointer-events:none; position:fixed; inset:0; z-index:80; opacity:.05; mix-blend-mode:overlay; background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E');"></div>
+
+  <header data-nav style="position:fixed; top:0; left:0; right:0; z-index:60; transition:background .4s ease, backdrop-filter .4s ease, border-color .4s ease; border-bottom:1px solid transparent;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 28px; gap:24px;">
+      <a href="Accueil.dc.html" style="display:flex; align-items:center; gap:11px;">
+        <span style="width:11px; height:11px; border-radius:50%; background:#c9a84c; box-shadow:0 0 14px rgba(201,168,76,.7); display:block;"></span>
+        <span style="font-family:'Anton',sans-serif; font-size:21px; letter-spacing:.04em; line-height:1;">LE&nbsp;NAUTILUS</span>
+      </a>
+      <nav style="display:flex; align-items:center; gap:30px; font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase;">
+        <a href="Agenda.dc.html" data-hov style="color:#c9a84c;">Agenda</a>
+        <a href="Salles.dc.html" data-hov style="opacity:.8; transition:opacity .2s, color .2s;">Salles</a>
+        <a href="Projet.dc.html" data-hov style="opacity:.8; transition:opacity .2s, color .2s;">Le&nbsp;projet</a>
+        <a href="Agenda.dc.html" data-hov data-cta style="display:inline-flex; align-items:center; gap:8px; background:#c9a84c; color:#0b0a09; padding:9px 18px; border-radius:100px; font-weight:700;">Billetterie ↗</a>
+      </nav>
+    </div>
+    <div data-marquee style="overflow:hidden; border-top:1px solid #221f1b; border-bottom:1px solid #221f1b; background:rgba(11,10,9,.6);">
+      <div style="display:inline-flex; white-space:nowrap; animation:naut-marquee 26s linear infinite; font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:#9a9488; padding:8px 0;">
+        <span style="padding:0 22px;">Saison 2025 — 26</span><span style="color:#c9a84c; padding:0 22px;">✦</span><span style="padding:0 22px;">14 dates à venir</span><span style="color:#c9a84c; padding:0 22px;">✦</span><span style="padding:0 22px;">Billetterie ouverte</span><span style="color:#c9a84c; padding:0 22px;">✦</span><span style="padding:0 22px;">Concerts · Résidences · Ateliers</span><span style="color:#c9a84c; padding:0 22px;">✦</span>
+        <span style="padding:0 22px;">Saison 2025 — 26</span><span style="color:#c9a84c; padding:0 22px;">✦</span><span style="padding:0 22px;">14 dates à venir</span><span style="color:#c9a84c; padding:0 22px;">✦</span><span style="padding:0 22px;">Billetterie ouverte</span><span style="color:#c9a84c; padding:0 22px;">✦</span><span style="padding:0 22px;">Concerts · Résidences · Ateliers</span><span style="color:#c9a84c; padding:0 22px;">✦</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- HEADER -->
+  <section style="padding:150px 28px 30px;">
+    <div style="max-width:1320px; margin:0 auto;">
+      <p style="font-family:'Space Mono',monospace; font-size:12.5px; letter-spacing:.26em; text-transform:uppercase; color:#c9a84c; margin:0 0 14px;">Saison 2025 — 26 · La programmation</p>
+      <h1 style="font-family:'Anton',sans-serif; font-weight:400; line-height:.84; letter-spacing:-.01em; margin:0; font-size:clamp(70px,17vw,260px); text-transform:uppercase;">Agenda</h1>
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-top:20px;">
+        <p style="font-size:clamp(16px,1.4vw,19px); color:#cfc8b8; max-width:48ch; margin:0; line-height:1.55;">Toute la saison en un coup d'œil. Filtrez par format, choisissez votre soir, réservez en deux clics.</p>
+        <p style="font-family:'Space Mono',monospace; font-size:12px; color:#9a9488; margin:0; display:flex; align-items:center; gap:9px;"><span style="width:7px;height:7px;border-radius:50%;background:#34d27a;display:inline-block;animation:naut-blink 1.6s infinite;"></span><span data-count>14</span> dates affichées</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILTERS -->
+  <section style="padding:10px 28px 0; position:sticky; top:96px; z-index:40;">
+    <div style="max-width:1320px; margin:0 auto;">
+      <div data-filters style="display:flex; flex-wrap:wrap; gap:10px; padding:14px 0; border-top:1px solid #221f1b; border-bottom:1px solid #221f1b; background:rgba(11,10,9,.85); backdrop-filter:blur(10px);">
+        <button data-filter="Tous" data-hov style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; border:1px solid #c9a84c; background:#c9a84c; color:#0b0a09; padding:9px 16px; border-radius:100px; cursor:pointer; transition:all .2s;">Tout · 14</button>
+        <button data-filter="Concert" data-hov style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; border:1px solid #3a352c; background:transparent; color:#cfc8b8; padding:9px 16px; border-radius:100px; cursor:pointer; transition:all .2s;">Concerts</button>
+        <button data-filter="Résidence" data-hov style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; border:1px solid #3a352c; background:transparent; color:#cfc8b8; padding:9px 16px; border-radius:100px; cursor:pointer; transition:all .2s;">Résidences</button>
+        <button data-filter="Atelier" data-hov style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; border:1px solid #3a352c; background:transparent; color:#cfc8b8; padding:9px 16px; border-radius:100px; cursor:pointer; transition:all .2s;">Ateliers</button>
+        <button data-filter="Gratuit" data-hov style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; border:1px solid #3a352c; background:transparent; color:#cfc8b8; padding:9px 16px; border-radius:100px; cursor:pointer; transition:all .2s;">Gratuit</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- GRID -->
+  <section style="padding:30px 28px 70px;">
+    <div style="max-width:1320px; margin:0 auto;">
+      <div data-grid style="display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:18px; grid-auto-flow:dense;">
+        <sc-for list="{{ events }}" as="ev" hint-placeholder-count="14">
+          <a href="Evenement.dc.html" data-card data-cat="{{ ev.cat }}" data-span="{{ ev.span }}" data-hov data-reveal-row style="position:relative; display:flex; flex-direction:column; background:#131110; border:1px solid #221f1b; border-radius:14px; overflow:hidden; transition:border-color .35s, transform .35s cubic-bezier(.16,1,.3,1);" style-hover="border-color:#c9a84c;">
+            <div style="position:relative; aspect-ratio:{{ ev.ratio }}; overflow:hidden;">
+              <img src="{{ ev.img }}" alt="{{ ev.artist }}" style="width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(.3) sepia(.5) saturate(1.4) brightness(.82) contrast(1.05); transition:filter .7s, transform 1s cubic-bezier(.16,1,.3,1);" style-hover="filter:none; transform:scale(1.05);">
+              <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(11,10,9,.55), transparent 55%); pointer-events:none;"></div>
+              <div style="position:absolute; top:13px; left:13px; background:#0b0a09; border:1px solid #3a352c; border-radius:10px; padding:8px 11px; text-align:center; line-height:1;">
+                <span style="font-family:'Anton',sans-serif; font-size:26px; display:block; color:#c9a84c;">{{ ev.day }}</span>
+                <span style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#cfc8b8; display:block; margin-top:3px;">{{ ev.mon }}</span>
+              </div>
+              <span style="position:absolute; top:13px; right:13px; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; background:rgba(11,10,9,.7); backdrop-filter:blur(6px); border:1px solid #3a352c; padding:6px 10px; border-radius:100px;">{{ ev.cat }}</span>
+            </div>
+            <div style="padding:16px 16px 18px; display:flex; flex-direction:column; gap:6px; flex:1;">
+              <h3 style="font-family:'Anton',sans-serif; font-weight:400; font-size:clamp(24px,2vw,34px); margin:0; text-transform:uppercase; line-height:.95;">{{ ev.artist }}</h3>
+              <p style="font-family:'Space Mono',monospace; font-size:11.5px; letter-spacing:.04em; color:#9a9488; margin:0;">{{ ev.genre }} · {{ ev.salle }}</p>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:14px;">
+                <span style="font-family:'Space Mono',monospace; font-size:13px; color:#e8c97a;">{{ ev.price }}</span>
+                <span style="display:inline-flex; align-items:center; gap:7px; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#c9a84c;">Réserver ↗</span>
+              </div>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+      <p data-empty style="display:none; text-align:center; color:#9a9488; font-family:'Space Mono',monospace; font-size:14px; padding:60px 0;">Aucune date pour ce filtre.</p>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER STRIP -->
+  <section style="padding:0 28px 70px;">
+    <div data-reveal style="max-width:1320px; margin:0 auto; border:1px solid #221f1b; border-radius:18px; background:#131110; padding:clamp(32px,5vw,56px); display:flex; align-items:center; justify-content:space-between; gap:28px; flex-wrap:wrap; opacity:0; transform:translateY(28px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);">
+      <div>
+        <h2 style="font-family:'Anton',sans-serif; font-weight:400; font-size:clamp(30px,4vw,56px); margin:0 0 8px; text-transform:uppercase; line-height:.92;">Ne ratez plus rien</h2>
+        <p style="color:#cfc8b8; margin:0; font-size:16px;">Le programme et les nouvelles dates, une fois par mois.</p>
+      </div>
+      <div style="display:flex; border:1px solid #3a352c; border-radius:100px; overflow:hidden; min-width:280px; flex:1; max-width:420px;">
+        <input type="email" placeholder="votre@email.fr" style="flex:1; min-width:0; background:transparent; border:0; outline:none; color:#f4efe2; padding:14px 18px; font-family:'Space Grotesk',sans-serif; font-size:15px;">
+        <button data-hov style="border:0; background:#c9a84c; color:#0b0a09; padding:0 22px; font-weight:700; font-size:14px; cursor:pointer;">S'inscrire</button>
+      </div>
+    </div>
+  </section>
+
+  <footer style="position:relative; border-top:1px solid #221f1b; padding:60px 28px 40px;">
+    <div style="max-width:1320px; margin:0 auto;">
+      <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1.3fr; gap:32px; padding-bottom:48px;">
+        <div>
+          <div style="display:flex; align-items:center; gap:11px; margin-bottom:16px;">
+            <span style="width:11px; height:11px; border-radius:50%; background:#c9a84c; display:block;"></span>
+            <span style="font-family:'Anton',sans-serif; font-size:22px; letter-spacing:.04em;">LE&nbsp;NAUTILUS</span>
+          </div>
+          <p style="font-size:14.5px; line-height:1.6; color:#9a9488; max-width:34ch;">Scène de musiques actuelles. Diffusion, création, médiation et structuration professionnelle au sein d'un même lieu.</p>
+        </div>
+        <div>
+          <p style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#5f5a50; margin:0 0 14px;">Naviguer</p>
+          <div style="display:flex; flex-direction:column; gap:10px; font-size:14.5px; color:#cfc8b8;">
+            <a href="Agenda.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Agenda</a>
+            <a href="Salles.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Nos salles</a>
+            <a href="Projet.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Le projet</a>
+          </div>
+        </div>
+        <div>
+          <p style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#5f5a50; margin:0 0 14px;">Suivre</p>
+          <div style="display:flex; flex-direction:column; gap:10px; font-size:14.5px; color:#cfc8b8;">
+            <a href="Accueil.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Instagram</a>
+            <a href="Accueil.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Facebook</a>
+            <a href="Accueil.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Newsletter</a>
+          </div>
+        </div>
+        <div>
+          <p style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#5f5a50; margin:0 0 14px;">Contact</p>
+          <p style="font-size:13.5px; color:#9a9488; margin:0; line-height:1.7;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8ae9e5e4feebe9fecae6efe4ebfffee3e6fff9a4ecf8">[email&#160;protected]</a><br>04 68 00 00 00</p>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; border-top:1px solid #221f1b; padding-top:22px; font-family:'Space Mono',monospace; font-size:11.5px; letter-spacing:.06em; color:#5f5a50;">
+        <span>© 2026 Le Nautilus — Tous droits réservés</span>
+        <span style="display:flex; gap:20px;"><a href="Accueil.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Mentions légales</a><a href="Accueil.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Contact</a></span>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  events = [
+    { day: "14", mon: "VEN NOV", cat: "Concert", artist: "Kérozène", genre: "Post-punk", salle: "Grande Scène", price: "18 €", img: "assets/photos/p03.jpg", ratio: "16/10" },
+    { day: "22", mon: "SAM NOV", cat: "Concert", artist: "Marée Haute", genre: "Chanson électro", salle: "Le Studio", price: "14 €", img: "assets/photos/p15.jpg", ratio: "4/5" },
+    { day: "27", mon: "JEU NOV", cat: "Atelier", artist: "MAO & Home-studio", genre: "Atelier", salle: "Le Studio", price: "Gratuit", img: "assets/photos/p27.jpg", ratio: "4/5" },
+    { day: "04", mon: "JEU DÉC", cat: "Concert", artist: "Foudre!", genre: "Afro-house", salle: "Grande Scène", price: "20 €", img: "assets/photos/p21.jpg", ratio: "16/10" },
+    { day: "06", mon: "SAM DÉC", cat: "Résidence", artist: "Nuit Bleue", genre: "Restitution", salle: "Le Studio", price: "Gratuit", img: "assets/photos/p11.jpg", ratio: "4/5" },
+    { day: "12", mon: "VEN DÉC", cat: "Concert", artist: "Sœur Lune", genre: "Néo-soul", salle: "Le Studio", price: "12 €", img: "assets/photos/salle-soiree.jpeg", ratio: "4/5" },
+    { day: "13", mon: "SAM DÉC", cat: "Gratuit", artist: "Carte blanche locale", genre: "Tremplin", salle: "Grande Scène", price: "Gratuit", img: "assets/photos/p05.jpg", ratio: "4/5" },
+    { day: "20", mon: "SAM DÉC", cat: "Concert", artist: "Voltaïk", genre: "Techno live", salle: "Grande Scène", price: "22 €", img: "assets/photos/p07.jpg", ratio: "16/10" },
+    { day: "09", mon: "VEN JAN", cat: "Atelier", artist: "Lumière & régie", genre: "Atelier", salle: "Grande Scène", price: "15 €", img: "assets/photos/p13.jpg", ratio: "4/5" },
+    { day: "11", mon: "DIM JAN", cat: "Gratuit", artist: "Lazuli", genre: "Jazz · impro", salle: "Le Studio", price: "Gratuit", img: "assets/photos/p17.jpg", ratio: "4/5" },
+    { day: "17", mon: "SAM JAN", cat: "Concert", artist: "Orage", genre: "Rock", salle: "Grande Scène", price: "19 €", img: "assets/photos/p19.jpg", ratio: "16/10" },
+    { day: "24", mon: "SAM JAN", cat: "Résidence", artist: "Cumulo", genre: "Création", salle: "Le Studio", price: "Gratuit", img: "assets/photos/p23.jpg", ratio: "4/5" },
+    { day: "31", mon: "SAM JAN", cat: "Concert", artist: "Calypso Drive", genre: "Indie pop", salle: "Le Rooftop", price: "16 €", img: "assets/photos/p25.jpg", ratio: "4/5" },
+    { day: "07", mon: "VEN FÉV", cat: "Concert", artist: "Ténébra", genre: "Cold wave", salle: "Le Studio", price: "14 €", img: "assets/photos/p29.jpg", ratio: "4/5" },
+  ];
+
+  renderVals() {
+    return { events: this.events };
+  }
+
+  componentDidMount() {
+    this._cleanup = [];
+    const root = document.querySelector('[data-naut-root]') || document;
+    this._initNav(root);
+    this._initReveal(root);
+    this._initFilter(root);
+    this._initCursor();
+  }
+  componentWillUnmount() { (this._cleanup || []).forEach((fn) => { try { fn(); } catch (e) {} }); }
+
+  _initNav(root) {
+    const nav = root.querySelector('[data-nav]');
+    if (!nav) return;
+    const onScroll = () => {
+      if (window.scrollY > 40) { nav.style.background = 'rgba(11,10,9,.82)'; nav.style.backdropFilter = 'blur(12px)'; nav.style.borderBottomColor = '#221f1b'; }
+      else { nav.style.background = 'transparent'; nav.style.backdropFilter = 'none'; nav.style.borderBottomColor = 'transparent'; }
+    };
+    onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+    this._cleanup.push(() => window.removeEventListener('scroll', onScroll));
+  }
+
+  _initReveal(root) {
+    const els = root.querySelectorAll('[data-reveal], [data-reveal-row]');
+    els.forEach((el) => { el.style.opacity = '0'; el.style.transform = 'translateY(26px)'; el.style.transition = 'opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1)'; });
+    if (!('IntersectionObserver' in window)) { els.forEach((el) => { el.style.opacity = '1'; el.style.transform = 'none'; }); return; }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          const el = e.target;
+          const sibs = Array.prototype.slice.call(el.parentNode.children).filter((c) => c.hasAttribute('data-reveal-row'));
+          const delay = el.hasAttribute('data-reveal-row') ? (sibs.indexOf(el) % 8) * 50 : 0;
+          setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'none'; }, delay);
+          io.unobserve(el);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    els.forEach((el) => io.observe(el));
+    this._cleanup.push(() => io.disconnect());
+  }
+
+  _initFilter(root) {
+    const btns = root.querySelectorAll('[data-filter]');
+    const cards = root.querySelectorAll('[data-card]');
+    const empty = root.querySelector('[data-empty]');
+    const count = root.querySelector('[data-count]');
+    const setActive = (active) => {
+      btns.forEach((b) => {
+        if (b === active) { b.style.background = '#c9a84c'; b.style.borderColor = '#c9a84c'; b.style.color = '#0b0a09'; }
+        else { b.style.background = 'transparent'; b.style.borderColor = '#3a352c'; b.style.color = '#cfc8b8'; }
+      });
+    };
+    btns.forEach((b) => {
+      const click = () => {
+        const f = b.getAttribute('data-filter');
+        setActive(b);
+        let shown = 0;
+        cards.forEach((c) => {
+          const ok = f === 'Tous' || c.getAttribute('data-cat') === f;
+          c.style.display = ok ? 'flex' : 'none';
+          if (ok) shown++;
+        });
+        if (empty) empty.style.display = shown === 0 ? 'block' : 'none';
+        if (count) count.textContent = shown;
+      };
+      b.addEventListener('click', click);
+      this._cleanup.push(() => b.removeEventListener('click', click));
+    });
+  }
+
+  _initCursor() {
+    if (!window.matchMedia('(pointer:fine)').matches) return;
+    const dot = document.createElement('div'); const ring = document.createElement('div');
+    dot.style.cssText = 'position:fixed;z-index:200;left:0;top:0;width:7px;height:7px;border-radius:50%;background:#c9a84c;pointer-events:none;transform:translate(-50%,-50%);transition:width .2s,height .2s;';
+    ring.style.cssText = 'position:fixed;z-index:199;left:0;top:0;width:34px;height:34px;border-radius:50%;border:1px solid rgba(201,168,76,.6);pointer-events:none;transform:translate(-50%,-50%);transition:width .25s,height .25s,border-color .25s,background .25s;';
+    document.body.appendChild(dot); document.body.appendChild(ring); document.body.classList.add('naut-cursor');
+    let mx = -100, my = -100, rx = -100, ry = -100, raf = null;
+    const move = (e) => { mx = e.clientX; my = e.clientY; dot.style.left = mx + 'px'; dot.style.top = my + 'px'; if (!raf) raf = requestAnimationFrame(loop); };
+    const loop = () => { rx += (mx - rx) * 0.2; ry += (my - ry) * 0.2; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; if (Math.abs(mx - rx) > 0.3 || Math.abs(my - ry) > 0.3) raf = requestAnimationFrame(loop); else raf = null; };
+    const over = (e) => { if (e.target.closest('[data-hov], a, button, input')) { ring.style.width = '56px'; ring.style.height = '56px'; ring.style.background = 'rgba(201,168,76,.08)'; dot.style.width = '0'; dot.style.height = '0'; } };
+    const out = (e) => { if (e.target.closest('[data-hov], a, button, input')) { ring.style.width = '34px'; ring.style.height = '34px'; ring.style.background = 'transparent'; dot.style.width = '7px'; dot.style.height = '7px'; } };
+    window.addEventListener('mousemove', move, { passive: true }); document.addEventListener('mouseover', over); document.addEventListener('mouseout', out);
+    this._cleanup.push(() => { window.removeEventListener('mousemove', move); document.removeEventListener('mouseover', over); document.removeEventListener('mouseout', out); if (raf) cancelAnimationFrame(raf); dot.remove(); ring.remove(); document.body.classList.remove('naut-cursor'); });
+  }
+}
+</script>
+</body>
+</html>

@@ -11,17 +11,21 @@
   --color-nautilus-dark: var(--nautilus-dark);
   --color-nautilus-card: var(--nautilus-card);
   --color-nautilus-border: var(--nautilus-border);
+  --color-nautilus-border-strong: var(--nautilus-border-strong);
   --color-nautilus-muted: var(--nautilus-muted);
   --color-nautilus-gold: var(--nautilus-gold);
   --color-nautilus-gold-light: var(--nautilus-gold-light);
   --color-nautilus-gold-dim: var(--nautilus-gold-dim);
   --color-nautilus-white: var(--nautilus-white);
+  --color-nautilus-cream: var(--nautilus-cream);
   --color-nautilus-gray: var(--nautilus-gray);
   --color-nautilus-gray-light: var(--nautilus-gray-light);
+  --color-nautilus-gray-dim: var(--nautilus-gray-dim);
 
   /* Fonts */
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
 
   /* Secondary accent (company green) */
   --color-nautilus-green: var(--nautilus-green);
@@ -50,22 +54,25 @@
 /* ─── CSS Variables ─────────────────────────────────────────────────────────── */
 
 :root {
-  /* Dark theme (default) */
-  --background: #080808;
-  --foreground: #f5f5f0;
+  /* Dark theme (default) — noir & violet */
+  --background: #0a090e;
+  --foreground: #f3f0f7;
 
-  --nautilus-black: #080808;
-  --nautilus-dark: #0d0d0d;
-  --nautilus-card: #111111;
-  --nautilus-border: #1e1e1e;
-  --nautilus-muted: #2a2a2a;
-  --nautilus-gold: #c9a84c;
-  --nautilus-gold-light: #e8c97a;
-  --nautilus-gold-dim: #8a6b2a;
-  --nautilus-green: #34d27a;
-  --nautilus-white: #f5f5f0;
-  --nautilus-gray: #8a8a8a;
-  --nautilus-gray-light: #b5b5b5;
+  --nautilus-black: #0a090e; /* page background — cool near-black */
+  --nautilus-dark: #100d18; /* deep surface */
+  --nautilus-card: #15121d; /* card surface */
+  --nautilus-border: #241f31; /* hairline borders */
+  --nautilus-border-strong: #3b3352; /* visible borders / pills */
+  --nautilus-muted: #221c32; /* hover surfaces */
+  --nautilus-gold: #a855f7; /* primary accent — violet */
+  --nautilus-gold-light: #c79bfb; /* light violet */
+  --nautilus-gold-dim: #6d28d9;
+  --nautilus-green: #34d27a; /* "live" status */
+  --nautilus-white: #f3f0f7; /* primary text */
+  --nautilus-cream: #c9c1da; /* secondary text on dark */
+  --nautilus-gray: #978fab; /* muted text */
+  --nautilus-gray-light: #c9c1da;
+  --nautilus-gray-dim: #5f5773; /* faint mono labels */
 
   /* Brand ribbon colors (logo purple + green + logo yellow) */
   --band-1: #a855f7;
@@ -76,24 +83,26 @@
   color-scheme: dark;
 }
 
-/* Light theme — semantic tokens flip (black = surface, white = text).
-   Accent shifts from gold (dark) to the company green to match le-nautilus.org. */
+/* Light theme — beige & vert. Semantic tokens flip (black = surface, white = text). */
 .light {
-  --background: #f6f1e7;
-  --foreground: #1b1b1b;
+  --background: #f4efe4;
+  --foreground: #1b1a16;
 
-  --nautilus-black: #f4efe4; /* page background (warm cream) */
-  --nautilus-dark: #ebe2d0; /* footer / sidebar surface */
-  --nautilus-card: #fffdf9; /* cards (warm white) */
-  --nautilus-border: #ddd0b6; /* clearly visible on cream */
-  --nautilus-muted: #e7dcc6; /* hover surfaces */
-  --nautilus-gold: #8a6d18; /* primary accent — deep antique gold (readable) */
-  --nautilus-gold-light: #a9842e;
-  --nautilus-gold-dim: #e2d3a8;
-  --nautilus-green: #15803d; /* secondary accent — company green */
-  --nautilus-white: #1c1a16; /* primary text */
-  --nautilus-gray: #6a6359; /* secondary text (AA on cream) */
+  --nautilus-black: #f4efe4; /* page background (warm beige) */
+  --nautilus-dark: #ebe3d3; /* footer / sidebar surface */
+  --nautilus-card: #fffdf8; /* cards (warm white) */
+  --nautilus-border: #ddd2bd; /* clearly visible on beige */
+  --nautilus-border-strong: #c7b89a; /* visible borders / pills */
+  --nautilus-muted: #e7ddc9; /* hover surfaces */
+  --nautilus-gold: #15803d; /* primary accent — green */
+  --nautilus-gold-light: #1c9d4b;
+  --nautilus-gold-dim: #bfe0c6;
+  --nautilus-green: #15803d; /* secondary accent — green */
+  --nautilus-white: #1b1a16; /* primary text */
+  --nautilus-cream: #3c4138; /* secondary text on light */
+  --nautilus-gray: #6a6359; /* secondary text (AA on beige) */
   --nautilus-gray-light: #322e27; /* strong text */
+  --nautilus-gray-dim: #8a8276; /* faint mono labels */
 
   /* Brand ribbon colors — deeper, professional tones on cream */
   --band-1: #7c3aed;
@@ -147,12 +156,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--nautilus-muted);
-  border-radius: 3px;
+  background: #2a2722;
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--nautilus-gold);
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
 }
 
 /* ─── Selection ──────────────────────────────────────────────────────────────── */
@@ -183,7 +197,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .text-gradient-gold {
-  background: linear-gradient(135deg, #c9a84c 0%, #e8c97a 50%, #c9a84c 100%);
+  background: linear-gradient(
+    135deg,
+    var(--nautilus-gold) 0%,
+    var(--nautilus-gold-light) 50%,
+    var(--nautilus-gold) 100%
+  );
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -281,11 +300,188 @@ h1, h2, h3, h4, h5, h6 {
 .skeleton {
   background: linear-gradient(
     90deg,
-    #111111 25%,
-    #1e1e1e 50%,
-    #111111 75%
+    #131110 25%,
+    #221f1b 50%,
+    #131110 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
+}
+
+/* ─── Nautilus — editorial design system ─────────────────────────────────────── */
+
+/* Fonts as utilities */
+.font-mono {
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+
+/* Mono kicker / eyebrow label */
+.kicker {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--nautilus-gold);
+}
+
+/* Big Anton display headline */
+.display {
+  font-family: var(--font-display, sans-serif);
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 0.86;
+  letter-spacing: -0.01em;
+}
+
+/* Cinematic photo treatment (neutral desaturated grade → clears on hover).
+   Theme-agnostic so it reads well on both noir/violet and beige/vert. */
+.duo {
+  filter: grayscale(0.18) brightness(0.84) contrast(1.05);
+  transition: filter 0.7s var(--ease-out-expo), transform 1s var(--ease-out-expo);
+}
+.group:hover .duo {
+  filter: brightness(0.96);
+}
+
+/* ─── Legibility helpers — text & chips sitting on top of photos ───────────────
+   Photos always sit behind a dark gradient, so on-media chrome must stay light
+   in BOTH themes (never flip with the semantic tokens). */
+.media-title {
+  color: #f6f3ee;
+}
+.media-text {
+  color: #ddd7cb;
+}
+.media-chip {
+  background: rgba(10, 9, 14, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #f6f3ee;
+  backdrop-filter: blur(6px);
+}
+.on-media {
+  color: #f6f3ee;
+}
+
+/* Selection */
+::selection {
+  background: var(--nautilus-gold);
+  color: var(--nautilus-black);
+}
+
+/* ─── Marquee ──────────────────────────────────────────────────────────────── */
+@keyframes naut-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes naut-marquee-rev {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+.animate-marquee {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: naut-marquee 26s linear infinite;
+}
+.animate-marquee-rev {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: naut-marquee-rev 54s linear infinite;
+}
+
+/* ─── Blink (live dot) ─────────────────────────────────────────────────────── */
+@keyframes naut-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+.animate-blink {
+  animation: naut-blink 1.6s infinite;
+}
+
+/* ─── Hero text rise ───────────────────────────────────────────────────────── */
+@keyframes naut-up {
+  from { opacity: 0; transform: translateY(46px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-up {
+  animation: naut-up 0.9s var(--ease-out-expo) both;
+}
+
+/* ─── Scroll reveal ────────────────────────────────────────────────────────── */
+/* Only hide when JS is active (reveal-on set on <html>) so content is never
+   stuck invisible if the observer fails. */
+.reveal-on [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+}
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─── Custom cursor ────────────────────────────────────────────────────────── */
+body.naut-cursor,
+body.naut-cursor a,
+body.naut-cursor button,
+body.naut-cursor input {
+  cursor: none;
+}
+.naut-cursor-dot {
+  position: fixed;
+  z-index: 200;
+  left: 0;
+  top: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--nautilus-gold);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, background 0.2s;
+}
+.naut-cursor-ring {
+  position: fixed;
+  z-index: 199;
+  left: 0;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 168, 76, 0.6);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: width 0.25s, height 0.25s, border-color 0.25s, background 0.25s;
+}
+
+/* ─── Film grain overlay ───────────────────────────────────────────────────────
+   No mix-blend-mode (that forces a full-viewport repaint on every scroll/paint
+   and was the main source of UI lag). A low-opacity static texture on its own
+   GPU layer is virtually free. */
+.grain-overlay {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  opacity: 0.035;
+  transform: translateZ(0);
+  will-change: transform;
+  contain: strict;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E");
+}
+.light .grain-overlay {
+  opacity: 0.025;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-marquee-rev,
+  .animate-blink,
+  .animate-up {
+    animation: none;
+  }
+  .reveal-on [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
 }

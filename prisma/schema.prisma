@@ -68,14 +68,50 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
-  tickets       Ticket[]
-  artistProfile ArtistProfile?
-  auditLogs     AuditLog[]
+  accounts       Account[]
+  sessions       Session[]
+  tickets        Ticket[]
+  artistProfile  ArtistProfile?
+  auditLogs      AuditLog[]
+  passwordTokens PasswordToken[]
 
   @@index([email])
   @@index([role])
+}
+
+// One-time token to activate an account (artist created by admin) or reset a
+// password. The user sets their password via the link sent by email.
+model PasswordToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  purpose   String   @default("activation") // activation | reset
+  expires   DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+// Public "request an artist account" submissions. An admin reviews them and
+// creates the actual artist account (which triggers an activation email).
+model ArtistRequest {
+  id          String            @id @default(cuid())
+  firstName   String
+  lastName    String
+  email       String
+  description String            @db.Text
+  status      ReservationStatus @default(PENDING)
+  adminNotes  String?           @db.Text
+  createdUserId String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([status])
+  @@index([email])
 }
 
 model Account {
@@ -257,7 +293,10 @@ model Ticket {
   code         String       @unique @default(cuid())
   ticketTypeId String
   eventId      String
-  userId       String
+  userId       String?
+  // Guest buyer (no account) — email is where the e-ticket is sent.
+  buyerEmail   String?
+  buyerName    String?
   status       TicketStatus @default(VALID)
 
   stripePaymentIntentId String?
@@ -273,10 +312,11 @@ model Ticket {
 
   ticketType TicketType @relation(fields: [ticketTypeId], references: [id])
   event      Event      @relation(fields: [eventId], references: [id])
-  user       User       @relation(fields: [userId], references: [id])
+  user       User?      @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([eventId])
+  @@index([buyerEmail])
   @@index([code])
   @@index([stripePaymentIntentId])
   @@index([status])

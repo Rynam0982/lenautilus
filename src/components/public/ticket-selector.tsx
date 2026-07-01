@@ -2,26 +2,23 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Minus, Plus, Ticket, Lock } from "lucide-react";
+import { Minus, Plus, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/utils";
 import type { EventWithDetails } from "@/types";
 import type { TicketType } from "@prisma/client";
-import { toast } from "sonner";
 
 interface TicketSelectorProps {
   event: EventWithDetails;
   ticketTypes: TicketType[];
   isSoldOut: boolean;
-  isAuthenticated: boolean;
 }
 
 export function TicketSelector({
   event,
   ticketTypes,
   isSoldOut,
-  isAuthenticated,
 }: TicketSelectorProps) {
   const router = useRouter();
   const [selected, setSelected] = useState<string | null>(
@@ -36,18 +33,9 @@ export function TicketSelector({
   const maxQty = Math.min(10, available);
 
   const total = selectedType ? selectedType.price * quantity : 0;
+  const isFree = selectedType ? selectedType.price <= 0 : false;
 
   const handleCheckout = () => {
-    if (!isAuthenticated) {
-      toast.info("Connexion requise", {
-        description: "Créez un compte ou connectez-vous pour acheter des billets.",
-        action: {
-          label: "Se connecter",
-          onClick: () => router.push(`/auth/login?callbackUrl=/events/${event.slug}`),
-        },
-      });
-      return;
-    }
     const params = new URLSearchParams({
       eventId: event.id,
       ticketTypeId: selected!,
@@ -59,10 +47,18 @@ export function TicketSelector({
   const isPast = new Date(event.endDate) < new Date();
 
   return (
-    <div className="rounded-2xl border border-nautilus-border bg-nautilus-card p-6">
-      <h3 className="font-display text-xl font-semibold text-nautilus-white mb-5">
-        Billets
-      </h3>
+    <div className="rounded-[18px] border border-nautilus-muted bg-nautilus-card p-6">
+      <div className="mb-1 flex items-baseline justify-between">
+        <h3 className="font-display text-2xl uppercase text-nautilus-white">
+          Billetterie
+        </h3>
+        {!isPast && !isSoldOut && (
+          <span className="font-mono text-[11px] text-[#7fe3a9]">● En vente</span>
+        )}
+      </div>
+      <p className="mb-5 font-mono text-[11.5px] text-nautilus-gray">
+        Sélectionnez vos places
+      </p>
 
       {isPast ? (
         <div className="text-center py-6">
@@ -160,9 +156,11 @@ export function TicketSelector({
           {/* Total & CTA */}
           {selectedType && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-nautilus-gray">Total</span>
-                <span className="text-xl font-semibold font-display text-nautilus-white">
+              <div className="flex items-baseline justify-between border-t border-nautilus-muted pt-4">
+                <span className="font-mono text-[12px] uppercase tracking-[0.08em] text-nautilus-gray">
+                  Total
+                </span>
+                <span className="font-display text-[34px] leading-none text-nautilus-gold">
                   {total === 0 ? "Gratuit" : formatPrice(total)}
                 </span>
               </div>
@@ -171,20 +169,13 @@ export function TicketSelector({
                 onClick={handleCheckout}
                 className="w-full"
               >
-                {isAuthenticated ? (
-                  <>
-                    <Ticket className="h-4 w-4" />
-                    Réserver
-                  </>
-                ) : (
-                  <>
-                    <Lock className="h-4 w-4" />
-                    Se connecter pour réserver
-                  </>
-                )}
+                <Ticket className="h-4 w-4" />
+                {isFree ? "Réserver gratuitement" : "Réserver"}
               </Button>
               <p className="text-xs text-nautilus-gray text-center">
-                Paiement sécurisé • Billet envoyé par email
+                {isFree
+                  ? "Billet envoyé par email • Aucun compte requis"
+                  : "Paiement sécurisé • Billet envoyé par email"}
               </p>
             </div>
           )}

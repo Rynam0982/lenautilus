@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { prestations, chiffresStats } from "@/lib/projet-data";
+import {
+  prestations,
+  chiffresStats,
+  chiffresArtistes,
+  galleryPhotos,
+} from "@/lib/projet-data";
+import { CountUp } from "@/components/public/count-up";
 
 export const metadata: Metadata = {
   title: "Le projet",
@@ -10,140 +15,255 @@ export const metadata: Metadata = {
     "Le Nautilus, lieu culturel à Perpignan : accompagnement des artistes locaux, des organisateurs d'événements, sensibilisation aux métiers de la musique et diffusion des musiques actuelles.",
 };
 
+const toNumber = (v: string) => parseInt(v.replace(/[^\d]/g, ""), 10) || 0;
+
 export default function ProjetPage() {
-  const chiffres = prestations.find((p) => p.special === "chiffres")!;
-  const others = prestations.filter((p) => p.special !== "chiffres");
-  const heroStats = chiffresStats.slice(0, 3);
+  const missions = prestations.filter((p) => p.special !== "chiffres");
+  const galleryA = galleryPhotos.slice(0, 8);
+  const galleryB = galleryPhotos.slice(8, 16);
 
   return (
-    <div className="min-h-screen pt-16">
-      {/* Hero */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 text-center">
-        <p className="text-xs uppercase tracking-[0.3em] text-nautilus-gold mb-4">
-          Le projet
-        </p>
-        <h1 className="font-display text-4xl md:text-6xl font-bold text-nautilus-white leading-tight">
-          Un lieu culturel au service du territoire
-        </h1>
-        <p className="mt-6 text-base md:text-lg text-nautilus-gray-light max-w-3xl mx-auto leading-relaxed">
-          Le Nautilus est un lieu culturel composé de trois espaces
-          complémentaires, pour une capacité totale de 180 personnes. Les espaces
-          sont principalement mis à disposition d’organisateurs locaux, dans une
-          logique de soutien à la création et à la diffusion artistique. Le
-          Nautilus peut également s’engager dans des démarches de coproduction afin
-          d’accompagner des projets innovants et structurants pour le territoire.
-        </p>
+    <div className="min-h-screen">
+      {/* HEADER */}
+      <section className="px-7 pb-[30px] pt-[150px]">
+        <div className="mx-auto max-w-[1320px]">
+          <p className="kicker m-0 mb-[14px]">Le projet · Saison 2025</p>
+          <h1 className="display m-0 text-[clamp(52px,11vw,180px)]">
+            Une saison
+            <br />
+            <span className="text-nautilus-gold">fondatrice</span>
+          </h1>
+          <p className="m-0 mt-6 max-w-[60ch] text-[clamp(16px,1.5vw,21px)] leading-[1.55] text-nautilus-cream text-pretty">
+            2025 marque la première saison d&apos;activité complète du Nautilus&nbsp;:
+            une année structurante qui confirme la pertinence du projet et son
+            ancrage territorial. Diffusion, création, médiation et structuration
+            professionnelle s&apos;articulent au sein d&apos;un même lieu.
+          </p>
+        </div>
       </section>
 
-      {/* Chiffres clés */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="rounded-3xl border border-nautilus-border bg-nautilus-card p-8 md:p-12">
-          <div className="flex items-center gap-4 mb-8">
-            <Image
-              src={chiffres.image}
-              alt=""
-              width={64}
-              height={64}
-              className="rounded-xl"
-            />
-            <div>
-              <h2 className="font-display text-2xl font-bold text-nautilus-white">
-                {chiffres.title}
-              </h2>
-              <p className="text-sm text-nautilus-gray mt-1 max-w-2xl">
-                {chiffres.intro}
-              </p>
-            </div>
+      {/* BIG NUMBER */}
+      <section className="px-7 pb-5 pt-[30px]">
+        <div
+          data-reveal
+          className="mx-auto flex max-w-[1320px] flex-wrap items-center justify-between gap-[30px] rounded-[18px] border border-nautilus-border bg-nautilus-card p-[clamp(34px,5vw,60px)]"
+        >
+          <div>
+            <p className="m-0 mb-[10px] font-mono text-[12px] uppercase tracking-[0.18em] text-nautilus-gold-light">
+              Recettes de billetterie reversées au territoire
+            </p>
+            <p className="m-0 font-display text-[clamp(58px,9vw,140px)] leading-[0.82] text-nautilus-gold">
+              <CountUp value={60386} suffix=" €" />
+            </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {heroStats.map((s) => (
-              <div key={s.label} className="text-center sm:text-left">
-                <p className="font-display text-4xl md:text-5xl font-bold text-gradient-gold">
-                  {s.value}
+          <p className="m-0 max-w-[38ch] text-[16px] leading-[1.6] text-nautilus-cream">
+            Une dynamique forte où diffusion, création, médiation et structuration
+            professionnelle se rencontrent — et bénéficient directement aux acteurs
+            locaux.
+          </p>
+        </div>
+      </section>
+
+      {/* STATS GRID */}
+      <section className="px-7 py-10">
+        <div className="mx-auto max-w-[1320px]">
+          <div data-reveal className="mb-7 flex items-baseline gap-[14px]">
+            <span className="font-mono text-[13px] tracking-[0.1em] text-nautilus-gold">
+              [ 01 ]
+            </span>
+            <h2 className="display m-0 text-[clamp(32px,4.6vw,64px)]">Chiffres clés</h2>
+          </div>
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-nautilus-border bg-nautilus-border md:grid-cols-4">
+            {chiffresStats.map((s) => (
+              <div key={s.label} className="bg-nautilus-black p-[26px_22px]">
+                <p className="m-0 font-display text-[clamp(38px,4vw,58px)] leading-[0.85] text-nautilus-white">
+                  <CountUp value={toNumber(s.value)} />
                 </p>
-                <p className="text-sm text-nautilus-gray mt-2">{s.label}</p>
+                <p className="m-0 mt-3 font-mono text-[11.5px] leading-[1.45] tracking-[0.04em] text-nautilus-gray">
+                  {s.label}
+                </p>
               </div>
             ))}
           </div>
-          <Link
-            href={`/projet/${chiffres.slug}`}
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-nautilus-gold px-6 py-2.5 text-sm font-semibold text-nautilus-black hover:bg-nautilus-gold-light transition-colors"
-          >
-            En savoir plus
-            <ArrowRight className="h-4 w-4" />
-          </Link>
         </div>
       </section>
 
-      {/* Prestations */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 className="font-display text-3xl md:text-4xl font-bold text-nautilus-white text-center mb-3">
-          Nos prestations
-        </h2>
-        <p className="text-center text-nautilus-gray mb-14 max-w-2xl mx-auto">
-          Le Nautilus accompagne les artistes, les organisateurs et le public
-          autour des musiques actuelles.
-        </p>
-
-        <div className="space-y-10">
-          {others.map((p, i) => (
-            <article
-              key={p.slug}
-              className={`grid grid-cols-1 md:grid-cols-2 gap-8 items-center rounded-3xl border border-nautilus-border bg-nautilus-card overflow-hidden ${
-                i % 2 === 1 ? "md:[direction:rtl]" : ""
-              }`}
-            >
-              <div className="relative aspect-[4/3] md:aspect-auto md:h-full min-h-[260px] [direction:ltr]">
-                <Image
-                  src={p.image}
-                  alt={p.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
+      {/* ARTISTES */}
+      <section className="px-7 pb-[50px] pt-5">
+        <div className="mx-auto max-w-[1320px]">
+          <div data-reveal className="mb-7 flex items-baseline gap-[14px]">
+            <span className="font-mono text-[13px] tracking-[0.1em] text-nautilus-gold">
+              [ 02 ]
+            </span>
+            <h2 className="display m-0 text-[clamp(32px,4.6vw,64px)]">
+              Les artistes accueillis
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
+            {chiffresArtistes.map((a) => (
+              <div
+                key={a.label}
+                data-reveal
+                className="rounded-[14px] border border-nautilus-border bg-nautilus-card p-[26px]"
+              >
+                <p className="m-0 font-display text-[clamp(40px,4.4vw,62px)] leading-[0.85] text-nautilus-gold">
+                  <CountUp value={toNumber(a.value)} />
+                </p>
+                <p className="m-0 mt-3 font-mono text-[12px] tracking-[0.04em] text-nautilus-gray">
+                  {a.label}
+                </p>
               </div>
-              <div className="p-8 md:p-10 [direction:ltr]">
-                <p className="text-xs uppercase tracking-widest text-nautilus-gold mb-2">
-                  {p.subtitle}
-                </p>
-                <h3 className="font-display text-2xl font-bold text-nautilus-white mb-4">
-                  {p.title}
-                </h3>
-                <p className="text-sm text-nautilus-gray-light leading-relaxed mb-6">
-                  {p.intro}
-                </p>
-                <Link
-                  href={`/projet/${p.slug}`}
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-nautilus-gold hover:gap-3 transition-all"
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* MISSIONS */}
+      <section className="px-7 pb-[50px] pt-[30px]">
+        <div className="mx-auto max-w-[1320px]">
+          <div data-reveal className="mb-[30px] flex items-baseline gap-[14px]">
+            <span className="font-mono text-[13px] tracking-[0.1em] text-nautilus-gold">
+              [ 03 ]
+            </span>
+            <h2 className="display m-0 text-[clamp(32px,4.6vw,64px)]">Nos missions</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-[18px] md:grid-cols-2">
+            {missions.map((m) => {
+              const items = m.sections.find((s) => s.items)?.items ?? [];
+              return (
+                <article
+                  key={m.slug}
+                  data-reveal
+                  className="group flex flex-col overflow-hidden rounded-[16px] border border-nautilus-border bg-nautilus-card"
                 >
-                  En savoir plus
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </article>
-          ))}
+                  <div className="relative aspect-[16/8] overflow-hidden">
+                    <Image
+                      src={m.image}
+                      alt={m.title}
+                      fill
+                      sizes="(max-width:768px) 100vw, 640px"
+                      className="duo object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent to-70%" />
+                  </div>
+                  <div className="p-[24px_26px_28px]">
+                    <p className="m-0 mb-2 font-mono text-[11px] uppercase tracking-[0.12em] text-nautilus-gold-light">
+                      {m.subtitle}
+                    </p>
+                    <h3 className="display m-0 mb-3 text-[clamp(24px,2.4vw,36px)]">
+                      {m.title}
+                    </h3>
+                    <p className="m-0 mb-4 text-[15px] leading-[1.6] text-nautilus-cream">
+                      {m.intro}
+                    </p>
+                    {items.length > 0 && (
+                      <div className="flex flex-col gap-[9px]">
+                        {items.slice(0, 5).map((it) => (
+                          <div
+                            key={it}
+                            className="flex items-start gap-[10px] text-[14px] text-nautilus-cream"
+                          >
+                            <span className="mt-[1px] flex-none text-nautilus-gold">→</span>
+                            <span>{it}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <Link
+                      href={`/projet/${m.slug}`}
+                      data-hov
+                      className="mt-5 inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.1em] text-nautilus-gold"
+                    >
+                      En savoir plus ↗
+                    </Link>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      {/* Contact / CTA */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="rounded-3xl border border-nautilus-border bg-gradient-to-br from-nautilus-card to-nautilus-dark p-8 md:p-12 text-center">
-          <h2 className="font-display text-3xl font-bold text-nautilus-white">
-            Un projet à accompagner ?
+      {/* GALLERY */}
+      <section className="py-10">
+        <div className="mx-auto mb-[26px] max-w-[1320px] px-7">
+          <div data-reveal className="flex items-baseline gap-[14px]">
+            <span className="font-mono text-[13px] tracking-[0.1em] text-nautilus-gold">
+              [ 04 ]
+            </span>
+            <h2 className="display m-0 text-[clamp(32px,4.6vw,64px)]">En images</h2>
+          </div>
+        </div>
+        <GalleryRow photos={galleryA} reverse={false} />
+        <GalleryRow photos={galleryB} reverse />
+      </section>
+
+      {/* CTA */}
+      <section className="px-7 pb-20 pt-5">
+        <div
+          data-reveal
+          className="mx-auto max-w-[1320px] rounded-[18px] border border-nautilus-border bg-nautilus-card p-[clamp(36px,5vw,64px)] text-center"
+        >
+          <p className="kicker m-0 mb-[14px]">Un projet à accompagner ?</p>
+          <h2 className="display m-0 mb-4 text-[clamp(34px,5.5vw,76px)]">
+            Parlons-en ensemble
           </h2>
-          <p className="text-nautilus-gray mt-3 max-w-xl mx-auto">
+          <p className="mx-auto mb-7 max-w-[54ch] text-[16px] leading-[1.6] text-nautilus-cream">
             Le Nautilus — 20 rue Jules Verne, 66000 Perpignan ·
             bonjour@le-nautilus.org · 06 26 52 10 15
           </p>
-          <Link
-            href="/events"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-nautilus-gold px-7 py-3 text-sm font-semibold text-nautilus-black hover:bg-nautilus-gold-light transition-colors"
-          >
-            Découvrir notre agenda
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link
+              href="/events"
+              data-hov
+              className="rounded-full bg-nautilus-gold px-7 py-[15px] text-[15px] font-bold text-nautilus-black transition-colors hover:bg-nautilus-gold-light"
+            >
+              Découvrir l&apos;agenda
+            </Link>
+            <Link
+              href="/venues"
+              data-hov
+              className="rounded-full border border-nautilus-border-strong px-7 py-[15px] text-[15px] font-semibold transition-colors hover:border-nautilus-gold hover:text-nautilus-gold"
+            >
+              Nos salles
+            </Link>
+          </div>
         </div>
       </section>
+    </div>
+  );
+}
+
+function GalleryRow({
+  photos,
+  reverse,
+}: {
+  photos: string[];
+  reverse: boolean;
+}) {
+  const run = [...photos, ...photos];
+  return (
+    <div className="overflow-hidden py-[6px]">
+      <div
+        className={`inline-flex gap-[14px] pl-[14px] ${
+          reverse ? "animate-marquee-rev" : "animate-marquee"
+        }`}
+      >
+        {run.map((src, i) => (
+          <div
+            key={i}
+            className="relative h-[230px] w-[340px] flex-none overflow-hidden rounded-[10px]"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={src}
+              alt=""
+              aria-hidden
+              className="duo h-full w-full object-cover"
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

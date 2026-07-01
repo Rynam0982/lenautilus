@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Send } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export function NewsletterSignup() {
   const [email, setEmail] = useState("");
@@ -33,26 +33,26 @@ export function NewsletterSignup() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex w-full md:w-auto gap-2">
+    <form
+      onSubmit={onSubmit}
+      className="flex min-w-[260px] max-w-[420px] overflow-hidden rounded-full border border-nautilus-border-strong focus-within:border-nautilus-gold/70 transition-colors"
+    >
       <input
         type="email"
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="votre@email.fr"
-        className="h-11 w-full md:w-64 px-4 rounded-xl border border-nautilus-border bg-nautilus-dark/60 text-sm text-nautilus-white placeholder:text-nautilus-gray/50 focus:border-nautilus-gold/60 focus:outline-none transition-colors"
+        className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm text-nautilus-white placeholder:text-nautilus-gray/60 focus:outline-none"
       />
       <button
         type="submit"
         disabled={loading}
-        className="h-11 px-5 inline-flex items-center gap-2 rounded-xl bg-nautilus-gold text-nautilus-black text-sm font-semibold hover:bg-nautilus-gold-light transition-colors disabled:opacity-60 shrink-0"
+        data-hov
+        className="inline-flex shrink-0 items-center justify-center bg-nautilus-gold px-5 text-base font-bold text-nautilus-black transition-colors hover:bg-nautilus-gold-light disabled:opacity-60"
+        aria-label="S'inscrire à la newsletter"
       >
-        {loading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <Send className="h-4 w-4" />
-        )}
-        S’inscrire
+        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "→"}
       </button>
     </form>
   );

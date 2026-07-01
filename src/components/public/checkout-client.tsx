@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadStripe } from "@stripe/stripe-js";
 import {
@@ -9,7 +9,7 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import { Calendar, MapPin, Ticket, Shield } from "lucide-react";
+import { Calendar, MapPin, Ticket, Shield, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { formatDate, formatPrice } from "@/lib/utils";
@@ -24,127 +24,164 @@ interface CheckoutClientProps {
   event: Event & { venue: Venue };
   ticketType: TicketType;
   quantity: number;
-  userId: string;
-  userEmail: string;
 }
 
-export function CheckoutClient(props: CheckoutClientProps) {
+export function CheckoutClient({ event, ticketType, quantity }: CheckoutClientProps) {
+  const router = useRouter();
+  const isFree = ticketType.price <= 0;
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
-  const [isCreating, setIsCreating] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const create = async () => {
-      try {
-        const res = await fetch("/api/payments/create-intent", {
+  const total = ticketType.price * quantity;
+
+  async function handleInfoSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email) return;
+    setLoading(true);
+    try {
+      if (isFree) {
+        const res = await fetch("/api/tickets/free", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ticketTypeId: props.ticketType.id,
-            quantity: props.quantity,
-          }),
+          body: JSON.stringify({ ticketTypeId: ticketType.id, quantity, email, name }),
         });
-        if (!res.ok) throw new Error("Impossible de créer la session de paiement");
-        const data = (await res.json()) as {
-          clientSecret: string;
-          paymentIntentId: string;
-        };
-        setClientSecret(data.clientSecret);
-        setPaymentIntentId(data.paymentIntentId);
-      } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Erreur");
-      } finally {
-        setIsCreating(false);
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error ?? "Erreur");
+        router.push("/checkout/success?free=1");
+        return;
       }
-    };
-    create();
-  }, [props.ticketType.id, props.quantity]);
 
-  if (isCreating) {
-    return (
-      <div className="space-y-4">
-        <div className="skeleton h-48 rounded-2xl" />
-        <div className="skeleton h-64 rounded-2xl" />
-      </div>
-    );
-  }
-
-  if (!clientSecret) {
-    return (
-      <div className="rounded-2xl border border-red-800/50 bg-red-900/10 p-8 text-center">
-        <p className="text-red-400">Impossible de charger le paiement. Réessayez plus tard.</p>
-      </div>
-    );
+      const res = await fetch("/api/payments/create-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ticketTypeId: ticketType.id, quantity, email, name }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error ?? "Erreur");
+      setClientSecret(data.clientSecret);
+      setPaymentIntentId(data.paymentIntentId);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <div className="space-y-6">
       {/* Order summary */}
-      <div className="rounded-2xl border border-nautilus-border bg-nautilus-card p-6">
-        <h2 className="font-display text-lg font-semibold text-nautilus-white mb-5">
+      <div className="rounded-[18px] border border-nautilus-border bg-nautilus-card p-6">
+        <h2 className="mb-5 font-display text-xl uppercase text-nautilus-white">
           Récapitulatif
         </h2>
         <div className="space-y-3 text-sm">
           <div className="flex items-start gap-3">
-            <Ticket className="h-4 w-4 text-nautilus-gold shrink-0 mt-0.5" />
+            <Ticket className="mt-0.5 h-4 w-4 shrink-0 text-nautilus-gold" />
             <div>
-              <p className="text-nautilus-white font-medium">{props.event.title}</p>
+              <p className="font-medium text-nautilus-white">{event.title}</p>
               <p className="text-nautilus-gray">
-                {props.ticketType.name} × {props.quantity}
+                {ticketType.name} × {quantity}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Calendar className="h-4 w-4 text-nautilus-gold shrink-0" />
-            <p className="text-nautilus-gray">{formatDate(props.event.startDate)}</p>
+            <Calendar className="h-4 w-4 shrink-0 text-nautilus-gold" />
+            <p className="text-nautilus-gray">{formatDate(event.startDate)}</p>
           </div>
           <div className="flex items-center gap-3">
-            <MapPin className="h-4 w-4 text-nautilus-gold shrink-0" />
-            <p className="text-nautilus-gray">{props.event.venue.name}</p>
+            <MapPin className="h-4 w-4 shrink-0 text-nautilus-gold" />
+            <p className="text-nautilus-gray">{event.venue.name}</p>
           </div>
         </div>
         <Separator className="my-4" />
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-nautilus-gray">Total</span>
-          <span className="font-display text-2xl font-semibold text-nautilus-white">
-            {formatPrice(props.ticketType.price * props.quantity)}
+        <div className="flex items-baseline justify-between">
+          <span className="font-mono text-[12px] uppercase tracking-[0.08em] text-nautilus-gray">
+            Total
+          </span>
+          <span className="font-display text-[34px] leading-none text-nautilus-gold">
+            {isFree ? "Gratuit" : formatPrice(total)}
           </span>
         </div>
       </div>
 
-      {/* Stripe payment form */}
-      <div className="rounded-2xl border border-nautilus-border bg-nautilus-card p-6">
-        <h2 className="font-display text-lg font-semibold text-nautilus-white mb-5">
-          Paiement
-        </h2>
-        <Elements
-          stripe={stripePromise}
-          options={{
-            clientSecret,
-            appearance: {
-              theme: "night",
-              variables: {
-                colorPrimary: "#c9a84c",
-                colorBackground: "#111111",
-                colorText: "#f5f5f0",
-                colorDanger: "#f87171",
-                fontFamily: "system-ui, sans-serif",
-                borderRadius: "8px",
-              },
-            },
-          }}
+      {/* Step 1 — buyer info (until a paid intent is created) */}
+      {!clientSecret ? (
+        <form
+          onSubmit={handleInfoSubmit}
+          className="space-y-4 rounded-[18px] border border-nautilus-border bg-nautilus-card p-6"
         >
-          <PaymentForm
-            paymentIntentId={paymentIntentId!}
-            eventSlug={props.event.slug}
-          />
-        </Elements>
-      </div>
+          <h2 className="font-display text-xl uppercase text-nautilus-white">
+            Vos informations
+          </h2>
+          <div>
+            <label className="mb-1 block font-mono text-[11px] uppercase tracking-[0.1em] text-nautilus-gray">
+              Nom (optionnel)
+            </label>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Votre nom"
+              className="w-full rounded-xl border border-nautilus-border-strong bg-transparent px-4 py-3 text-sm text-nautilus-white placeholder:text-nautilus-gray/60 focus:border-nautilus-gold/70 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block font-mono text-[11px] uppercase tracking-[0.1em] text-nautilus-gray">
+              E-mail (réception des billets)
+            </label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="votre@email.fr"
+              className="w-full rounded-xl border border-nautilus-border-strong bg-transparent px-4 py-3 text-sm text-nautilus-white placeholder:text-nautilus-gray/60 focus:border-nautilus-gold/70 focus:outline-none"
+            />
+          </div>
+          <Button type="submit" size="lg" className="w-full" loading={loading}>
+            {isFree ? "Réserver mes places" : "Continuer vers le paiement"}
+          </Button>
+          <p className="flex items-center justify-center gap-2 text-center text-xs text-nautilus-gray">
+            <Mail className="h-3.5 w-3.5 text-nautilus-gold" />
+            Vos billets arrivent par e-mail, aucun compte requis.
+          </p>
+        </form>
+      ) : (
+        <div className="rounded-[18px] border border-nautilus-border bg-nautilus-card p-6">
+          <h2 className="mb-5 font-display text-xl uppercase text-nautilus-white">
+            Paiement
+          </h2>
+          <Elements
+            stripe={stripePromise}
+            options={{
+              clientSecret,
+              appearance: {
+                theme: "night",
+                variables: {
+                  colorPrimary: "#a855f7",
+                  colorBackground: "#15121d",
+                  colorText: "#f3f0f7",
+                  colorDanger: "#f87171",
+                  fontFamily: "system-ui, sans-serif",
+                  borderRadius: "10px",
+                },
+              },
+            }}
+          >
+            <PaymentForm
+              paymentIntentId={paymentIntentId!}
+              email={email}
+            />
+          </Elements>
+        </div>
+      )}
 
-      {/* Security note */}
-      <div className="flex items-center gap-2 text-xs text-nautilus-gray justify-center">
+      <div className="flex items-center justify-center gap-2 text-xs text-nautilus-gray">
         <Shield className="h-3.5 w-3.5 text-nautilus-gold" />
-        Paiement 100% sécurisé par Stripe. Vos données sont protégées.
+        Paiement 100% sécurisé par Stripe.
       </div>
     </div>
   );
@@ -152,26 +189,25 @@ export function CheckoutClient(props: CheckoutClientProps) {
 
 function PaymentForm({
   paymentIntentId,
-  eventSlug,
+  email,
 }: {
   paymentIntentId: string;
-  eventSlug: string;
+  email: string;
 }) {
   const stripe = useStripe();
   const elements = useElements();
-  const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!stripe || !elements) return;
-
     setIsProcessing(true);
 
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         return_url: `${window.location.origin}/checkout/success?intent=${paymentIntentId}`,
+        receipt_email: email,
       },
     });
 
@@ -183,11 +219,11 @@ function PaymentForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <PaymentElement />
+      <PaymentElement options={{ defaultValues: { billingDetails: { email } } }} />
       <Button
         type="submit"
         size="lg"
-        className="w-full mt-2"
+        className="mt-2 w-full"
         disabled={!stripe || !elements}
         loading={isProcessing}
       >

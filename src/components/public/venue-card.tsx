@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Users, CalendarDays, ArrowRight, Building2 } from "lucide-react";
+import { Building2 } from "lucide-react";
 import type { Venue } from "@prisma/client";
 
 interface VenueCardProps {
@@ -9,50 +9,40 @@ interface VenueCardProps {
 
 export function VenueCard({ venue }: VenueCardProps) {
   return (
-    <Link href={`/venues/${venue.slug}`} className="group block h-full">
-      <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-nautilus-border bg-nautilus-card transition-all duration-300 hover:-translate-y-1 hover:border-nautilus-gold/50 hover:shadow-xl hover:shadow-black/20">
-        {/* Image */}
-        <div className="relative aspect-[16/10] overflow-hidden bg-nautilus-dark">
-          {venue.coverImage ? (
-            <Image
-              src={venue.coverImage}
-              alt={venue.name}
-              fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, 400px"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-nautilus-muted to-nautilus-dark">
-              <Building2 className="h-10 w-10 text-nautilus-gold/40" />
-            </div>
-          )}
-        </div>
+    <Link
+      href={`/venues/${venue.slug}`}
+      data-hov
+      className="group relative block overflow-hidden rounded-[14px] border border-nautilus-border bg-nautilus-card transition-[border-color,transform] duration-300 hover:border-nautilus-gold"
+    >
+      <div className="relative aspect-[4/5] overflow-hidden">
+        {venue.coverImage ? (
+          <Image
+            src={venue.coverImage}
+            alt={venue.name}
+            fill
+            sizes="(max-width: 768px) 100vw, 420px"
+            className="duo object-cover group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-nautilus-muted to-nautilus-dark">
+            <Building2 className="h-10 w-10 text-nautilus-gold/40" />
+          </div>
+        )}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent to-65%" />
 
-        {/* Content on the solid card surface */}
-        <div className="flex flex-1 flex-col p-5">
-          <h3 className="font-display text-xl font-semibold text-nautilus-white transition-colors group-hover:text-nautilus-gold mb-2">
+        <span className="media-chip absolute right-[14px] top-[14px] rounded-full px-[10px] py-[6px] font-mono text-[11px] tracking-[0.04em]">
+          {venue.capacity.toLocaleString("fr-FR")} places
+        </span>
+
+        <div className="absolute inset-x-[18px] bottom-4">
+          <p className="mb-[6px] font-mono text-[11px] uppercase tracking-[0.12em] text-nautilus-gold-light line-clamp-1 [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]">
+            {venue._count ? `${venue._count.events} événements` : "Programmation"}
+          </p>
+          <h3 className="media-title font-display text-[clamp(26px,2.6vw,40px)] uppercase leading-[0.92]">
             {venue.name}
           </h3>
-          <p className="text-sm text-nautilus-gray line-clamp-2 mb-4">
-            {venue.description}
-          </p>
-          <div className="mt-auto flex items-center justify-between">
-            <div className="flex items-center gap-4 text-xs text-nautilus-gray">
-              <span className="flex items-center gap-1.5">
-                <Users className="h-3.5 w-3.5 text-nautilus-gold" />
-                {venue.capacity.toLocaleString("fr-FR")} personnes
-              </span>
-              {venue._count && (
-                <span className="flex items-center gap-1.5">
-                  <CalendarDays className="h-3.5 w-3.5 text-nautilus-gold" />
-                  {venue._count.events} événements
-                </span>
-              )}
-            </div>
-            <ArrowRight className="h-4 w-4 text-nautilus-gold opacity-0 -translate-x-2 transition-all group-hover:opacity-100 group-hover:translate-x-0" />
-          </div>
         </div>
-      </article>
+      </div>
     </Link>
   );
 }

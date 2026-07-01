@@ -18,16 +18,20 @@ export default async function LoginPage({ searchParams }: PageProps) {
     <div className="min-h-screen flex items-center justify-center px-4 bg-nautilus-black">
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
-          <Link href="/" className="font-display text-2xl font-bold text-nautilus-white hover:text-nautilus-gold transition-colors">
-            LE NAUTILUS
+          <Link href="/" className="inline-flex items-center gap-[11px] transition-opacity hover:opacity-90">
+            <span className="block h-[11px] w-[11px] rounded-full bg-nautilus-gold shadow-[0_0_14px_rgba(201,168,76,0.7)]" />
+            <span className="font-display text-2xl tracking-[0.04em]">LE NAUTILUS</span>
           </Link>
-          <h1 className="font-display text-3xl font-bold text-nautilus-white mt-6 mb-2">
+          <h1 className="font-display text-4xl uppercase text-nautilus-white mt-7 mb-2">
             Connexion
           </h1>
-          <p className="text-nautilus-gray text-sm">
-            Pas encore de compte ?{" "}
-            <Link href="/auth/register" className="text-nautilus-gold hover:underline">
-              S'inscrire
+          <p className="text-nautilus-gray text-sm font-mono">
+            Espace professionnel — accès réservé.
+          </p>
+          <p className="text-nautilus-gray text-sm font-mono mt-1">
+            Artiste ?{" "}
+            <Link href="/devenir-artiste" className="text-nautilus-gold hover:underline">
+              Demander un compte
             </Link>
           </p>
         </div>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+  body{ margin:0; background:#0b0a09; color:#f4efe2; font-family:'Space Grotesk',system-ui,sans-serif; overflow-x:hidden; }
+  ::selection{ background:#c9a84c; color:#0b0a09; }
+  a{ color:inherit; text-decoration:none; }
+  @keyframes naut-marquee{ from{ transform:translateX(0) } to{ transform:translateX(-50%) } }
+  @keyframes naut-up{ from{ opacity:0; transform:translateY(46px) } to{ opacity:1; transform:translateY(0) } }
+  @keyframes naut-blink{ 0%,100%{ opacity:1 } 50%{ opacity:.2 } }
+  @keyframes naut-spin{ from{ transform:rotate(0) } to{ transform:rotate(360deg) } }
+  body.naut-cursor, body.naut-cursor a, body.naut-cursor button{ cursor:none; }
+  ::-webkit-scrollbar{ width:9px; height:9px } ::-webkit-scrollbar-track{ background:#0b0a09 } ::-webkit-scrollbar-thumb{ background:#2a2722; border-radius:6px } ::-webkit-scrollbar-thumb:hover{ background:#c9a84c }
+</style>
+</helmet>
+<div data-naut-root style="position:relative; min-height:100vh; background:#0b0a09; color:#f4efe2; font-family:'Space Grotesk',system-ui,sans-serif;">
+
+  <div data-grain style="pointer-events:none; position:fixed; inset:0; z-index:80; opacity:.05; mix-blend-mode:overlay; background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E');"></div>
+
+  <header data-nav style="position:fixed; top:0; left:0; right:0; z-index:60; transition:background .4s ease, backdrop-filter .4s ease, border-color .4s ease; border-bottom:1px solid transparent;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 28px; gap:24px;">
+      <a href="Accueil.dc.html" style="display:flex; align-items:center; gap:11px;">
+        <span style="width:11px; height:11px; border-radius:50%; background:#c9a84c; box-shadow:0 0 14px rgba(201,168,76,.7); display:block;"></span>
+        <span style="font-family:'Anton',sans-serif; font-size:21px; letter-spacing:.04em; line-height:1;">LE&nbsp;NAUTILUS</span>
+      </a>
+      <nav style="display:flex; align-items:center; gap:30px; font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase;">
+        <a href="Agenda.dc.html" data-hov style="opacity:.8; transition:opacity .2s, color .2s;">Agenda</a>
+        <a href="Salles.dc.html" data-hov style="opacity:.8; transition:opacity .2s, color .2s;">Salles</a>
+        <a href="Projet.dc.html" data-hov style="opacity:.8; transition:opacity .2s, color .2s;">Le&nbsp;projet</a>
+        <a href="Agenda.dc.html" data-hov data-cta style="display:inline-flex; align-items:center; gap:8px; background:#c9a84c; color:#0b0a09; padding:9px 18px; border-radius:100px; font-weight:700; opacity:1;">Billetterie ↗</a>
+      </nav>
+    </div>
+    <div data-marquee style="overflow:hidden; border-top:1px solid #221f1b; border-bottom:1px solid #221f1b; background:rgba(11,10,9,.6);">
+      <div style="display:inline-flex; white-space:nowrap; animation:naut-marquee 26s linear infinite; font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:#9a9488; padding:8px 0;">
+        <span style="padding:0 22px;">Saison 2025 — 26</span><span style="color:#c9a84c; padding:0 22px;">✦</span><span style="padding:0 22px;">Musiques actuelles</span><span style="color:#c9a84c; padding:0 22px;">✦</span><span style="padding:0 22px;">Concerts · Résidences · Ateliers</span><span style="color:#c9a84c; padding:0 22px;">✦</span><span style="padding:0 22px;">Billetterie ouverte</span><span style="color:#c9a84c; padding:0 22px;">✦</span>
+        <span style="padding:0 22px;">Saison 2025 — 26</span><span style="color:#c9a84c; padding:0 22px;">✦</span><span style="padding:0 22px;">Musiques actuelles</span><span style="color:#c9a84c; padding:0 22px;">✦</span><span style="padding:0 22px;">Concerts · Résidences · Ateliers</span><span style="color:#c9a84c; padding:0 22px;">✦</span><span style="padding:0 22px;">Billetterie ouverte</span><span style="color:#c9a84c; padding:0 22px;">✦</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ░░ HERO ░░ -->
+  <section style="position:relative; padding:158px 28px 70px;">
+    <div style="max-width:1320px; margin:0 auto;">
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-bottom:26px;">
+        <p style="font-family:'Space Mono',monospace; font-size:12.5px; letter-spacing:.26em; text-transform:uppercase; color:#c9a84c; margin:0; animation:naut-up .8s .05s both cubic-bezier(.16,1,.3,1);">Scène — Musiques actuelles — Pyrénées-Orientales</p>
+        <p style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.16em; color:#9a9488; margin:0; display:flex; align-items:center; gap:9px; animation:naut-up .8s .1s both cubic-bezier(.16,1,.3,1);"><span style="width:7px;height:7px;border-radius:50%;background:#34d27a;display:inline-block;animation:naut-blink 1.6s infinite;"></span>3 salles · 924 artistes accueillis</p>
+      </div>
+
+      <h1 style="font-family:'Anton',sans-serif; font-weight:400; line-height:.85; letter-spacing:-.01em; margin:0; font-size:clamp(58px,12.5vw,188px); text-transform:uppercase;">
+        <span style="display:block; animation:naut-up .9s .12s both cubic-bezier(.16,1,.3,1);">Ce qui vous</span>
+        <span style="display:block; color:#c9a84c; animation:naut-up .9s .22s both cubic-bezier(.16,1,.3,1);">attend ce soir<span style="color:#f4efe2;">.</span></span>
+      </h1>
+
+      <div style="display:grid; grid-template-columns:1.55fr 1fr; gap:34px; margin-top:46px; align-items:end;" data-hero-grid>
+        <!-- featured photo -->
+        <a href="Evenement.dc.html" data-hov style="position:relative; display:block; border-radius:14px; overflow:hidden; aspect-ratio:16/10; background:#131110; animation:naut-up 1s .3s both cubic-bezier(.16,1,.3,1);">
+          <img data-duo src="assets/photos/p03.jpg" alt="Concert à la Grande Scène" style="width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(.25) sepia(.55) saturate(1.5) brightness(.82) contrast(1.05); transition:filter .7s cubic-bezier(.16,1,.3,1), transform 1.2s cubic-bezier(.16,1,.3,1); transform:scale(1.03);" style-hover="filter:grayscale(0) sepia(0) saturate(1) brightness(1) contrast(1); transform:scale(1.07);">
+          <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(11,10,9,.85) 0%, rgba(11,10,9,.05) 55%); pointer-events:none;"></div>
+          <div style="position:absolute; top:16px; left:16px; display:flex; gap:8px;">
+            <span style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; background:#c9a84c; color:#0b0a09; padding:6px 11px; border-radius:100px; font-weight:700;">À l'affiche</span>
+            <span style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; background:rgba(11,10,9,.6); backdrop-filter:blur(6px); padding:6px 11px; border-radius:100px; border:1px solid #3a352c;">Complet à 80%</span>
+          </div>
+          <div style="position:absolute; left:20px; right:20px; bottom:18px; display:flex; align-items:flex-end; justify-content:space-between; gap:16px;">
+            <div>
+              <p style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.14em; color:#e8c97a; margin:0 0 6px;">VEN 14.11 · 20H30 · LA GRANDE SCÈNE</p>
+              <h2 style="font-family:'Anton',sans-serif; font-weight:400; font-size:clamp(34px,5vw,64px); line-height:.9; margin:0; text-transform:uppercase;">Kérozène</h2>
+              <p style="margin:6px 0 0; font-size:14px; color:#cfc8b8;">Post-punk incandescent · FR</p>
+            </div>
+            <span style="flex:none; width:58px; height:58px; border-radius:50%; border:1px solid #c9a84c; display:grid; place-items:center; font-size:22px; color:#c9a84c;">↗</span>
+          </div>
+        </a>
+
+        <!-- intro + ctas -->
+        <div style="animation:naut-up 1s .42s both cubic-bezier(.16,1,.3,1);">
+          <p style="font-size:clamp(16px,1.4vw,19px); line-height:1.55; color:#cfc8b8; margin:0 0 26px; text-wrap:pretty;">Trois salles, une programmation qui ne dort jamais. Concerts, résidences, ateliers&nbsp;: le Nautilus fait vivre les musiques actuelles au cœur du territoire.</p>
+          <div style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:30px;">
+            <a href="Agenda.dc.html" data-hov style="display:inline-flex; align-items:center; gap:10px; background:#c9a84c; color:#0b0a09; padding:14px 24px; border-radius:100px; font-weight:700; font-size:15px;">Voir l'agenda <span style="font-size:17px;">→</span></a>
+            <a href="Salles.dc.html" data-hov style="display:inline-flex; align-items:center; gap:10px; border:1px solid #3a352c; padding:14px 24px; border-radius:100px; font-weight:600; font-size:15px; transition:border-color .25s, color .25s;" style-hover="border-color:#c9a84c; color:#c9a84c;">Nos salles</a>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; border-top:1px solid #221f1b; padding-top:20px;">
+            <div><p style="font-family:'Anton',sans-serif; font-size:30px; margin:0; color:#c9a84c; line-height:1;">358</p><p style="font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:#9a9488; margin:5px 0 0;">événements / an</p></div>
+            <div><p style="font-family:'Anton',sans-serif; font-size:30px; margin:0; color:#c9a84c; line-height:1;">12 273</p><p style="font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:#9a9488; margin:5px 0 0;">spectateurs</p></div>
+            <div><p style="font-family:'Anton',sans-serif; font-size:30px; margin:0; color:#c9a84c; line-height:1;">65</p><p style="font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:#9a9488; margin:5px 0 0;">soirées gratuites</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ AGENDA ░░ -->
+  <section style="position:relative; padding:60px 28px 40px;">
+    <div style="max-width:1320px; margin:0 auto;">
+      <div data-reveal style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; border-top:1px solid #221f1b; padding-top:26px; margin-bottom:8px; opacity:0; transform:translateY(30px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);">
+        <div style="display:flex; align-items:baseline; gap:16px;">
+          <span style="font-family:'Space Mono',monospace; font-size:13px; color:#c9a84c; letter-spacing:.1em;">[ 01 ]</span>
+          <h2 style="font-family:'Anton',sans-serif; font-weight:400; font-size:clamp(38px,6vw,86px); margin:0; line-height:.9; text-transform:uppercase;">Prochainement</h2>
+        </div>
+        <a href="Agenda.dc.html" data-hov style="font-family:'Space Mono',monospace; font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; color:#c9a84c; display:inline-flex; align-items:center; gap:9px;">Tout l'agenda <span style="font-size:15px;">↗</span></a>
+      </div>
+
+      <div data-agenda-list style="margin-top:18px;">
+        <sc-for list="{{ events }}" as="ev" hint-placeholder-count="6">
+          <a href="Evenement.dc.html" data-agenda-row data-img="{{ ev.img }}" data-hov style="display:grid; grid-template-columns:54px 168px 1fr 200px 110px 40px; align-items:center; gap:18px; padding:22px 6px; border-top:1px solid #221f1b; transition:background .3s, padding .3s; opacity:0; transform:translateY(24px);" data-reveal-row>
+            <span style="font-family:'Space Mono',monospace; font-size:13px; color:#5f5a50;">{{ ev.num }}</span>
+            <span style="font-family:'Space Mono',monospace; font-size:13.5px; letter-spacing:.08em; color:#e8c97a;">{{ ev.date }}</span>
+            <span style="font-family:'Anton',sans-serif; font-weight:400; font-size:clamp(26px,3.3vw,44px); text-transform:uppercase; line-height:.95; transition:color .3s, transform .35s cubic-bezier(.16,1,.3,1);" data-row-title>{{ ev.artist }}</span>
+            <span style="font-size:14px; color:#9a9488;">{{ ev.genre }}</span>
+            <span style="font-family:'Space Mono',monospace; font-size:13px; color:#cfc8b8; text-align:right;">{{ ev.price }}</span>
+            <span style="justify-self:end; font-size:20px; color:#5f5a50; transition:color .3s, transform .35s;" data-row-arrow>↗</span>
+          </a>
+        </sc-for>
+        <div style="border-top:1px solid #221f1b;"></div>
+      </div>
+    </div>
+    <img data-agenda-thumb alt="" style="position:fixed; z-index:55; width:248px; height:178px; object-fit:cover; border-radius:10px; pointer-events:none; opacity:0; transform:translate(-50%,-50%) scale(.85) rotate(-4deg); transition:opacity .25s ease, transform .25s cubic-bezier(.16,1,.3,1); box-shadow:0 24px 60px rgba(0,0,0,.6); left:0; top:0;">
+  </section>
+
+  <!-- ░░ SALLES ░░ -->
+  <section style="position:relative; padding:70px 28px;">
+    <div style="max-width:1320px; margin:0 auto;">
+      <div data-reveal style="display:flex; align-items:baseline; gap:16px; margin-bottom:34px; opacity:0; transform:translateY(30px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);">
+        <span style="font-family:'Space Mono',monospace; font-size:13px; color:#c9a84c; letter-spacing:.1em;">[ 02 ]</span>
+        <h2 style="font-family:'Anton',sans-serif; font-weight:400; font-size:clamp(38px,6vw,86px); margin:0; line-height:.9; text-transform:uppercase;">Trois&nbsp;salles, <span style="color:#c9a84c;">une&nbsp;énergie</span></h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:18px;" data-salles-grid>
+        <sc-for list="{{ salles }}" as="s" hint-placeholder-count="3">
+          <a href="Salles.dc.html" data-hov data-reveal-row style="position:relative; display:block; border-radius:14px; overflow:hidden; background:#131110; border:1px solid #221f1b; opacity:0; transform:translateY(30px); transition:transform .4s cubic-bezier(.16,1,.3,1), border-color .4s;" style-hover="border-color:#c9a84c;">
+            <div style="position:relative; aspect-ratio:4/5; overflow:hidden;">
+              <img src="{{ s.img }}" alt="{{ s.name }}" style="width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(.3) sepia(.5) saturate(1.4) brightness(.8) contrast(1.05); transition:filter .7s, transform 1s cubic-bezier(.16,1,.3,1);" style-hover="filter:none; transform:scale(1.05);">
+              <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(11,10,9,.92), rgba(11,10,9,.05) 60%); pointer-events:none;"></div>
+              <span style="position:absolute; top:14px; right:14px; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.08em; background:rgba(11,10,9,.6); backdrop-filter:blur(6px); border:1px solid #3a352c; padding:6px 10px; border-radius:100px;">{{ s.cap }}</span>
+              <div style="position:absolute; left:18px; right:18px; bottom:16px;">
+                <p style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#e8c97a; margin:0 0 6px;">{{ s.tag }}</p>
+                <h3 style="font-family:'Anton',sans-serif; font-weight:400; font-size:clamp(26px,2.6vw,40px); margin:0; text-transform:uppercase; line-height:.92;">{{ s.name }}</h3>
+              </div>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ PROJET ░░ -->
+  <section style="position:relative; padding:70px 28px;">
+    <div style="max-width:1320px; margin:0 auto;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:46px; align-items:center;" data-projet-grid>
+        <div data-reveal style="opacity:0; transform:translateY(30px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);">
+          <span style="font-family:'Space Mono',monospace; font-size:13px; color:#c9a84c; letter-spacing:.1em;">[ 03 ] &nbsp;Le projet</span>
+          <h2 style="font-family:'Anton',sans-serif; font-weight:400; font-size:clamp(36px,4.6vw,72px); margin:14px 0 18px; line-height:.92; text-transform:uppercase;">Un lieu au service du&nbsp;<span style="color:#c9a84c;">territoire</span></h2>
+          <p style="font-size:17px; line-height:1.6; color:#cfc8b8; margin:0 0 26px; max-width:46ch; text-wrap:pretty;">Accompagnement des artistes locaux, des organisateurs d'événements, sensibilisation aux métiers de la musique et diffusion des musiques actuelles. Une saison fondatrice qui ancre le Nautilus dans son territoire.</p>
+          <div style="display:flex; flex-wrap:wrap; gap:9px; margin-bottom:30px;">
+            <span style="font-family:'Space Mono',monospace; font-size:12px; border:1px solid #3a352c; border-radius:100px; padding:8px 14px; color:#cfc8b8;">Artistes locaux</span>
+            <span style="font-family:'Space Mono',monospace; font-size:12px; border:1px solid #3a352c; border-radius:100px; padding:8px 14px; color:#cfc8b8;">Organisateurs</span>
+            <span style="font-family:'Space Mono',monospace; font-size:12px; border:1px solid #3a352c; border-radius:100px; padding:8px 14px; color:#cfc8b8;">Métiers de la musique</span>
+            <span style="font-family:'Space Mono',monospace; font-size:12px; border:1px solid #3a352c; border-radius:100px; padding:8px 14px; color:#cfc8b8;">Diffusion</span>
+          </div>
+          <a href="Projet.dc.html" data-hov style="display:inline-flex; align-items:center; gap:10px; border:1px solid #c9a84c; color:#c9a84c; padding:14px 24px; border-radius:100px; font-weight:600; font-size:15px; transition:background .25s, color .25s;" style-hover="background:#c9a84c; color:#0b0a09;">Découvrir le projet →</a>
+        </div>
+        <div data-reveal style="position:relative; opacity:0; transform:translateY(30px); transition:opacity .9s .15s cubic-bezier(.16,1,.3,1), transform .9s .15s cubic-bezier(.16,1,.3,1);">
+          <div style="position:relative; border-radius:14px; overflow:hidden; aspect-ratio:5/6;">
+            <img data-duo src="assets/photos/p15.jpg" alt="Le public au Nautilus" style="width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(.25) sepia(.55) saturate(1.45) brightness(.82) contrast(1.05); transition:filter .7s;" style-hover="filter:none;">
+          </div>
+          <div style="position:absolute; right:-14px; bottom:-22px; background:#c9a84c; color:#0b0a09; border-radius:12px; padding:18px 22px; box-shadow:0 18px 50px rgba(0,0,0,.5);">
+            <p style="font-family:'Anton',sans-serif; font-size:46px; margin:0; line-height:.85;">60 386 €</p>
+            <p style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.06em; margin:6px 0 0; text-transform:uppercase;">reversés au territoire</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ CTA ARTISTE ░░ -->
+  <section style="position:relative; padding:30px 28px 80px;">
+    <div data-reveal style="max-width:1320px; margin:0 auto; position:relative; border-radius:18px; overflow:hidden; opacity:0; transform:translateY(30px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);">
+      <img src="assets/photos/salle-soiree.jpeg" alt="La scène du Nautilus" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:grayscale(.3) brightness(.42) contrast(1.05);">
+      <div style="position:absolute; inset:0; background:linear-gradient(120deg, rgba(11,10,9,.9), rgba(11,10,9,.35));"></div>
+      <div style="position:relative; padding:clamp(40px,7vw,86px); display:flex; flex-direction:column; align-items:flex-start; gap:18px;">
+        <p style="font-family:'Space Mono',monospace; font-size:12.5px; letter-spacing:.22em; text-transform:uppercase; color:#e8c97a; margin:0;">Vous êtes artiste ou organisateur ?</p>
+        <h2 style="font-family:'Anton',sans-serif; font-weight:400; font-size:clamp(40px,7vw,104px); margin:0; line-height:.86; text-transform:uppercase; max-width:14ch;">Réservez notre&nbsp;scène</h2>
+        <p style="font-size:17px; line-height:1.55; color:#dcd6c8; max-width:52ch; margin:4px 0 8px;">Trois salles, une équipe dédiée, des conditions professionnelles. Du showcase intime au grand concert.</p>
+        <div style="display:flex; flex-wrap:wrap; gap:12px;">
+          <a href="Salles.dc.html" data-hov style="background:#c9a84c; color:#0b0a09; padding:15px 28px; border-radius:100px; font-weight:700; font-size:15px;">Créer un compte artiste</a>
+          <a href="Salles.dc.html" data-hov style="border:1px solid #d8cfb8; color:#f4efe2; padding:15px 28px; border-radius:100px; font-weight:600; font-size:15px; transition:background .25s,color .25s;" style-hover="background:#f4efe2; color:#0b0a09;">Voir les salles</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ FOOTER ░░ -->
+  <footer style="position:relative; border-top:1px solid #221f1b; padding:60px 28px 40px;">
+    <div style="max-width:1320px; margin:0 auto;">
+      <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1.3fr; gap:32px; padding-bottom:48px;">
+        <div>
+          <div style="display:flex; align-items:center; gap:11px; margin-bottom:16px;">
+            <span style="width:11px; height:11px; border-radius:50%; background:#c9a84c; display:block;"></span>
+            <span style="font-family:'Anton',sans-serif; font-size:22px; letter-spacing:.04em;">LE&nbsp;NAUTILUS</span>
+          </div>
+          <p style="font-size:14.5px; line-height:1.6; color:#9a9488; max-width:34ch;">Scène de musiques actuelles. Diffusion, création, médiation et structuration professionnelle au sein d'un même lieu.</p>
+        </div>
+        <div>
+          <p style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#5f5a50; margin:0 0 14px;">Naviguer</p>
+          <div style="display:flex; flex-direction:column; gap:10px; font-size:14.5px; color:#cfc8b8;">
+            <a href="Agenda.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Agenda</a>
+            <a href="Salles.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Nos salles</a>
+            <a href="Projet.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Le projet</a>
+          </div>
+        </div>
+        <div>
+          <p style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#5f5a50; margin:0 0 14px;">Suivre</p>
+          <div style="display:flex; flex-direction:column; gap:10px; font-size:14.5px; color:#cfc8b8;">
+            <a href="Accueil.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Instagram</a>
+            <a href="Accueil.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Facebook</a>
+            <a href="Accueil.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Newsletter</a>
+          </div>
+        </div>
+        <div>
+          <p style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#5f5a50; margin:0 0 14px;">Newsletter</p>
+          <p style="font-size:13.5px; color:#9a9488; margin:0 0 12px;">Le programme dans votre boîte mail.</p>
+          <div style="display:flex; border:1px solid #3a352c; border-radius:100px; overflow:hidden;">
+            <input type="email" placeholder="votre@email.fr" style="flex:1; min-width:0; background:transparent; border:0; outline:none; color:#f4efe2; padding:11px 16px; font-family:'Space Grotesk',sans-serif; font-size:14px;">
+            <button data-hov style="border:0; background:#c9a84c; color:#0b0a09; padding:0 18px; font-weight:700; font-size:16px;">→</button>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; border-top:1px solid #221f1b; padding-top:22px; font-family:'Space Mono',monospace; font-size:11.5px; letter-spacing:.06em; color:#5f5a50;">
+        <span>© 2026 Le Nautilus — Tous droits réservés</span>
+        <span style="display:flex; gap:20px;"><a href="Accueil.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Mentions légales</a><a href="Accueil.dc.html" data-hov style="transition:color .2s;" style-hover="color:#c9a84c;">Contact</a></span>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  events = [
+    { num: "01", date: "VEN 14.11", artist: "Kérozène", genre: "Post-punk · FR", salle: "La Grande Scène", price: "18 €", img: "assets/photos/p03.jpg" },
+    { num: "02", date: "SAM 22.11", artist: "Marée Haute", genre: "Chanson électro", salle: "Le Studio", price: "14 €", img: "assets/photos/p15.jpg" },
+    { num: "03", date: "JEU 04.12", artist: "Foudre!", genre: "Afro-house", salle: "La Grande Scène", price: "20 €", img: "assets/photos/p21.jpg" },
+    { num: "04", date: "VEN 12.12", artist: "Sœur Lune", genre: "Néo-soul", salle: "Le Studio", price: "12 €", img: "assets/photos/salle-soiree.jpeg" },
+    { num: "05", date: "SAM 20.12", artist: "Voltaïk", genre: "Techno live", salle: "La Grande Scène", price: "22 €", img: "assets/photos/p27.jpg" },
+    { num: "06", date: "DIM 11.01", artist: "Lazuli", genre: "Jazz · impro", salle: "Le Studio", price: "Gratuit", img: "assets/photos/p11.jpg" },
+  ];
+  salles = [
+    { name: "La Grande Scène", tag: "Concerts & grands formats", cap: "800 places", img: "assets/photos/salle-soiree.jpeg" },
+    { name: "Le Studio", tag: "Acoustique & showcases", cap: "150 places", img: "assets/photos/p11.jpg" },
+    { name: "Le Rooftop", tag: "Plein air & soirées", cap: "300 places", img: "assets/photos/salle-repas.jpeg" },
+  ];
+
+  renderVals() {
+    return { events: this.events, salles: this.salles };
+  }
+
+  componentDidMount() {
+    this._cleanup = [];
+    const root = document.querySelector('[data-naut-root]') || document;
+    this._initNav(root);
+    this._initReveal(root);
+    this._initAgendaThumb(root);
+    this._initRows(root);
+    this._initCursor();
+  }
+
+  componentWillUnmount() {
+    (this._cleanup || []).forEach((fn) => { try { fn(); } catch (e) {} });
+  }
+
+  _initNav(root) {
+    const nav = root.querySelector('[data-nav]');
+    if (!nav) return;
+    const onScroll = () => {
+      if (window.scrollY > 40) {
+        nav.style.background = 'rgba(11,10,9,.82)';
+        nav.style.backdropFilter = 'blur(12px)';
+        nav.style.borderBottomColor = '#221f1b';
+      } else {
+        nav.style.background = 'transparent';
+        nav.style.backdropFilter = 'none';
+        nav.style.borderBottomColor = 'transparent';
+      }
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    this._cleanup.push(() => window.removeEventListener('scroll', onScroll));
+  }
+
+  _initReveal(root) {
+    const els = root.querySelectorAll('[data-reveal], [data-reveal-row]');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach((el) => { el.style.opacity = '1'; el.style.transform = 'none'; });
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          const el = e.target;
+          const delay = el.hasAttribute('data-reveal-row') ? (Array.prototype.indexOf.call(el.parentNode.children, el) % 7) * 55 : 0;
+          setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'none'; }, delay);
+          io.unobserve(el);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    els.forEach((el) => io.observe(el));
+    this._cleanup.push(() => io.disconnect());
+  }
+
+  _initRows(root) {
+    const rows = root.querySelectorAll('[data-agenda-row]');
+    rows.forEach((row) => {
+      const title = row.querySelector('[data-row-title]');
+      const arrow = row.querySelector('[data-row-arrow]');
+      const enter = () => {
+        row.style.background = 'linear-gradient(90deg, rgba(201,168,76,.07), transparent)';
+        row.style.paddingLeft = '18px';
+        if (title) { title.style.color = '#c9a84c'; title.style.transform = 'translateX(6px)'; }
+        if (arrow) { arrow.style.color = '#c9a84c'; arrow.style.transform = 'translate(4px,-4px)'; }
+      };
+      const leave = () => {
+        row.style.background = 'transparent';
+        row.style.paddingLeft = '6px';
+        if (title) { title.style.color = '#f4efe2'; title.style.transform = 'none'; }
+        if (arrow) { arrow.style.color = '#5f5a50'; arrow.style.transform = 'none'; }
+      };
+      row.addEventListener('mouseenter', enter);
+      row.addEventListener('mouseleave', leave);
+      this._cleanup.push(() => { row.removeEventListener('mouseenter', enter); row.removeEventListener('mouseleave', leave); });
+    });
+  }
+
+  _initAgendaThumb(root) {
+    const thumb = root.querySelector('[data-agenda-thumb]');
+    const rows = root.querySelectorAll('[data-agenda-row]');
+    if (!thumb || !window.matchMedia('(pointer:fine)').matches) return;
+    let raf = null, tx = 0, ty = 0, cx = 0, cy = 0, active = false;
+    const move = (e) => {
+      tx = e.clientX; ty = e.clientY;
+      if (!raf) raf = requestAnimationFrame(loop);
+    };
+    const loop = () => {
+      cx += (tx - cx) * 0.18; cy += (ty - cy) * 0.18;
+      thumb.style.left = cx + 'px';
+      thumb.style.top = cy + 'px';
+      if (active && (Math.abs(tx - cx) > 0.5 || Math.abs(ty - cy) > 0.5)) { raf = requestAnimationFrame(loop); }
+      else { raf = null; }
+    };
+    rows.forEach((row) => {
+      const enter = () => {
+        active = true;
+        thumb.src = row.getAttribute('data-img');
+        cx = tx; cy = ty;
+        thumb.style.opacity = '1';
+        thumb.style.transform = 'translate(-50%,-50%) scale(1) rotate(-4deg)';
+        if (!raf) raf = requestAnimationFrame(loop);
+      };
+      const leave = () => {
+        active = false;
+        thumb.style.opacity = '0';
+        thumb.style.transform = 'translate(-50%,-50%) scale(.85) rotate(-4deg)';
+      };
+      row.addEventListener('mouseenter', enter);
+      row.addEventListener('mouseleave', leave);
+      this._cleanup.push(() => { row.removeEventListener('mouseenter', enter); row.removeEventListener('mouseleave', leave); });
+    });
+    window.addEventListener('mousemove', move, { passive: true });
+    this._cleanup.push(() => { window.removeEventListener('mousemove', move); if (raf) cancelAnimationFrame(raf); });
+  }
+
+  _initCursor() {
+    if (!window.matchMedia('(pointer:fine)').matches) return;
+    const dot = document.createElement('div');
+    const ring = document.createElement('div');
+    dot.style.cssText = 'position:fixed;z-index:200;left:0;top:0;width:7px;height:7px;border-radius:50%;background:#c9a84c;pointer-events:none;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;';
+    ring.style.cssText = 'position:fixed;z-index:199;left:0;top:0;width:34px;height:34px;border-radius:50%;border:1px solid rgba(201,168,76,.6);pointer-events:none;transform:translate(-50%,-50%);transition:width .25s,height .25s,border-color .25s,background .25s;';
+    document.body.appendChild(dot); document.body.appendChild(ring);
+    document.body.classList.add('naut-cursor');
+    let mx = -100, my = -100, rx = -100, ry = -100, raf = null;
+    const move = (e) => { mx = e.clientX; my = e.clientY; dot.style.left = mx + 'px'; dot.style.top = my + 'px'; if (!raf) raf = requestAnimationFrame(loop); };
+    const loop = () => { rx += (mx - rx) * 0.2; ry += (my - ry) * 0.2; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; if (Math.abs(mx - rx) > 0.3 || Math.abs(my - ry) > 0.3) raf = requestAnimationFrame(loop); else raf = null; };
+    const over = (e) => { if (e.target.closest('[data-hov], a, button, input')) { ring.style.width = '56px'; ring.style.height = '56px'; ring.style.borderColor = '#c9a84c'; ring.style.background = 'rgba(201,168,76,.08)'; dot.style.width = '0px'; dot.style.height = '0px'; } };
+    const out = (e) => { if (e.target.closest('[data-hov], a, button, input')) { ring.style.width = '34px'; ring.style.height = '34px'; ring.style.borderColor = 'rgba(201,168,76,.6)'; ring.style.background = 'transparent'; dot.style.width = '7px'; dot.style.height = '7px'; } };
+    window.addEventListener('mousemove', move, { passive: true });
+    document.addEventListener('mouseover', over);
+    document.addEventListener('mouseout', out);
+    this._cleanup.push(() => {
+      window.removeEventListener('mousemove', move);
+      document.removeEventListener('mouseover', over);
+      document.removeEventListener('mouseout', out);
+      if (raf) cancelAnimationFrame(raf);
+      dot.remove(); ring.remove();
+      document.body.classList.remove('naut-cursor');
+    });
+  }
+}
+</script>
+</body>
+</html>
