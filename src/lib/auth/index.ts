@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db/client";
 import { loginSchema } from "@/lib/validators/auth";
 import { authConfig } from "@/auth.config";
 import bcrypt from "bcryptjs";
+import { rateLimit } from "@/lib/rate-limit";
 import type { Role } from "@prisma/client";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -13,9 +14,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   providers: [
     Credentials({
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const parsed = loginSchema.safeParse(credentials);
         if (!parsed.success) return null;
+
+        // Anti brute-force : 5 tentatives / 5 min par couple IP + e-mail.
+        const ip =
+          request?.headers?.get?.("x-forwarded-for")?.split(",")[0]?.trim() ??
+          "unknown";
+        const limited = rateLimit(
+          `login:${ip}:${parsed.data.email.toLowerCase()}`,
+          5,
+          5 * 60_000
+        );
+        if (!limited.ok) return null;
 
         const user = await prisma.user.findUnique({
           where: { email: parsed.data.email },

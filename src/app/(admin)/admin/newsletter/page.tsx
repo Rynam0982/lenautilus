@@ -1,6 +1,6 @@
 import { Mail, Users } from "lucide-react";
 import { requireAdmin } from "@/lib/auth/guards";
-import { getAudienceStats } from "@/lib/mailchimp";
+import { getAudienceStats } from "@/lib/brevo";
 import { getPublicEvents } from "@/services/events.service";
 import { NewsletterForm } from "@/components/admin/newsletter-form";
 
@@ -28,7 +28,7 @@ export default async function AdminNewsletterPage() {
           Newsletter
         </h1>
         <p className="text-sm text-nautilus-gray mt-1">
-          Rédigez et envoyez une newsletter à vos abonnés via Mailchimp.
+          Rédigez et envoyez une newsletter à vos abonnés via Brevo.
         </p>
       </div>
 
@@ -50,10 +50,10 @@ export default async function AdminNewsletterPage() {
           </div>
           <div>
             <p className="text-sm font-medium text-nautilus-white">
-              {stats.configured ? stats.name ?? "Audience Mailchimp" : "Non configuré"}
+              {stats.configured ? stats.name ?? "Liste Brevo" : "Non configuré"}
             </p>
             <p className="text-xs text-nautilus-gray">
-              {stats.configured ? "Connecté à Mailchimp" : "Mailchimp inactif"}
+              {stats.configured ? "Connecté à Brevo" : "Brevo inactif"}
             </p>
           </div>
         </div>

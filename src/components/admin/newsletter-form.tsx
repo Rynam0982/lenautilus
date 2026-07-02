@@ -92,10 +92,10 @@ export function NewsletterForm({
     <form onSubmit={onSend} className="space-y-6 max-w-2xl">
       {!configured && (
         <div className="rounded-lg border border-amber-700/40 bg-amber-900/10 p-4 text-sm text-amber-300">
-          Mailchimp n&apos;est pas encore configuré. Renseignez{" "}
-          <code className="text-amber-200">MAILCHIMP_API_KEY</code>,{" "}
-          <code className="text-amber-200">MAILCHIMP_SERVER_PREFIX</code> et{" "}
-          <code className="text-amber-200">MAILCHIMP_AUDIENCE_ID</code>. L&apos;aperçu
+          Brevo n&apos;est pas encore configuré. Renseignez{" "}
+          <code className="text-amber-200">BREVO_API_KEY</code>,{" "}
+          <code className="text-amber-200">BREVO_LIST_ID</code> et{" "}
+          <code className="text-amber-200">BREVO_SENDER_EMAIL</code>. L&apos;aperçu
           reste disponible.
         </div>
       )}

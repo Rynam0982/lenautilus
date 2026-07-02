@@ -27,8 +27,28 @@ export async function GET(
     return NextResponse.json({ error: "Aucune image" }, { status: 404 });
   }
 
+  // Anti-SSRF : on ne télécharge que depuis les hébergeurs d'images connus
+  // (mêmes domaines que `images.remotePatterns` de next.config.ts).
+  let coverUrl: URL;
   try {
-    const upstream = await fetch(event.coverImage);
+    coverUrl = new URL(event.coverImage);
+  } catch {
+    return NextResponse.json({ error: "URL d'image invalide" }, { status: 400 });
+  }
+  const host = coverUrl.hostname;
+  const allowedHost =
+    coverUrl.protocol === "https:" &&
+    (host === "cdn.openagenda.com" ||
+      host === "images.unsplash.com" ||
+      host === "utfs.io" ||
+      host.endsWith(".uploadthing.com") ||
+      host.endsWith(".ufs.sh"));
+  if (!allowedHost) {
+    return NextResponse.json({ error: "Hôte d'image non autorisé" }, { status: 400 });
+  }
+
+  try {
+    const upstream = await fetch(coverUrl);
     if (!upstream.ok) throw new Error(`Upstream ${upstream.status}`);
     const input = Buffer.from(await upstream.arrayBuffer());
 

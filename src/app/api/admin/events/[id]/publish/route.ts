@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requireAdminApi } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db/client";
 import { publishEventToOpenAgenda } from "@/services/openagenda.service";
 import { z } from "zod";
@@ -10,7 +10,8 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await requireAdmin();
+  const { session, response } = await requireAdminApi();
+  if (response) return response;
   const { id } = await params;
 
   try {

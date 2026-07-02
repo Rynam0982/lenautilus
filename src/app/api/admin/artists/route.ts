@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomBytes } from "crypto";
 import { z } from "zod";
-import { auth } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db/client";
 import { sendArtistActivation } from "@/lib/email";
 
@@ -14,10 +14,8 @@ const schema = z.object({
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (session?.user?.role !== "ADMIN") {
-    return NextResponse.json({ success: false, error: "Non autorisé" }, { status: 403 });
-  }
+  const { response } = await requireAdminApi();
+  if (response) return response;
 
   try {
     const parsed = schema.safeParse(await req.json());

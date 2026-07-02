@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requireAdminApi } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db/client";
-import { sendNewsletterCampaign } from "@/lib/mailchimp";
-import { buildNewsletterHtml, type NewsletterEvent } from "@/lib/mailchimp/template";
+import { sendNewsletterCampaign } from "@/lib/brevo";
+import { buildNewsletterHtml, type NewsletterEvent } from "@/lib/brevo/template";
 
 const schema = z.object({
   subject: z.string().min(3, "Sujet trop court"),
@@ -16,7 +16,8 @@ const schema = z.object({
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://lenautilus.vercel.app";
 
 export async function POST(req: NextRequest) {
-  await requireAdmin();
+  const { response } = await requireAdminApi();
+  if (response) return response;
 
   try {
     const parsed = schema.safeParse(await req.json());
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest) {
     if (!result.ok) {
       const msg =
         result.reason === "not_configured"
-          ? "Mailchimp n'est pas configuré (variables d'environnement manquantes)."
+          ? "Brevo n'est pas configuré (variables d'environnement manquantes)."
           : `Échec de l'envoi : ${result.reason}`;
       return NextResponse.json({ success: false, error: msg }, { status: 503 });
     }

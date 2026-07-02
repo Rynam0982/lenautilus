@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { subscribeToNewsletter } from "@/lib/mailchimp";
+import { subscribeToNewsletter } from "@/lib/brevo";
+import { rateLimitByIp } from "@/lib/rate-limit";
 
 const schema = z.object({ email: z.string().email("Adresse e-mail invalide") });
 
 export async function POST(req: NextRequest) {
+  const limited = await rateLimitByIp("newsletter", 5, 10 * 60_000);
+  if (limited) {
+    return NextResponse.json({ success: false, error: limited.error }, { status: 429 });
+  }
+
   try {
     const body = (await req.json()) as unknown;
     const parsed = schema.safeParse(body);

@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireArtist } from "@/lib/auth/guards";
+import { requireArtistApi } from "@/lib/auth/guards";
 import { createReservation, getArtistReservations } from "@/services/reservations.service";
 import { reservationSchema } from "@/lib/validators/event";
 import { prisma } from "@/lib/db/client";
 import { sendReservationSubmittedToAdmin } from "@/lib/email";
 
 export async function GET() {
-  const session = await requireArtist();
+  const { session, response } = await requireArtistApi();
+  if (response) return response;
   try {
     const reservations = await getArtistReservations(session.user.id);
     return NextResponse.json({ success: true, data: reservations });
@@ -17,7 +18,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await requireArtist();
+  const { session, response } = await requireArtistApi();
+  if (response) return response;
 
   try {
     const body = await req.json() as unknown;

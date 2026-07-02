@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createFreeTickets } from "@/services/tickets.service";
+import { rateLimitByIp } from "@/lib/rate-limit";
 import { z } from "zod";
 
 const schema = z.object({
@@ -10,6 +11,11 @@ const schema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const limited = await rateLimitByIp("free-tickets", 8, 10 * 60_000);
+  if (limited) {
+    return NextResponse.json({ success: false, error: limited.error }, { status: 429 });
+  }
+
   try {
     const body = (await req.json()) as unknown;
     const parsed = schema.safeParse(body);

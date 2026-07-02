@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireAuthApi } from "@/lib/auth/guards";
 import { requestRefund } from "@/services/tickets.service";
 import { refundTicketSchema } from "@/lib/validators/booking";
 
@@ -7,7 +7,8 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await requireAuth();
+  const { session, response } = await requireAuthApi();
+  if (response) return response;
   const { id } = await params;
 
   try {

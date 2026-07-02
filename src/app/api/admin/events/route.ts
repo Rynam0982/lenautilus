@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requireAdminApi } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db/client";
 import { createEventSchema } from "@/lib/validators/event";
 import { slugify } from "@/lib/utils";
@@ -11,7 +11,8 @@ const adminCreateSchema = createEventSchema.extend({
 });
 
 export async function POST(req: NextRequest) {
-  const session = await requireAdmin();
+  const { session, response } = await requireAdminApi();
+  if (response) return response;
 
   try {
     const body = await req.json() as unknown;

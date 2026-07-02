@@ -51,10 +51,23 @@ moderne de type SaaS, permettant :
 - **Couche service** dans `src/services/` (logique métier isolée).
 - **Garde d'accès** par rôle dans `src/lib/auth/guards.ts`.
 - **Client base de données** centralisé dans `src/lib/db/client.ts`.
-- **Rôles utilisateurs** :
-  - `ADMIN` : contrôle total, voit les événements publics et privés.
-  - `ARTIST` : demande des réservations de salle, soumet des infos d'événement.
-  - `CLIENT` : navigue, achète des billets, demande des remboursements.
+- **Rôles utilisateurs** (modèle mis à jour, cf. Tâche 47) :
+  - `ADMIN` : contrôle total, voit les événements publics et privés, **crée les
+    comptes artistes** à partir des demandes reçues.
+  - `ARTIST` : compte **créé par l'admin** (activation par e-mail), demande des
+    réservations de salle, soumet des infos d'événement.
+  - **Public / acheteur** : plus de compte client. La **billetterie est en accès
+    libre** (checkout invité) — l'e-mail est saisi au paiement et le billet est
+    envoyé par e-mail ; les places gratuites sont limitées par adresse e-mail.
+
+### Système de design (cf. Tâches 46–48)
+- **Typographies** : Anton (titres capitales), Space Grotesk (texte), Space Mono
+  (intitulés) — via `next/font`.
+- **Thèmes** : sombre = noir + violet, clair = beige + vert (bascule `next-themes`,
+  accent piloté par un jeton unique).
+- **Effets** : grain de film, curseur personnalisé, apparition au défilement,
+  marquees — regroupés dans `SiteEffects` avec repli propre (sans JS / tactile /
+  `prefers-reduced-motion`).
 
 ---
 
@@ -825,6 +838,102 @@ l'accueil présentes et révélées.
 
 ---
 
+### Tâche 49 — Nouvelle direction artistique « affiche de concert »
+**Fonctionnalité (refonte graphique).**
+
+Objectif : donner au site une identité plus authentique et atypique, dans
+l'esprit des scènes de musiques actuelles dont le projet s'inspire
+(letempsmachine.com, lemetronum.fr), et s'éloigner du style « premium sombre »
+générique. Après analyse des deux références (Le Temps Machine : typo display
+expressive et blocs de couleurs pleines inversés par sections ; Le Metronum :
+noir/blanc en aplats + accent violet), j'ai défini un langage « affiche
+sérigraphiée » :
+
+- **Aplats et encre** : suppression des dégradés cinématiques et des effets de
+  flou ; deux thèmes conservés mais repensés — « encre de nuit » (noir plat,
+  violet du logo, jaune acide, vert vif) et « papier affiche » (crème imprimé,
+  encre noire, violet). Nouvelles variables `--ink-line` (traits), `--shadow-hard`
+  (ombre portée dure) et `--nautilus-yellow` (jaune sticker).
+- **Typographie** : Anton conservé pour les titres, ajout d'**Instrument Serif
+  italique** (`.accent-serif`) pour composer un mot « à la main » dans chaque
+  grand titre, et utilitaire `.text-outline` (lettres au trait, non remplies).
+- **Composants d'affiche** (dans `@layer components` pour rester surchargeables
+  par Tailwind) : `.poster-frame` (cadre encre 2 px), `.hard-shadow` (ombre
+  décalée sans flou, façon sérigraphie), `.btn-stamp` (bouton « tampon » qui
+  s'enfonce au clic), `.sticker` (étiquette jaune inclinée), `.ticker-band`
+  (bandeau défilant en aplat violet).
+- **Application** : hero avec affiche punaisée légèrement inclinée et stickers ;
+  lignes d'agenda au survol en aplat violet intégral ; cartes événement/salle en
+  cartes-affiches (bordure encre, sticker de date à cheval sur le bord, ombre
+  dure au survol) ; CTA de l'accueil en grand bloc violet ; footer avec wordmark
+  géant « Le Nautilus à Perpignan » ; photos traitées en noir & blanc qui
+  reprennent leurs couleurs au survol (`.duo`).
+- **Authenticité** : clin d'œil à l'adresse du lieu (rue Jules Verne) avec la
+  ligne « 20 000 lieues sous la scène » dans le bandeau défilant.
+
+Vérification : `npm run build` OK, serveur de développement relancé et pages
+publiques en 200.
+
+---
+
+### Tâche 50 — Audit de sécurité complet, newsletter Brevo et rattrapage de l'agenda
+**Fonctionnalités + corrections de bugs (audit).**
+
+Audit complet du site : authentification, routes API, validation, dépendances
+externes. Points vérifiés sains : webhook Stripe signé, mots de passe bcrypt
+(coût 12), tokens d'activation à usage unique avec expiration, en-têtes de
+sécurité HTTP, secrets absents de l'historique git, protection des pages
+admin/artiste/client par le proxy Edge (JWT).
+
+**Corrections apportées :**
+
+- **Symptôme :** une requête API non authentifiée sur `/api/admin/*` recevait
+  une redirection HTML vers la page de login au lieu d'une erreur JSON.
+  **Cause :** les guards de pages (`requireAdmin`…) utilisent `redirect()`, y
+  compris dans les routes API.
+  **Solution :** nouveaux guards dédiés aux API (`requireAdminApi`,
+  `requireArtistApi`, `requireAuthApi`) qui renvoient un JSON propre en
+  401/403 ; toutes les routes API protégées migrées. Vérifié : 401 sans
+  session, 403 avec un rôle insuffisant.
+
+- **Faille (brute force) :** aucune limitation de débit sur le login ni sur les
+  routes publiques (demande artiste, newsletter, billets gratuits, paiement).
+  **Solution :** limiteur en mémoire (`src/lib/rate-limit.ts`) appliqué au
+  login (5 tentatives / 5 min par IP+e-mail dans `authorize()`) et aux routes
+  publiques sensibles (429 au-delà du seuil). Vérifié : la 6ᵉ demande artiste
+  répond 429.
+
+- **Faille (SSRF léger) :** `/api/events/[id]/cover` téléchargeait n'importe
+  quelle URL stockée en base.
+  **Solution :** liste blanche d'hôtes (les mêmes que `images.remotePatterns`)
+  et HTTPS obligatoire avant le fetch.
+
+- **Symptôme :** il manquait 5 événements à venir par rapport au site original.
+  **Cause :** événements créés côté OpenAgenda après le dernier import ; les
+  occurrences récurrentes gardaient une `startDate` passée.
+  **Solution :** ré-import + backfill (recalage sur `nextTiming`) ; 9/9
+  événements à venir désormais visibles. Scripts de diagnostic ajoutés
+  (`scripts/check-upcoming.ts`, `scripts/check-oa-upcoming.ts`).
+
+- **Newsletter migrée de Mailchimp vers Brevo** : nouveau client
+  `src/lib/brevo` (API v3 — contacts, statistiques de liste, campagnes),
+  mêmes signatures de fonctions et même dégradation gracieuse si non
+  configuré ; formulaire admin et messages mis à jour ; variables d'env.
+  `BREVO_API_KEY`, `BREVO_LIST_ID`, `BREVO_SENDER_EMAIL` (+ `BREVO_SENDER_NAME`).
+
+- **Vérification bout-en-bout du flux compte artiste** (demande publique →
+  approbation admin → e-mail d'activation → choix du mot de passe → connexion
+  → API artiste) : chaque étape testée en conditions réelles, tout fonctionne ;
+  données de test nettoyées.
+
+- Hygiène du dépôt : `src.zip` et les fichiers `*Zone.Identifier` (WSL)
+  ignorés par git.
+
+Vérification : `npm run build` OK, guards et rate-limit testés en HTTP réel,
+flux artiste complet validé, agenda aligné sur OpenAgenda.
+
+---
+
 ## 4. Récapitulatif des bugs corrigés
 
 | # | Bug | Cause | Solution |
@@ -847,6 +956,12 @@ l'accueil présentes et révélées.
 | 16 | `UPLOADTHING_TOKEN` invalide | Valeur doublement encapsulée | Correction de la valeur dans `.env.local` |
 | 17 | Peu d'événements « à venir » | Dates récurrentes + events `APPROVED`/privés | `nextTiming` + promotion en `PUBLISHED`/public (4 → 12) |
 | 18 | Couvertures manquantes | Événements importés sans image | Récupération de l'image OpenAgenda (`full`) |
+| 19 | Latence forte de l'UI | Grain de film en `mix-blend-mode` plein écran (repaint à chaque scroll) | Texture légère isolée sur couche GPU (`translateZ`, `contain`) |
+| 20 | Titre illisible (noir sur noir) en thème clair | Voile des visuels en `nautilus-black` → devient beige en clair | Voiles sombres fixes + utilitaires `media-title/text/chip` |
+| 21 | Moitié basse de l'accueil vide | Sections en `Suspense` (streaming) non observées par l'animation d'apparition | Re-scan `MutationObserver` + filet de sécurité (jamais bloqué à `opacity:0`) |
+| 22 | Cartes d'agenda de tailles différentes | Titre non tronqué → hauteur variable | Titre limité à 2 lignes + cartes `h-full` (box identiques) |
+| 23 | API admin : redirection HTML au lieu d'un JSON 401/403 | Guards de pages (`redirect()`) utilisés dans les routes API | Guards API dédiés (`requireAdminApi`…) renvoyant du JSON |
+| 24 | 5 événements à venir manquants vs site original | Import OpenAgenda non relancé + `startDate` passée sur les récurrents | Ré-import + backfill `nextTiming` (9/9 visibles) |
 
 ---
 

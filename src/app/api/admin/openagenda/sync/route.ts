@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requireAdminApi } from "@/lib/auth/guards";
 import { importAllFromOpenAgenda } from "@/services/openagenda.service";
 
 export async function POST() {
-  await requireAdmin();
+  const { response } = await requireAdminApi();
+  if (response) return response;
 
   try {
     const stats = await importAllFromOpenAgenda();

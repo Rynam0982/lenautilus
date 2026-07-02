@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db/client";
 import { sendArtistRequestToAdmin } from "@/lib/email";
+import { rateLimitByIp } from "@/lib/rate-limit";
 
 const schema = z.object({
   firstName: z.string().trim().min(1).max(80),
@@ -11,6 +12,11 @@ const schema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const limited = await rateLimitByIp("artist-request", 5, 10 * 60_000);
+  if (limited) {
+    return NextResponse.json({ success: false, error: limited.error }, { status: 429 });
+  }
+
   try {
     const parsed = schema.safeParse(await req.json());
     if (!parsed.success) {

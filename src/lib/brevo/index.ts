@@ -1,107 +1,102 @@
-import crypto from "crypto";
-
 /**
- * Minimal Mailchimp Marketing API client built on fetch (no extra dependency).
- * All functions degrade gracefully when the env vars are not configured, so the
- * app keeps working without Mailchimp credentials (mirrors src/lib/email).
+ * Client minimal pour l'API Brevo (ex-Sendinblue), construit sur fetch —
+ * aucune dépendance supplémentaire. Toutes les fonctions se dégradent
+ * proprement quand les variables d'environnement ne sont pas configurées
+ * (même philosophie que src/lib/email).
  *
- * Required env vars:
- *  - MAILCHIMP_API_KEY        (e.g. "xxxxxxxx-us21")
- *  - MAILCHIMP_SERVER_PREFIX  (e.g. "us21") — falls back to the suffix of the key
- *  - MAILCHIMP_AUDIENCE_ID    (the list / audience id)
+ * Variables d'environnement requises :
+ *  - BREVO_API_KEY       (clé API v3, format "xkeysib-…")
+ *  - BREVO_LIST_ID       (id numérique de la liste de contacts)
+ *  - BREVO_SENDER_EMAIL  (expéditeur validé dans Brevo, ex. bonjour@le-nautilus.org)
+ * Optionnelle :
+ *  - BREVO_SENDER_NAME   (défaut : "Le Nautilus")
  */
 
-const API_KEY = process.env.MAILCHIMP_API_KEY;
-const AUDIENCE_ID = process.env.MAILCHIMP_AUDIENCE_ID;
-const SERVER_PREFIX =
-  process.env.MAILCHIMP_SERVER_PREFIX ?? API_KEY?.split("-")[1] ?? "";
+const API_KEY = process.env.BREVO_API_KEY;
+const LIST_ID = Number(process.env.BREVO_LIST_ID ?? NaN);
+const SENDER_EMAIL = process.env.BREVO_SENDER_EMAIL;
+const SENDER_NAME = process.env.BREVO_SENDER_NAME ?? "Le Nautilus";
 
-export function isMailchimpConfigured(): boolean {
-  return Boolean(API_KEY && AUDIENCE_ID && SERVER_PREFIX);
+const BASE_URL = "https://api.brevo.com/v3";
+
+export function isBrevoConfigured(): boolean {
+  return Boolean(API_KEY && Number.isFinite(LIST_ID));
 }
 
-function baseUrl(): string {
-  return `https://${SERVER_PREFIX}.api.mailchimp.com/3.0`;
-}
-
-function authHeader(): string {
-  return "Basic " + Buffer.from(`anystring:${API_KEY}`).toString("base64");
-}
-
-async function mc<T = unknown>(
+async function brevo<T = unknown>(
   method: string,
   path: string,
   body?: unknown
 ): Promise<T> {
-  const res = await fetch(`${baseUrl()}${path}`, {
+  const res = await fetch(`${BASE_URL}${path}`, {
     method,
     headers: {
-      Authorization: authHeader(),
+      "api-key": API_KEY!,
       "Content-Type": "application/json",
+      Accept: "application/json",
     },
     body: body ? JSON.stringify(body) : undefined,
   });
+  // Brevo répond 204 sans corps sur plusieurs endpoints (update, sendNow).
   const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
   if (!res.ok) {
-    const detail = (data.detail as string) ?? res.statusText;
-    const err = new Error(detail) as Error & { status?: number; title?: string };
+    const detail = (data.message as string) ?? res.statusText;
+    const err = new Error(detail) as Error & { status?: number; code?: string };
     err.status = res.status;
-    err.title = data.title as string | undefined;
+    err.code = data.code as string | undefined;
     throw err;
   }
   return data as T;
 }
 
-/** Subscribe (or re-subscribe) an email to the audience. Idempotent. */
+/** Inscrit (ou ré-inscrit) un e-mail à la liste. Idempotent. */
 export async function subscribeToNewsletter(
   email: string
 ): Promise<{ ok: boolean; reason?: string }> {
-  if (!isMailchimpConfigured()) {
-    console.warn("[MAILCHIMP] Not configured — subscription ignored:", email);
+  if (!isBrevoConfigured()) {
+    console.warn("[BREVO] Not configured — subscription ignored:", email);
     return { ok: false, reason: "not_configured" };
   }
-  const hash = crypto
-    .createHash("md5")
-    .update(email.toLowerCase())
-    .digest("hex");
   try {
-    // PUT upserts the member; status_if_new = subscribed for single opt-in.
-    await mc("PUT", `/lists/${AUDIENCE_ID}/members/${hash}`, {
-      email_address: email,
-      status_if_new: "subscribed",
+    // updateEnabled: true → upsert du contact (pas d'erreur s'il existe déjà).
+    await brevo("POST", "/contacts", {
+      email: email.toLowerCase(),
+      listIds: [LIST_ID],
+      updateEnabled: true,
     });
     return { ok: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("[MAILCHIMP] subscribe error:", message);
+    console.error("[BREVO] subscribe error:", message);
     return { ok: false, reason: message };
   }
 }
 
-/** Number of subscribed members in the audience (0 if unconfigured). */
+/** Nombre d'abonnés de la liste (0 si non configuré). */
 export async function getAudienceStats(): Promise<{
   configured: boolean;
   memberCount: number;
   name?: string;
 }> {
-  if (!isMailchimpConfigured()) return { configured: false, memberCount: 0 };
+  if (!isBrevoConfigured()) return { configured: false, memberCount: 0 };
   try {
-    const list = await mc<{
+    const list = await brevo<{
       name: string;
-      stats?: { member_count: number };
-    }>("GET", `/lists/${AUDIENCE_ID}`);
+      uniqueSubscribers?: number;
+      totalSubscribers?: number;
+    }>("GET", `/contacts/lists/${LIST_ID}`);
     return {
       configured: true,
-      memberCount: list.stats?.member_count ?? 0,
+      memberCount: list.uniqueSubscribers ?? list.totalSubscribers ?? 0,
       name: list.name,
     };
   } catch (err) {
-    console.error("[MAILCHIMP] stats error:", err);
+    console.error("[BREVO] stats error:", err);
     return { configured: true, memberCount: 0 };
   }
 }
 
-/** Create a campaign for the audience, set its HTML content, and send it. */
+/** Crée une campagne e-mail pour la liste et l'envoie immédiatement. */
 export async function sendNewsletterCampaign(input: {
   subject: string;
   title?: string;
@@ -110,28 +105,27 @@ export async function sendNewsletterCampaign(input: {
   fromName?: string;
   replyTo?: string;
 }): Promise<{ ok: boolean; reason?: string }> {
-  if (!isMailchimpConfigured()) {
+  if (!isBrevoConfigured()) {
     return { ok: false, reason: "not_configured" };
   }
+  if (!SENDER_EMAIL) {
+    return { ok: false, reason: "BREVO_SENDER_EMAIL manquant" };
+  }
   try {
-    const campaign = await mc<{ id: string }>("POST", "/campaigns", {
-      type: "regular",
-      recipients: { list_id: AUDIENCE_ID },
-      settings: {
-        subject_line: input.subject,
-        preview_text: input.preheader ?? "",
-        title: input.title ?? input.subject,
-        from_name: input.fromName ?? "Le Nautilus",
-        reply_to: input.replyTo ?? "bonjour@le-nautilus.org",
-        auto_footer: false,
-      },
+    const campaign = await brevo<{ id: number }>("POST", "/emailCampaigns", {
+      name: input.title ?? input.subject,
+      subject: input.subject,
+      previewText: input.preheader ?? "",
+      sender: { name: input.fromName ?? SENDER_NAME, email: SENDER_EMAIL },
+      replyTo: input.replyTo ?? SENDER_EMAIL,
+      htmlContent: input.html,
+      recipients: { listIds: [LIST_ID] },
     });
-    await mc("PUT", `/campaigns/${campaign.id}/content`, { html: input.html });
-    await mc("POST", `/campaigns/${campaign.id}/actions/send`);
+    await brevo("POST", `/emailCampaigns/${campaign.id}/sendNow`);
     return { ok: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("[MAILCHIMP] campaign error:", message);
+    console.error("[BREVO] campaign error:", message);
     return { ok: false, reason: message };
   }
 }
