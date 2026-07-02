@@ -12,7 +12,7 @@ export function VenueCard({ venue }: VenueCardProps) {
     <Link
       href={`/venues/${venue.slug}`}
       data-hov
-      className="group relative block overflow-hidden rounded-[14px] border border-nautilus-border bg-nautilus-card transition-[border-color,transform] duration-300 hover:border-nautilus-gold"
+      className="group poster-frame relative block transition-transform duration-200 hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[6px_6px_0_var(--shadow-hard)]"
     >
       <div className="relative aspect-[4/5] overflow-hidden">
         {venue.coverImage ? (
@@ -24,13 +24,13 @@ export function VenueCard({ venue }: VenueCardProps) {
             className="duo object-cover group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-nautilus-muted to-nautilus-dark">
+          <div className="flex h-full w-full items-center justify-center bg-nautilus-muted">
             <Building2 className="h-10 w-10 text-nautilus-gold/40" />
           </div>
         )}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent to-65%" />
 
-        <span className="media-chip absolute right-[14px] top-[14px] rounded-full px-[10px] py-[6px] font-mono text-[11px] tracking-[0.04em]">
+        <span className="media-chip absolute right-[14px] top-[14px] px-[10px] py-[6px] font-mono text-[11px] font-bold tracking-[0.04em]">
           {venue.capacity.toLocaleString("fr-FR")} places
         </span>
 

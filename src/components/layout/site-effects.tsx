@@ -117,7 +117,8 @@ export function SiteEffects() {
     const over = (e: MouseEvent) => {
       if (isInteractive(e.target)) {
         ring.style.width = ring.style.height = "56px";
-        ring.style.background = "rgba(201,168,76,.08)";
+        ring.style.background =
+          "color-mix(in srgb, var(--nautilus-gold) 14%, transparent)";
         dot.style.width = dot.style.height = "0px";
       }
     };

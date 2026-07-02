@@ -30,8 +30,12 @@ export default async function VenuesPage() {
       {/* Header */}
       <section className="px-7 pb-10 pt-[150px]">
         <div className="mx-auto max-w-[1320px]">
-          <p className="kicker m-0 mb-[14px]">Le lieu · Trois espaces</p>
-          <h1 className="display m-0 text-[clamp(64px,15vw,232px)]">Nos&nbsp;salles</h1>
+          <p className="m-0 mb-[18px]">
+            <span className="sticker text-[12px]">Le lieu · Trois espaces</span>
+          </p>
+          <h1 className="display m-0 text-[clamp(64px,15vw,232px)]">
+            Nos&nbsp;<span className="text-outline">salles</span>
+          </h1>
           <p className="m-0 mt-5 max-w-[54ch] text-[clamp(16px,1.4vw,19px)] leading-[1.55] text-nautilus-cream">
             Du showcase intime au grand concert. Trois espaces équipés, une même
             exigence&nbsp;: des conditions professionnelles pour vos événements.
@@ -58,8 +62,8 @@ export default async function VenuesPage() {
               >
                 {/* Image */}
                 <div
-                  className={`relative overflow-hidden rounded-[16px] aspect-[4/3] ${
-                    reversed ? "lg:order-2" : ""
+                  className={`poster-frame hard-shadow relative overflow-hidden aspect-[4/3] ${
+                    reversed ? "lg:order-2 rotate-[1deg]" : "rotate-[-1deg]"
                   }`}
                 >
                   {venue.coverImage ? (
@@ -98,7 +102,7 @@ export default async function VenuesPage() {
                   </p>
 
                   {specEntries.length > 0 && (
-                    <div className="mb-[22px] grid grid-cols-2 gap-px overflow-hidden rounded-[12px] border border-nautilus-border bg-nautilus-border">
+                    <div className="mb-[22px] grid grid-cols-2 gap-[2px] overflow-hidden border-2 border-nautilus-ink bg-nautilus-ink">
                       {specEntries.map(([k, v]) => (
                         <div key={k} className="bg-nautilus-black p-4">
                           <p className="m-0 mb-[5px] font-mono text-[10px] uppercase tracking-[0.1em] text-nautilus-gray-dim">
@@ -115,7 +119,7 @@ export default async function VenuesPage() {
                       {venue.amenities.map((a) => (
                         <span
                           key={a}
-                          className="rounded-full border border-nautilus-border-strong px-[13px] py-[7px] font-mono text-[11.5px] text-nautilus-cream"
+                          className="border-2 border-nautilus-ink px-[12px] py-[6px] font-mono text-[11px] uppercase tracking-[0.05em] text-nautilus-cream"
                         >
                           {a}
                         </span>
@@ -141,7 +145,7 @@ export default async function VenuesPage() {
                   <Link
                     href="/devenir-artiste"
                     data-hov
-                    className="inline-flex items-center gap-[10px] rounded-full bg-nautilus-gold px-6 py-[13px] text-[15px] font-bold text-nautilus-black transition-colors hover:bg-nautilus-gold-light"
+                    className="btn-stamp text-[15px]"
                   >
                     Réserver cette salle →
                   </Link>
@@ -156,28 +160,25 @@ export default async function VenuesPage() {
       <section className="px-7 pb-20 pt-5">
         <div
           data-reveal
-          className="mx-auto max-w-[1320px] rounded-[18px] border border-nautilus-border bg-nautilus-card p-[clamp(36px,5vw,64px)] text-center"
+          className="poster-frame hard-shadow mx-auto max-w-[1320px] p-[clamp(36px,5vw,64px)] text-center"
         >
           <p className="kicker m-0 mb-[14px]">Un projet d&apos;événement ?</p>
           <h2 className="display m-0 mb-4 text-[clamp(34px,5.5vw,76px)]">
-            Parlons-en ensemble
+            Parlons-en{" "}
+            <span className="accent-serif text-nautilus-gold">ensemble</span>
           </h2>
           <p className="mx-auto mb-7 max-w-[52ch] text-[17px] leading-[1.55] text-nautilus-cream">
             Notre équipe vous accompagne du devis à la régie. Décrivez votre
             projet, on revient vers vous sous 48h.
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Link
-              href="/devenir-artiste"
-              data-hov
-              className="rounded-full bg-nautilus-gold px-7 py-[15px] text-[15px] font-bold text-nautilus-black transition-colors hover:bg-nautilus-gold-light"
-            >
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/devenir-artiste" data-hov className="btn-stamp text-[15px]">
               Demander un devis
             </Link>
             <Link
               href="/projet"
               data-hov
-              className="rounded-full border border-nautilus-border-strong px-7 py-[15px] text-[15px] font-semibold transition-colors hover:border-nautilus-gold hover:text-nautilus-gold"
+              className="btn-stamp btn-stamp--ghost text-[15px]"
             >
               En savoir plus
             </Link>

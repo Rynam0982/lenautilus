@@ -35,7 +35,7 @@ export function NewsletterSignup() {
   return (
     <form
       onSubmit={onSubmit}
-      className="flex min-w-[260px] max-w-[420px] overflow-hidden rounded-full border border-nautilus-border-strong focus-within:border-nautilus-gold/70 transition-colors"
+      className="flex min-w-[260px] max-w-[420px] overflow-hidden border-2 border-nautilus-ink shadow-[3px_3px_0_var(--shadow-hard)] focus-within:shadow-[5px_5px_0_var(--shadow-hard)] transition-shadow"
     >
       <input
         type="email"
@@ -49,7 +49,7 @@ export function NewsletterSignup() {
         type="submit"
         disabled={loading}
         data-hov
-        className="inline-flex shrink-0 items-center justify-center bg-nautilus-gold px-5 text-base font-bold text-nautilus-black transition-colors hover:bg-nautilus-gold-light disabled:opacity-60"
+        className="inline-flex shrink-0 items-center justify-center border-l-2 border-nautilus-ink bg-nautilus-gold px-5 text-base font-bold text-[color:var(--paper-chip)] transition-colors hover:bg-nautilus-gold-light disabled:opacity-60"
         aria-label="S'inscrire à la newsletter"
       >
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "→"}

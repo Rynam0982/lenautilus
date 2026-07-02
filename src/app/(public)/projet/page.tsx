@@ -27,11 +27,13 @@ export default function ProjetPage() {
       {/* HEADER */}
       <section className="px-7 pb-[30px] pt-[150px]">
         <div className="mx-auto max-w-[1320px]">
-          <p className="kicker m-0 mb-[14px]">Le projet · Saison 2025</p>
+          <p className="m-0 mb-[18px]">
+            <span className="sticker text-[12px]">Le projet · Saison 2025</span>
+          </p>
           <h1 className="display m-0 text-[clamp(52px,11vw,180px)]">
-            Une saison
+            Une <span className="text-outline">saison</span>
             <br />
-            <span className="text-nautilus-gold">fondatrice</span>
+            <span className="accent-serif text-nautilus-gold">fondatrice</span>
           </h1>
           <p className="m-0 mt-6 max-w-[60ch] text-[clamp(16px,1.5vw,21px)] leading-[1.55] text-nautilus-cream text-pretty">
             2025 marque la première saison d&apos;activité complète du Nautilus&nbsp;:
@@ -46,7 +48,7 @@ export default function ProjetPage() {
       <section className="px-7 pb-5 pt-[30px]">
         <div
           data-reveal
-          className="mx-auto flex max-w-[1320px] flex-wrap items-center justify-between gap-[30px] rounded-[18px] border border-nautilus-border bg-nautilus-card p-[clamp(34px,5vw,60px)]"
+          className="poster-frame hard-shadow mx-auto flex max-w-[1320px] flex-wrap items-center justify-between gap-[30px] rotate-[-0.4deg] p-[clamp(34px,5vw,60px)]"
         >
           <div>
             <p className="m-0 mb-[10px] font-mono text-[12px] uppercase tracking-[0.18em] text-nautilus-gold-light">
@@ -68,12 +70,12 @@ export default function ProjetPage() {
       <section className="px-7 py-10">
         <div className="mx-auto max-w-[1320px]">
           <div data-reveal className="mb-7 flex items-baseline gap-[14px]">
-            <span className="font-mono text-[13px] tracking-[0.1em] text-nautilus-gold">
-              [ 01 ]
-            </span>
-            <h2 className="display m-0 text-[clamp(32px,4.6vw,64px)]">Chiffres clés</h2>
+            <span className="sticker text-[12px]">01</span>
+            <h2 className="display m-0 text-[clamp(32px,4.6vw,64px)]">
+              Chiffres <span className="accent-serif text-nautilus-gold">clés</span>
+            </h2>
           </div>
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-nautilus-border bg-nautilus-border md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-[2px] overflow-hidden border-2 border-nautilus-ink bg-nautilus-ink md:grid-cols-4">
             {chiffresStats.map((s) => (
               <div key={s.label} className="bg-nautilus-black p-[26px_22px]">
                 <p className="m-0 font-display text-[clamp(38px,4vw,58px)] leading-[0.85] text-nautilus-white">
@@ -92,11 +94,10 @@ export default function ProjetPage() {
       <section className="px-7 pb-[50px] pt-5">
         <div className="mx-auto max-w-[1320px]">
           <div data-reveal className="mb-7 flex items-baseline gap-[14px]">
-            <span className="font-mono text-[13px] tracking-[0.1em] text-nautilus-gold">
-              [ 02 ]
-            </span>
+            <span className="sticker rotate-[2deg] text-[12px]">02</span>
             <h2 className="display m-0 text-[clamp(32px,4.6vw,64px)]">
-              Les artistes accueillis
+              Les artistes{" "}
+              <span className="accent-serif text-nautilus-gold">accueillis</span>
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
@@ -104,7 +105,7 @@ export default function ProjetPage() {
               <div
                 key={a.label}
                 data-reveal
-                className="rounded-[14px] border border-nautilus-border bg-nautilus-card p-[26px]"
+                className="poster-frame p-[26px]"
               >
                 <p className="m-0 font-display text-[clamp(40px,4.4vw,62px)] leading-[0.85] text-nautilus-gold">
                   <CountUp value={toNumber(a.value)} />
@@ -122,10 +123,10 @@ export default function ProjetPage() {
       <section className="px-7 pb-[50px] pt-[30px]">
         <div className="mx-auto max-w-[1320px]">
           <div data-reveal className="mb-[30px] flex items-baseline gap-[14px]">
-            <span className="font-mono text-[13px] tracking-[0.1em] text-nautilus-gold">
-              [ 03 ]
-            </span>
-            <h2 className="display m-0 text-[clamp(32px,4.6vw,64px)]">Nos missions</h2>
+            <span className="sticker rotate-[-2deg] text-[12px]">03</span>
+            <h2 className="display m-0 text-[clamp(32px,4.6vw,64px)]">
+              Nos <span className="accent-serif text-nautilus-gold">missions</span>
+            </h2>
           </div>
           <div className="grid grid-cols-1 gap-[18px] md:grid-cols-2">
             {missions.map((m) => {
@@ -134,7 +135,7 @@ export default function ProjetPage() {
                 <article
                   key={m.slug}
                   data-reveal
-                  className="group flex flex-col overflow-hidden rounded-[16px] border border-nautilus-border bg-nautilus-card"
+                  className="group poster-frame flex flex-col overflow-hidden transition-transform duration-200 hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[6px_6px_0_var(--shadow-hard)]"
                 >
                   <div className="relative aspect-[16/8] overflow-hidden">
                     <Image
@@ -188,10 +189,10 @@ export default function ProjetPage() {
       <section className="py-10">
         <div className="mx-auto mb-[26px] max-w-[1320px] px-7">
           <div data-reveal className="flex items-baseline gap-[14px]">
-            <span className="font-mono text-[13px] tracking-[0.1em] text-nautilus-gold">
-              [ 04 ]
-            </span>
-            <h2 className="display m-0 text-[clamp(32px,4.6vw,64px)]">En images</h2>
+            <span className="sticker rotate-[1deg] text-[12px]">04</span>
+            <h2 className="display m-0 text-[clamp(32px,4.6vw,64px)]">
+              En <span className="accent-serif text-nautilus-gold">images</span>
+            </h2>
           </div>
         </div>
         <GalleryRow photos={galleryA} reverse={false} />
@@ -202,28 +203,25 @@ export default function ProjetPage() {
       <section className="px-7 pb-20 pt-5">
         <div
           data-reveal
-          className="mx-auto max-w-[1320px] rounded-[18px] border border-nautilus-border bg-nautilus-card p-[clamp(36px,5vw,64px)] text-center"
+          className="poster-frame hard-shadow mx-auto max-w-[1320px] p-[clamp(36px,5vw,64px)] text-center"
         >
           <p className="kicker m-0 mb-[14px]">Un projet à accompagner ?</p>
           <h2 className="display m-0 mb-4 text-[clamp(34px,5.5vw,76px)]">
-            Parlons-en ensemble
+            Parlons-en{" "}
+            <span className="accent-serif text-nautilus-gold">ensemble</span>
           </h2>
           <p className="mx-auto mb-7 max-w-[54ch] text-[16px] leading-[1.6] text-nautilus-cream">
             Le Nautilus — 20 rue Jules Verne, 66000 Perpignan ·
             bonjour@le-nautilus.org · 06 26 52 10 15
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Link
-              href="/events"
-              data-hov
-              className="rounded-full bg-nautilus-gold px-7 py-[15px] text-[15px] font-bold text-nautilus-black transition-colors hover:bg-nautilus-gold-light"
-            >
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/events" data-hov className="btn-stamp text-[15px]">
               Découvrir l&apos;agenda
             </Link>
             <Link
               href="/venues"
               data-hov
-              className="rounded-full border border-nautilus-border-strong px-7 py-[15px] text-[15px] font-semibold transition-colors hover:border-nautilus-gold hover:text-nautilus-gold"
+              className="btn-stamp btn-stamp--ghost text-[15px]"
             >
               Nos salles
             </Link>
@@ -252,7 +250,7 @@ function GalleryRow({
         {run.map((src, i) => (
           <div
             key={i}
-            className="relative h-[230px] w-[340px] flex-none overflow-hidden rounded-[10px]"
+            className="relative h-[230px] w-[340px] flex-none overflow-hidden border-2 border-nautilus-ink"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

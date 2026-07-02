@@ -64,14 +64,14 @@ export function AgendaList({ rows }: { rows: AgendaRow[] }) {
         cy = ty;
         thumb.style.opacity = "1";
         thumb.style.transform =
-          "translate(-50%,-50%) scale(1) rotate(-4deg)";
+          "translate(-50%,-50%) scale(1) rotate(-5deg)";
         if (!raf) raf = requestAnimationFrame(loop);
       };
       const leave = () => {
         active = false;
         thumb.style.opacity = "0";
         thumb.style.transform =
-          "translate(-50%,-50%) scale(.85) rotate(-4deg)";
+          "translate(-50%,-50%) scale(.85) rotate(-5deg)";
       };
       row.addEventListener("mouseenter", enter);
       row.addEventListener("mouseleave", leave);
@@ -97,32 +97,32 @@ export function AgendaList({ rows }: { rows: AgendaRow[] }) {
             data-hov
             data-agenda-row
             data-img={ev.img ?? ""}
-            className="group grid grid-cols-[40px_1fr_auto] items-center gap-4 border-t border-nautilus-border py-5 transition-colors hover:bg-[linear-gradient(90deg,rgba(201,168,76,0.07),transparent)] md:grid-cols-[54px_168px_1fr_200px_110px_40px] md:gap-[18px] md:px-[6px] md:hover:pl-[18px]"
+            className="group grid grid-cols-[40px_1fr_auto] items-center gap-4 border-t-2 border-nautilus-ink py-5 transition-colors duration-150 hover:bg-nautilus-gold md:grid-cols-[54px_168px_1fr_200px_110px_40px] md:gap-[18px] md:px-[10px]"
           >
-            <span className="font-mono text-[13px] text-nautilus-gray-dim">
+            <span className="font-mono text-[13px] text-nautilus-gray-dim transition-colors group-hover:text-[color:var(--paper-chip)]">
               {ev.num}
             </span>
-            <span className="hidden font-mono text-[13.5px] tracking-[0.08em] text-nautilus-gold-light md:block">
+            <span className="hidden font-mono text-[13.5px] font-bold tracking-[0.08em] text-nautilus-gold transition-colors group-hover:text-[color:var(--paper-chip)] md:block">
               {ev.date}
             </span>
-            <span className="font-display text-[clamp(22px,3.3vw,44px)] uppercase leading-[0.95] text-nautilus-white transition-colors group-hover:text-nautilus-gold">
+            <span className="font-display text-[clamp(22px,3.3vw,44px)] uppercase leading-[0.95] text-nautilus-white transition-colors group-hover:text-[color:var(--paper-chip)]">
               {ev.title}
-              <span className="mt-1 block font-mono text-[11px] normal-case tracking-[0.06em] text-nautilus-gray md:hidden">
+              <span className="mt-1 block font-mono text-[11px] normal-case tracking-[0.06em] text-nautilus-gray transition-colors group-hover:text-[color:var(--paper-chip)] md:hidden">
                 {ev.date} · {ev.price}
               </span>
             </span>
-            <span className="hidden text-[14px] text-nautilus-gray md:block">
+            <span className="hidden text-[14px] text-nautilus-gray transition-colors group-hover:text-[color:var(--paper-chip)] md:block">
               {ev.genre}
             </span>
-            <span className="hidden text-right font-mono text-[13px] text-nautilus-cream md:block">
+            <span className="hidden text-right font-mono text-[13px] text-nautilus-cream transition-colors group-hover:text-[color:var(--paper-chip)] md:block">
               {ev.price}
             </span>
-            <span className="hidden justify-self-end text-[20px] text-nautilus-gray-dim transition-colors group-hover:text-nautilus-gold md:block">
+            <span className="hidden justify-self-end text-[20px] text-nautilus-gray-dim transition-transform group-hover:translate-x-1 group-hover:text-[color:var(--paper-chip)] md:block">
               ↗
             </span>
           </Link>
         ))}
-        <div className="border-t border-nautilus-border" />
+        <div className="border-t-2 border-nautilus-ink" />
       </div>
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -130,9 +130,9 @@ export function AgendaList({ rows }: { rows: AgendaRow[] }) {
         ref={thumbRef}
         alt=""
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[55] h-[178px] w-[248px] rounded-[10px] object-cover opacity-0 shadow-[0_24px_60px_rgba(0,0,0,0.6)]"
+        className="pointer-events-none fixed left-0 top-0 z-[55] h-[178px] w-[248px] border-2 border-nautilus-ink object-cover opacity-0 shadow-[6px_6px_0_var(--shadow-hard)]"
         style={{
-          transform: "translate(-50%,-50%) scale(.85) rotate(-4deg)",
+          transform: "translate(-50%,-50%) scale(.85) rotate(-5deg)",
           transition:
             "opacity .25s ease, transform .25s cubic-bezier(.16,1,.3,1)",
         }}

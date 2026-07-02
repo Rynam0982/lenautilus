@@ -49,8 +49,14 @@ export default async function EventsPage({ searchParams }: PageProps) {
       {/* Header */}
       <section className="px-7 pb-[30px] pt-[150px]">
         <div className="mx-auto max-w-[1320px]">
-          <p className="kicker m-0 mb-[14px]">Saison 2025 — 26 · La programmation</p>
-          <h1 className="display m-0 text-[clamp(70px,17vw,260px)]">Agenda</h1>
+          <p className="m-0 mb-[18px]">
+            <span className="sticker text-[12px]">
+              Saison 2025 — 26 · La programmation
+            </span>
+          </p>
+          <h1 className="display m-0 text-[clamp(70px,17vw,260px)]">
+            Agen<span className="text-outline">da</span>
+          </h1>
           <div className="mt-5 flex flex-wrap items-end justify-between gap-5">
             <p className="m-0 max-w-[48ch] text-[clamp(16px,1.4vw,19px)] leading-[1.55] text-nautilus-cream">
               Toute la saison en un coup d&apos;œil. Cherchez votre artiste,
@@ -67,7 +73,7 @@ export default async function EventsPage({ searchParams }: PageProps) {
       {/* Filters */}
       <section className="sticky top-[92px] z-40 px-7">
         <div className="mx-auto max-w-[1320px]">
-          <div className="flex flex-wrap items-center gap-[10px] border-y border-nautilus-border bg-nautilus-black/85 py-[14px] backdrop-blur-md">
+          <div className="flex flex-wrap items-center gap-[10px] border-y-2 border-nautilus-ink bg-nautilus-black py-[14px]">
             <form
               method="GET"
               action="/events"
@@ -81,17 +87,17 @@ export default async function EventsPage({ searchParams }: PageProps) {
                 name="search"
                 defaultValue={search}
                 placeholder="Rechercher un artiste…"
-                className="h-10 w-full rounded-full border border-nautilus-border-strong bg-transparent pl-11 pr-4 font-mono text-[12px] uppercase tracking-[0.06em] text-nautilus-white placeholder:text-nautilus-gray/60 focus:border-nautilus-gold/70 focus:outline-none"
+                className="h-10 w-full border-2 border-nautilus-ink bg-transparent pl-11 pr-4 font-mono text-[12px] uppercase tracking-[0.06em] text-nautilus-white placeholder:text-nautilus-gray/60 focus:border-nautilus-gold focus:outline-none"
               />
             </form>
 
             <a
               href={buildHref({ upcoming: undefined, page: "1" })}
               data-hov
-              className={`rounded-full px-4 py-[9px] font-mono text-[12px] uppercase tracking-[0.1em] transition ${
+              className={`border-2 px-4 py-[8px] font-mono text-[12px] font-bold uppercase tracking-[0.1em] transition ${
                 !upcoming
-                  ? "border border-nautilus-gold bg-nautilus-gold text-nautilus-black"
-                  : "border border-nautilus-border-strong text-nautilus-cream hover:border-nautilus-gold"
+                  ? "border-nautilus-ink bg-nautilus-gold text-[color:var(--paper-chip)] shadow-[3px_3px_0_var(--shadow-hard)]"
+                  : "border-nautilus-ink text-nautilus-cream hover:bg-nautilus-muted"
               }`}
             >
               Tout
@@ -99,10 +105,10 @@ export default async function EventsPage({ searchParams }: PageProps) {
             <a
               href={buildHref({ upcoming: "true", page: "1" })}
               data-hov
-              className={`rounded-full px-4 py-[9px] font-mono text-[12px] uppercase tracking-[0.1em] transition ${
+              className={`border-2 px-4 py-[8px] font-mono text-[12px] font-bold uppercase tracking-[0.1em] transition ${
                 upcoming
-                  ? "border border-nautilus-gold bg-nautilus-gold text-nautilus-black"
-                  : "border border-nautilus-border-strong text-nautilus-cream hover:border-nautilus-gold"
+                  ? "border-nautilus-ink bg-nautilus-gold text-[color:var(--paper-chip)] shadow-[3px_3px_0_var(--shadow-hard)]"
+                  : "border-nautilus-ink text-nautilus-cream hover:bg-nautilus-muted"
               }`}
             >
               À venir
@@ -146,7 +152,7 @@ export default async function EventsPage({ searchParams }: PageProps) {
                 <a
                   href={buildHref({ page: String(page - 1) })}
                   data-hov
-                  className="flex h-10 items-center gap-1.5 rounded-full border border-nautilus-border-strong px-4 text-nautilus-cream transition-colors hover:border-nautilus-gold hover:text-nautilus-gold"
+                  className="flex h-10 items-center gap-1.5 border-2 border-nautilus-ink px-4 text-nautilus-cream transition-colors hover:bg-nautilus-muted"
                 >
                   ← Précédent
                 </a>
@@ -160,10 +166,10 @@ export default async function EventsPage({ searchParams }: PageProps) {
                     key={p}
                     href={buildHref({ page: String(p) })}
                     data-hov
-                    className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+                    className={`flex h-10 w-10 items-center justify-center border-2 border-nautilus-ink transition-colors ${
                       p === page
-                        ? "bg-nautilus-gold text-nautilus-black"
-                        : "border border-nautilus-border-strong text-nautilus-cream hover:border-nautilus-gold hover:text-nautilus-gold"
+                        ? "bg-nautilus-gold font-bold text-[color:var(--paper-chip)] shadow-[3px_3px_0_var(--shadow-hard)]"
+                        : "text-nautilus-cream hover:bg-nautilus-muted"
                     }`}
                   >
                     {p}
@@ -174,7 +180,7 @@ export default async function EventsPage({ searchParams }: PageProps) {
                 <a
                   href={buildHref({ page: String(page + 1) })}
                   data-hov
-                  className="flex h-10 items-center gap-1.5 rounded-full border border-nautilus-border-strong px-4 text-nautilus-cream transition-colors hover:border-nautilus-gold hover:text-nautilus-gold"
+                  className="flex h-10 items-center gap-1.5 border-2 border-nautilus-ink px-4 text-nautilus-cream transition-colors hover:bg-nautilus-muted"
                 >
                   Suivant →
                 </a>

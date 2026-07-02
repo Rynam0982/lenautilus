@@ -1,5 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Anton, Space_Grotesk, Space_Mono } from "next/font/google";
+import {
+  Anton,
+  Space_Grotesk,
+  Space_Mono,
+  Instrument_Serif,
+} from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/shared/providers";
 import { Toaster } from "sonner";
@@ -9,6 +14,15 @@ const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-body",
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+// Accent — Instrument Serif italic (the hand-set word inside Anton headlines)
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  variable: "--font-accent",
+  weight: ["400"],
+  style: ["italic"],
   display: "swap",
 });
 
@@ -86,7 +100,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${spaceGrotesk.variable} ${anton.variable} ${spaceMono.variable} h-full`}
+      className={`${spaceGrotesk.variable} ${anton.variable} ${spaceMono.variable} ${instrumentSerif.variable} h-full`}
       suppressHydrationWarning
     >
       <body className="relative min-h-full flex flex-col bg-nautilus-black text-nautilus-white antialiased">
@@ -96,9 +110,11 @@ export default function RootLayout({
             position="bottom-right"
             toastOptions={{
               style: {
-                background: "#131110",
-                border: "1px solid #221f1b",
-                color: "#f4efe2",
+                background: "var(--nautilus-card)",
+                border: "2px solid var(--ink-line)",
+                borderRadius: "4px",
+                boxShadow: "4px 4px 0 var(--shadow-hard)",
+                color: "var(--nautilus-white)",
                 fontFamily: "var(--font-body)",
               },
             }}

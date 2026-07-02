@@ -21,11 +21,14 @@
   --color-nautilus-gray: var(--nautilus-gray);
   --color-nautilus-gray-light: var(--nautilus-gray-light);
   --color-nautilus-gray-dim: var(--nautilus-gray-dim);
+  --color-nautilus-yellow: var(--nautilus-yellow);
+  --color-nautilus-ink: var(--ink-line);
 
   /* Fonts */
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
   --font-mono: var(--font-mono);
+  --font-accent: var(--font-accent);
 
   /* Secondary accent (company green) */
   --color-nautilus-green: var(--nautilus-green);
@@ -36,13 +39,13 @@
   --spacing-26: 6.5rem;
   --spacing-30: 7.5rem;
 
-  /* Radius */
+  /* Radius — print poster: hard edges, tiny rounding only */
   --radius-xs: 0.125rem;
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
+  --radius-sm: 0.1875rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.625rem;
   --radius-full: 9999px;
 
   /* Transitions */
@@ -54,61 +57,74 @@
 /* ─── CSS Variables ─────────────────────────────────────────────────────────── */
 
 :root {
-  /* Dark theme (default) — noir & violet */
-  --background: #0a090e;
-  --foreground: #f3f0f7;
+  /* Dark theme (default) — « encre de nuit » : aplats francs, zéro dégradé.
+     Affiche sérigraphiée sur fond noir : violet logo, jaune acide, vert vif. */
+  --background: #100f13;
+  --foreground: #f4f1ea;
 
-  --nautilus-black: #0a090e; /* page background — cool near-black */
-  --nautilus-dark: #100d18; /* deep surface */
-  --nautilus-card: #15121d; /* card surface */
-  --nautilus-border: #241f31; /* hairline borders */
-  --nautilus-border-strong: #3b3352; /* visible borders / pills */
-  --nautilus-muted: #221c32; /* hover surfaces */
-  --nautilus-gold: #a855f7; /* primary accent — violet */
-  --nautilus-gold-light: #c79bfb; /* light violet */
+  --nautilus-black: #100f13; /* page background — flat ink */
+  --nautilus-dark: #16141b; /* deep surface */
+  --nautilus-card: #191721; /* card surface */
+  --nautilus-border: #2e2a3a; /* hairline rules */
+  --nautilus-border-strong: #524a6b; /* visible rules / pills */
+  --nautilus-muted: #241f32; /* hover surfaces */
+  --nautilus-gold: #a855f7; /* primary accent — violet logo */
+  --nautilus-gold-light: #c79bfb;
   --nautilus-gold-dim: #6d28d9;
+  --nautilus-yellow: #f2c94c; /* acid sticker yellow */
   --nautilus-green: #34d27a; /* "live" status */
-  --nautilus-white: #f3f0f7; /* primary text */
-  --nautilus-cream: #c9c1da; /* secondary text on dark */
-  --nautilus-gray: #978fab; /* muted text */
-  --nautilus-gray-light: #c9c1da;
-  --nautilus-gray-dim: #5f5773; /* faint mono labels */
+  --nautilus-white: #f4f1ea; /* primary text — paper white */
+  --nautilus-cream: #cdc6d8; /* secondary text */
+  --nautilus-gray: #9b93ad; /* muted text */
+  --nautilus-gray-light: #cdc6d8;
+  --nautilus-gray-dim: #625a76; /* faint mono labels */
+
+  /* Print chrome — the poster hardware */
+  --ink-line: #f4f1ea; /* thick rules & borders (white ink on night) */
+  --shadow-hard: #f2c94c; /* hard offset shadow — screen-print offset */
+  --paper-chip: #100f13; /* chip/sticker paper */
 
   /* Brand ribbon colors (logo purple + green + logo yellow) */
   --band-1: #a855f7;
   --band-2: #34d27a;
-  --band-3: #eab308;
-  --band-opacity: 0.16;
+  --band-3: #f2c94c;
+  --band-opacity: 0.14;
 
   color-scheme: dark;
 }
 
-/* Light theme — beige & vert. Semantic tokens flip (black = surface, white = text). */
+/* Light theme — « papier affiche » : crème imprimé, encre noire, violet logo. */
 .light {
-  --background: #f4efe4;
-  --foreground: #1b1a16;
+  --background: #f2ecdd;
+  --foreground: #191713;
 
-  --nautilus-black: #f4efe4; /* page background (warm beige) */
-  --nautilus-dark: #ebe3d3; /* footer / sidebar surface */
-  --nautilus-card: #fffdf8; /* cards (warm white) */
-  --nautilus-border: #ddd2bd; /* clearly visible on beige */
-  --nautilus-border-strong: #c7b89a; /* visible borders / pills */
-  --nautilus-muted: #e7ddc9; /* hover surfaces */
-  --nautilus-gold: #15803d; /* primary accent — green */
-  --nautilus-gold-light: #1c9d4b;
-  --nautilus-gold-dim: #bfe0c6;
+  --nautilus-black: #f2ecdd; /* page background (poster cream) */
+  --nautilus-dark: #eae2cd; /* footer / sidebar surface */
+  --nautilus-card: #faf6ea; /* cards (warm paper) */
+  --nautilus-border: #d9cfb6; /* visible on cream */
+  --nautilus-border-strong: #191713; /* print rules are pure ink */
+  --nautilus-muted: #e7ddc4; /* hover surfaces */
+  --nautilus-gold: #6d28d9; /* primary accent — violet print */
+  --nautilus-gold-light: #7c3aed;
+  --nautilus-gold-dim: #c9b8ef;
+  --nautilus-yellow: #eab308; /* sticker yellow */
   --nautilus-green: #15803d; /* secondary accent — green */
-  --nautilus-white: #1b1a16; /* primary text */
-  --nautilus-cream: #3c4138; /* secondary text on light */
-  --nautilus-gray: #6a6359; /* secondary text (AA on beige) */
-  --nautilus-gray-light: #322e27; /* strong text */
-  --nautilus-gray-dim: #8a8276; /* faint mono labels */
+  --nautilus-white: #191713; /* primary text — ink */
+  --nautilus-cream: #3a352c; /* secondary text */
+  --nautilus-gray: #6a6355; /* muted text (AA on cream) */
+  --nautilus-gray-light: #2e2a22;
+  --nautilus-gray-dim: #8b8371; /* faint mono labels */
 
-  /* Brand ribbon colors — deeper, professional tones on cream */
+  /* Print chrome */
+  --ink-line: #191713; /* black ink rules */
+  --shadow-hard: #191713; /* hard ink shadow */
+  --paper-chip: #f2ecdd;
+
+  /* Brand ribbon colors — deeper tones on cream */
   --band-1: #7c3aed;
   --band-2: #15803d;
   --band-3: #c08a1e;
-  --band-opacity: 0.13;
+  --band-opacity: 0.12;
 
   color-scheme: light;
 }
@@ -147,8 +163,8 @@ h1, h2, h3, h4, h5, h6 {
 /* ─── Scrollbar ──────────────────────────────────────────────────────────────── */
 
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 9px;
+  height: 9px;
 }
 
 ::-webkit-scrollbar-track {
@@ -156,24 +172,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2a2722;
-  border-radius: 6px;
+  background: var(--nautilus-border-strong);
+  border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--nautilus-gold);
 }
 
-::-webkit-scrollbar {
-  width: 9px;
-  height: 9px;
-}
-
 /* ─── Selection ──────────────────────────────────────────────────────────────── */
 
 ::selection {
-  background: color-mix(in srgb, var(--nautilus-gold) 30%, transparent);
-  color: var(--nautilus-white);
+  background: var(--nautilus-yellow);
+  color: #191713;
 }
 
 /* ─── Focus Ring ─────────────────────────────────────────────────────────────── */
@@ -272,8 +283,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes pulse-gold {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0); }
-  50% { box-shadow: 0 0 0 8px rgba(201, 168, 76, 0.1); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0); }
+  50% { box-shadow: 0 0 0 8px rgba(168, 85, 247, 0.1); }
 }
 
 .animate-fade-in-up {
@@ -288,7 +299,7 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(201, 168, 76, 0.05) 50%,
+    color-mix(in srgb, var(--nautilus-gold) 6%, transparent) 50%,
     transparent 100%
   );
   background-size: 200% 100%;
@@ -300,20 +311,50 @@ h1, h2, h3, h4, h5, h6 {
 .skeleton {
   background: linear-gradient(
     90deg,
-    #131110 25%,
-    #221f1b 50%,
-    #131110 75%
+    var(--nautilus-card) 25%,
+    var(--nautilus-muted) 50%,
+    var(--nautilus-card) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  border-radius: 4px;
+  border-radius: 3px;
+  border: 1px solid var(--nautilus-border);
 }
 
-/* ─── Nautilus — editorial design system ─────────────────────────────────────── */
+/* ─── Nautilus — « affiche de concert » design system ────────────────────────── */
 
 /* Fonts as utilities */
 .font-mono {
   font-family: var(--font-mono, ui-monospace, monospace);
+}
+
+/* In @layer components so Tailwind utilities can override paddings/sizes. */
+@layer components {
+
+/* Serif italic accent — the hand-set word inside big Anton headlines */
+.accent-serif {
+  font-family: var(--font-accent, serif);
+  font-style: italic;
+  font-weight: 400;
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+  line-height: 0.9;
+}
+
+/* Hollow print letters — ink outline, no fill */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--nautilus-white);
+}
+.text-outline-accent {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--nautilus-gold);
+}
+@media (max-width: 640px) {
+  .text-outline,
+  .text-outline-accent {
+    -webkit-text-stroke-width: 1.4px;
+  }
 }
 
 /* Mono kicker / eyebrow label */
@@ -334,14 +375,100 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.01em;
 }
 
-/* Cinematic photo treatment (neutral desaturated grade → clears on hover).
-   Theme-agnostic so it reads well on both noir/violet and beige/vert. */
-.duo {
-  filter: grayscale(0.18) brightness(0.84) contrast(1.05);
-  transition: filter 0.7s var(--ease-out-expo), transform 1s var(--ease-out-expo);
+/* Hard offset shadow — screen-print offset, no blur */
+.hard-shadow {
+  box-shadow: 5px 5px 0 var(--shadow-hard);
 }
-.group:hover .duo {
-  filter: brightness(0.96);
+.hard-shadow-sm {
+  box-shadow: 3px 3px 0 var(--shadow-hard);
+}
+
+/* Poster frame — thick ink border, hard edges */
+.poster-frame {
+  border: 2px solid var(--ink-line);
+  border-radius: 4px;
+  background: var(--nautilus-card);
+}
+
+/* Stamp button — flat, bordered, hard shadow that the cursor "pushes" */
+.btn-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid var(--ink-line);
+  border-radius: 4px;
+  background: var(--nautilus-gold);
+  color: var(--paper-chip);
+  font-weight: 700;
+  padding: 13px 26px;
+  box-shadow: 4px 4px 0 var(--shadow-hard);
+  transition:
+    transform 0.16s var(--ease-out-expo),
+    box-shadow 0.16s var(--ease-out-expo),
+    background 0.16s ease,
+    color 0.16s ease;
+}
+.btn-stamp:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 var(--shadow-hard);
+}
+.btn-stamp:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--shadow-hard);
+}
+.btn-stamp--ghost {
+  background: transparent;
+  color: var(--nautilus-white);
+}
+.btn-stamp--ghost:hover {
+  background: var(--nautilus-white);
+  color: var(--nautilus-black);
+}
+.btn-stamp--paper {
+  background: var(--nautilus-yellow);
+  color: #191713;
+  border-color: #191713;
+}
+
+/* Tilted sticker — the price tag slapped on the poster */
+.sticker {
+  display: inline-block;
+  background: var(--nautilus-yellow);
+  color: #191713;
+  border: 2px solid #191713;
+  border-radius: 3px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 11px;
+  transform: rotate(-3deg);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+}
+.sticker--violet {
+  background: var(--nautilus-gold);
+  color: var(--paper-chip);
+  border-color: var(--ink-line);
+}
+
+/* Ticker band — solid accent strip, black print text (navbar marquee, CTAs) */
+.ticker-band {
+  background: var(--nautilus-gold);
+  color: var(--paper-chip);
+  border-top: 2px solid var(--ink-line);
+  border-bottom: 2px solid var(--ink-line);
+}
+
+/* Photo treatment — B&W print that inks up in color on hover */
+.duo {
+  filter: grayscale(1) contrast(1.08) brightness(0.92);
+  transition: filter 0.5s var(--ease-out-expo), transform 0.9s var(--ease-out-expo);
+}
+.group:hover .duo,
+a:hover > .duo,
+.duo:hover {
+  filter: grayscale(0) contrast(1) brightness(1);
 }
 
 /* ─── Legibility helpers — text & chips sitting on top of photos ───────────────
@@ -354,20 +481,16 @@ h1, h2, h3, h4, h5, h6 {
   color: #ddd7cb;
 }
 .media-chip {
-  background: rgba(10, 9, 14, 0.62);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #191713;
+  border: 2px solid #f4f1ea;
+  border-radius: 3px;
   color: #f6f3ee;
-  backdrop-filter: blur(6px);
 }
 .on-media {
   color: #f6f3ee;
 }
 
-/* Selection */
-::selection {
-  background: var(--nautilus-gold);
-  color: var(--nautilus-black);
-}
+} /* end @layer components */
 
 /* ─── Marquee ──────────────────────────────────────────────────────────────── */
 @keyframes naut-marquee {
@@ -448,13 +571,13 @@ body.naut-cursor input {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1px solid rgba(201, 168, 76, 0.6);
+  border: 2px solid var(--nautilus-gold);
   pointer-events: none;
   transform: translate(-50%, -50%);
   transition: width 0.25s, height 0.25s, border-color 0.25s, background 0.25s;
 }
 
-/* ─── Film grain overlay ───────────────────────────────────────────────────────
+/* ─── Paper grain overlay ──────────────────────────────────────────────────────
    No mix-blend-mode (that forces a full-viewport repaint on every scroll/paint
    and was the main source of UI lag). A low-opacity static texture on its own
    GPU layer is virtually free. */
@@ -463,14 +586,14 @@ body.naut-cursor input {
   position: fixed;
   inset: 0;
   z-index: 80;
-  opacity: 0.035;
+  opacity: 0.045;
   transform: translateZ(0);
   will-change: transform;
   contain: strict;
   background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E");
 }
 .light .grain-overlay {
-  opacity: 0.025;
+  opacity: 0.05;
 }
 
 @media (prefers-reduced-motion: reduce) {

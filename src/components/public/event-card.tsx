@@ -39,9 +39,9 @@ export function EventCard({ event }: EventCardProps) {
     <Link
       href={`/events/${event.slug}`}
       data-hov
-      className="group relative flex h-full flex-col overflow-hidden rounded-[14px] border border-nautilus-border bg-nautilus-card transition-[border-color,transform] duration-300 hover:border-nautilus-gold"
+      className="group poster-frame relative flex h-full flex-col overflow-visible transition-transform duration-200 hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[6px_6px_0_var(--shadow-hard)]"
     >
-      <div className="relative aspect-[4/5] overflow-hidden">
+      <div className="relative aspect-[4/5] overflow-hidden border-b-2 border-nautilus-ink">
         {event.coverImage ? (
           <Image
             src={event.coverImage}
@@ -51,40 +51,39 @@ export function EventCard({ event }: EventCardProps) {
             className="duo object-cover group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-nautilus-muted to-nautilus-dark">
+          <div className="flex h-full w-full items-center justify-center bg-nautilus-muted">
             <Music2 className="h-10 w-10 text-nautilus-gold/40" />
           </div>
         )}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 to-transparent to-55%" />
 
-        {/* Date chip */}
-        <div className="media-chip absolute left-[13px] top-[13px] rounded-[10px] px-[11px] py-2 text-center leading-none">
-          <span className="block font-display text-[26px] text-nautilus-gold">
-            {day}
-          </span>
-          <span className="mt-[3px] block font-mono text-[10px] uppercase tracking-[0.1em]">
-            {dow} {mon}
-          </span>
-        </div>
-
-        {/* Category pill */}
-        <span className="media-chip absolute right-[13px] top-[13px] rounded-full px-[10px] py-[6px] font-mono text-[10px] uppercase tracking-[0.08em]">
+        {/* Category stamp */}
+        <span className="media-chip absolute right-[11px] top-[13px] px-[9px] py-[5px] font-mono text-[10px] font-bold uppercase tracking-[0.08em]">
           {isCancelled ? "Annulé" : category}
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col gap-[6px] p-4 pb-[18px]">
-        <h3 className="line-clamp-2 min-h-[1.9em] font-display text-[clamp(22px,2vw,30px)] uppercase leading-[0.95] text-nautilus-white">
+      {/* Date sticker — slapped across the poster edge */}
+      <div className="sticker absolute -left-[10px] -top-[8px] z-10 px-[11px] py-[7px] text-center leading-none">
+        <span className="block font-display text-[24px] tracking-normal">
+          {day}
+        </span>
+        <span className="mt-[3px] block font-mono text-[9.5px] font-bold uppercase tracking-[0.1em]">
+          {dow} {mon}
+        </span>
+      </div>
+
+      <div className="flex flex-1 flex-col gap-[6px] p-4 pb-[16px]">
+        <h3 className="line-clamp-2 min-h-[1.9em] font-display text-[clamp(22px,2vw,30px)] uppercase leading-[0.95] text-nautilus-white transition-colors group-hover:text-nautilus-gold">
           {event.title}
         </h3>
         <p className="font-mono text-[11.5px] tracking-[0.04em] text-nautilus-gray line-clamp-1">
           {category} · {event.venue.name}
         </p>
-        <div className="mt-auto flex items-center justify-between pt-[14px]">
-          <span className="font-mono text-[13px] text-nautilus-gold-light">
+        <div className="mt-auto flex items-center justify-between border-t-2 border-dashed border-nautilus-border pt-[12px]">
+          <span className="font-mono text-[13px] font-bold text-nautilus-gold">
             {priceLabel}
           </span>
-          <span className="inline-flex items-center gap-[7px] font-mono text-[11px] uppercase tracking-[0.08em] text-nautilus-gold">
+          <span className="inline-flex items-center gap-[7px] font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-nautilus-white">
             Réserver ↗
           </span>
         </div>
@@ -94,5 +93,5 @@ export function EventCard({ event }: EventCardProps) {
 }
 
 export function EventCardSkeleton() {
-  return <div className="aspect-[4/5] rounded-[14px] skeleton" />;
+  return <div className="aspect-[4/5] skeleton" />;
 }

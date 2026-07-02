@@ -44,7 +44,8 @@ const navLinks = [
 
 const marqueeItems = [
   "Saison 2025 — 26",
-  "Musiques actuelles",
+  "20 000 lieues sous la scène",
+  "Musiques actuelles — Perpignan",
   "Concerts · Résidences · Ateliers",
   "Billetterie ouverte",
 ];
@@ -52,12 +53,12 @@ const marqueeItems = [
 function MarqueeRow() {
   const run = [...marqueeItems, ...marqueeItems];
   return (
-    <div className="overflow-hidden border-y border-nautilus-border bg-nautilus-black/60">
-      <div className="animate-marquee font-mono text-[12px] uppercase tracking-[0.18em] text-nautilus-gray py-2">
+    <div className="ticker-band overflow-hidden">
+      <div className="animate-marquee py-[7px] font-mono text-[12px] font-bold uppercase tracking-[0.18em]">
         {run.map((item, i) => (
           <span key={i} className="inline-flex items-center">
             <span className="px-[22px]">{item}</span>
-            <span className="px-[22px] text-nautilus-gold">✦</span>
+            <span className="px-[22px]">✦</span>
           </span>
         ))}
       </div>
@@ -83,10 +84,8 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled
-          ? "bg-nautilus-black/85 backdrop-blur-md border-b border-nautilus-border"
-          : "bg-transparent border-b border-transparent"
+        "fixed top-0 left-0 right-0 z-50 bg-nautilus-black transition-shadow duration-300",
+        scrolled && "shadow-[0_2px_0_var(--ink-line)]"
       )}
     >
       <div className="flex items-center justify-between gap-6 px-5 sm:px-7 py-4">
@@ -137,7 +136,7 @@ export function Navbar() {
           <Link
             href="/events"
             data-hov
-            className="inline-flex items-center gap-2 rounded-full bg-nautilus-gold px-[18px] py-[9px] font-bold text-nautilus-black hover:bg-nautilus-gold-light transition-colors"
+            className="btn-stamp px-[18px] py-[8px] text-[12px] uppercase tracking-[0.08em]"
           >
             Billetterie ↗
           </Link>
@@ -162,7 +161,7 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden overflow-hidden border-b border-nautilus-border bg-nautilus-black/98 backdrop-blur-md"
+            className="md:hidden overflow-hidden border-b-2 border-nautilus-ink bg-nautilus-black"
           >
             <div className="flex flex-col gap-1 px-6 py-6 font-mono text-sm uppercase tracking-[0.12em]">
               {navLinks.map((link) => (
@@ -211,7 +210,7 @@ export function Navbar() {
               <Link
                 href="/events"
                 onClick={() => setOpen(false)}
-                className="mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-nautilus-gold px-5 py-3 font-bold text-nautilus-black"
+                className="btn-stamp mt-3 justify-center text-[13px] uppercase tracking-[0.08em]"
               >
                 Billetterie ↗
               </Link>

@@ -31,9 +31,18 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="relative z-10 mt-auto border-t border-nautilus-border px-7 pb-10 pt-16">
+    <footer className="relative z-10 mt-auto border-t-2 border-nautilus-ink px-7 pb-10 pt-14">
       <div className="mx-auto max-w-[1320px]">
-        <div className="grid grid-cols-1 gap-10 pb-12 md:grid-cols-[2fr_1fr_1fr_1.3fr]">
+        {/* Wordmark géant — typo d'affiche pleine largeur */}
+        <p
+          aria-hidden
+          className="display m-0 mb-12 select-none text-[clamp(44px,9.6vw,150px)] leading-[0.82]"
+        >
+          Le&nbsp;Nau<span className="text-outline">tilus</span>{" "}
+          <span className="accent-serif text-nautilus-gold">à Perpignan</span>
+        </p>
+
+        <div className="grid grid-cols-1 gap-10 border-t-2 border-nautilus-ink pb-12 pt-10 md:grid-cols-[2fr_1fr_1fr_1.3fr]">
           {/* Brand */}
           <div>
             <div className="mb-4 flex items-center gap-[11px]">
@@ -107,7 +116,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-nautilus-border pt-[22px] font-mono text-[11.5px] tracking-[0.06em] text-nautilus-gray-dim">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-t-2 border-nautilus-ink pt-[22px] font-mono text-[11.5px] uppercase tracking-[0.06em] text-nautilus-gray">
           <span>© {new Date().getFullYear()} Le Nautilus — Tous droits réservés</span>
           <span className="flex gap-5">
             <Link
